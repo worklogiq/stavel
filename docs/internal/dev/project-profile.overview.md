@@ -30,4 +30,8 @@ Use supported Node LTS, npm install, npm run build, npm test and npm run check. 
 
 Use main as the default branch and reviewable task branches for subsequent changes; do not commit/push to main or merge without authorization. The current restart task authorizes the initial Stavel main history and its completion commits. Publication is distinct from source delivery or releasing a consumer application; npm publication and its release pipeline remain deferred. Keep the portable export sourced from explicit asset catalog entries and include every executable dependency needed after relocation.
 
-Current implementation evidence and open work are maintained in the [execution record](../platform/tooling-and-packaging/stavel/stavel-restart.execution-plan.md). Accepted requirements are distinct from completion evidence.
+Deferred publication work is bounded by the [dependency snapshot contract](../platform/tooling-and-packaging/stavel/dependency-snapshots.contract.md). Accepted requirements are distinct from completion evidence.
+
+## Historical context (archived)
+
+The completed [Stavel restart record](../_archive/delivery/stavel-restart.execution-plan.md) contains the implementation, consumer, installed-skill and repository-retirement evidence.

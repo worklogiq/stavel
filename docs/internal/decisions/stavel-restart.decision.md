@@ -18,4 +18,6 @@ The rejected alternatives were archiving the old GitHub repository, retaining le
 
 Scope includes the installed skill, mdcomposer's active product references and MenuLogiq's tooling integration. WARP's older experimental adoption and unrelated MenuLogiq work remain untouched. MIT attribution is retained. Npm publication and its publishing pipeline remain deferred.
 
-The active [execution owner](../platform/tooling-and-packaging/stavel/stavel-restart.execution-plan.md) records observed results separately from this accepted decision.
+## Historical context (archived)
+
+The completed [execution record](../_archive/delivery/stavel-restart.execution-plan.md) records observed results separately from this accepted decision.
