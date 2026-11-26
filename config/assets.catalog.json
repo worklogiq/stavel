@@ -1,0 +1,398 @@
+{
+  "product": "stavel",
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "defaultProfile": "default@1",
+  "entrypoints": {
+    "index": "docs/internal/index.md",
+    "constitution": "docs/internal/process/development-constitution.policy.md",
+    "profile": "docs/internal/dev/project-profile.overview.md"
+  },
+  "agentsTemplate": "docs/internal/templates/agents.template.md",
+  "profileTemplate": "docs/internal/templates/project-profile.template.md",
+  "skill": {
+    "source": "skills/stavel"
+  },
+  "assets": [
+    {
+      "source": "docs/internal/dev/agent-questions.guide.md",
+      "target": "docs/internal/dev/agent-questions.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/bootstrap.guide.md",
+      "target": "docs/internal/dev/bootstrap.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/configuration.contract.md",
+      "target": "docs/internal/dev/configuration.contract.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/contribution-profiles.guide.md",
+      "target": "docs/internal/dev/contribution-profiles.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/existing-system.guide.md",
+      "target": "docs/internal/dev/existing-system.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/framework-adoption.guide.md",
+      "target": "docs/internal/dev/framework-adoption.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/greenfield.guide.md",
+      "target": "docs/internal/dev/greenfield.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/philosophy-extraction.overview.md",
+      "target": "docs/internal/dev/philosophy-extraction.overview.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/profiles/backend.profiles.md",
+      "target": "docs/internal/dev/profiles/backend.profiles.md",
+      "role": "profile-example"
+    },
+    {
+      "source": "docs/internal/dev/profiles/frontend.profiles.md",
+      "target": "docs/internal/dev/profiles/frontend.profiles.md",
+      "role": "profile-example"
+    },
+    {
+      "source": "docs/internal/dev/profiles/index.md",
+      "target": "docs/internal/dev/profiles/index.md",
+      "role": "profile-example"
+    },
+    {
+      "source": "docs/internal/dev/profiles/java.profiles.md",
+      "target": "docs/internal/dev/profiles/java.profiles.md",
+      "role": "profile-example"
+    },
+    {
+      "source": "docs/internal/dev/profiles/python.profiles.md",
+      "target": "docs/internal/dev/profiles/python.profiles.md",
+      "role": "profile-example"
+    },
+    {
+      "source": "docs/internal/dev/repository-history.guide.md",
+      "target": "docs/internal/dev/repository-history.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/repository-migration.guide.md",
+      "target": "docs/internal/dev/repository-migration.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/research.guide.md",
+      "target": "docs/internal/dev/research.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/index.md",
+      "target": "docs/internal/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/ai-collaboration.philosophy.md",
+      "target": "docs/internal/philosophies/ai-collaboration.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/architecture.philosophy.md",
+      "target": "docs/internal/philosophies/architecture.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/code-quality.philosophy.md",
+      "target": "docs/internal/philosophies/code-quality.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/data-and-persistence.philosophy.md",
+      "target": "docs/internal/philosophies/data-and-persistence.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/delivery-and-infrastructure.philosophy.md",
+      "target": "docs/internal/philosophies/delivery-and-infrastructure.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/documentation.philosophy.md",
+      "target": "docs/internal/philosophies/documentation.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/index.md",
+      "target": "docs/internal/philosophies/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/interfaces-and-accessibility.philosophy.md",
+      "target": "docs/internal/philosophies/interfaces-and-accessibility.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/observability.philosophy.md",
+      "target": "docs/internal/philosophies/observability.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/product-intent.philosophy.md",
+      "target": "docs/internal/philosophies/product-intent.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/security-and-privacy.philosophy.md",
+      "target": "docs/internal/philosophies/security-and-privacy.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/tooling.philosophy.md",
+      "target": "docs/internal/philosophies/tooling.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/verification.philosophy.md",
+      "target": "docs/internal/philosophies/verification.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/default-conventions.decision.md",
+      "target": "docs/internal/process/default-conventions.decision.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/development-constitution.policy.md",
+      "target": "docs/internal/process/development-constitution.policy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/development-lifecycle.policy.md",
+      "target": "docs/internal/process/development-lifecycle.policy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/documentation-taxonomy.policy.md",
+      "target": "docs/internal/process/documentation-taxonomy.policy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/framework-extension.policy.md",
+      "target": "docs/internal/process/framework-extension.policy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/index.md",
+      "target": "docs/internal/process/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/naming-conventions.policy.md",
+      "target": "docs/internal/process/naming-conventions.policy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/design.prompt.md",
+      "target": "docs/internal/process/prompts/design.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/experiment.prompt.md",
+      "target": "docs/internal/process/prompts/experiment.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/explore.prompt.md",
+      "target": "docs/internal/process/prompts/explore.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/index.md",
+      "target": "docs/internal/process/prompts/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/review.prompt.md",
+      "target": "docs/internal/process/prompts/review.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/strict.prompt.md",
+      "target": "docs/internal/process/prompts/strict.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/session-handoff.guide.md",
+      "target": "docs/internal/process/session-handoff.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/agents.template.md",
+      "target": "docs/internal/templates/agents.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/decision.template.md",
+      "target": "docs/internal/templates/design/decision.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/design.template.md",
+      "target": "docs/internal/templates/design/design.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/index.md",
+      "target": "docs/internal/templates/design/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/design/interface.template.md",
+      "target": "docs/internal/templates/design/interface.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/philosophy.template.md",
+      "target": "docs/internal/templates/design/philosophy.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/product.template.md",
+      "target": "docs/internal/templates/design/product.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/requirements.template.md",
+      "target": "docs/internal/templates/design/requirements.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/test-plan.template.md",
+      "target": "docs/internal/templates/design/test-plan.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/execution-plan.template.md",
+      "target": "docs/internal/templates/execution/execution-plan.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/execution-slice.template.md",
+      "target": "docs/internal/templates/execution/execution-slice.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/experiment.template.md",
+      "target": "docs/internal/templates/execution/experiment.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/index.md",
+      "target": "docs/internal/templates/execution/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/execution/recon.template.md",
+      "target": "docs/internal/templates/execution/recon.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/verification.template.md",
+      "target": "docs/internal/templates/execution/verification.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/index.md",
+      "target": "docs/internal/templates/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/profiles/index.md",
+      "target": "docs/internal/templates/profiles/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/profiles/language-profile.template.md",
+      "target": "docs/internal/templates/profiles/language-profile.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/project-profile.template.md",
+      "target": "docs/internal/templates/project-profile.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/public/framework-cli.contract.md",
+      "target": "docs/public/framework-cli.contract.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/public/index.md",
+      "target": "docs/public/index.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/public/skill-installation.guide.md",
+      "target": "docs/public/skill-installation.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "examples/README.md",
+      "target": "examples/README.md",
+      "role": "documentation"
+    },
+    {
+      "source": "examples/existing-system.example.md",
+      "target": "examples/existing-system.example.md",
+      "role": "documentation"
+    },
+    {
+      "source": "examples/greenfield.example.md",
+      "target": "examples/greenfield.example.md",
+      "role": "documentation"
+    },
+    {
+      "source": "examples/research.example.md",
+      "target": "examples/research.example.md",
+      "role": "documentation"
+    },
+    {
+      "source": "config/default.profile.json",
+      "target": "config/default.profile.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/decisions.catalog.json",
+      "target": "config/decisions.catalog.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/backend.example.json",
+      "target": "config/profiles/backend.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/frontend.example.json",
+      "target": "config/profiles/frontend.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/java.example.json",
+      "target": "config/profiles/java.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/python.example.json",
+      "target": "config/profiles/python.example.json",
+      "role": "configuration"
+    }
+  ]
+}

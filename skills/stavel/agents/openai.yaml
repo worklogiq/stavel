@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stavel"
+  short_description: "Preserve design intent with scoped, evidenced changes"
+  default_prompt: "Use $stavel to map this project's canonical docs and plan the next verifiable development slice."

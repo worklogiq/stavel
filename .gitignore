@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+dist/
+node_modules/
+.generated/
+.cache/
+*.tgz
+!tools/vendor/*.tgz

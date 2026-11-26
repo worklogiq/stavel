@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "version": 1,
+  "groups": [
+    {
+      "id": "project",
+      "title": "Project intent and ownership"
+    },
+    {
+      "id": "workflow",
+      "title": "Repository workflow"
+    },
+    {
+      "id": "documentation",
+      "title": "Documentation taxonomy and metadata"
+    },
+    {
+      "id": "document-naming",
+      "title": "Document filename conventions"
+    },
+    {
+      "id": "source",
+      "title": "Source naming and structure"
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture and API"
+    },
+    {
+      "id": "data",
+      "title": "Data and persistence"
+    },
+    {
+      "id": "interfaces",
+      "title": "Human interfaces"
+    },
+    {
+      "id": "verification",
+      "title": "Verification"
+    },
+    {
+      "id": "observability",
+      "title": "Observability"
+    },
+    {
+      "id": "delivery",
+      "title": "Delivery and integrations"
+    },
+    {
+      "id": "tooling",
+      "title": "Developer tooling"
+    },
+    {
+      "id": "history",
+      "title": "Historical context"
+    }
+  ],
+  "resolutionStates": [
+    "resolved-from-user",
+    "resolved-from-accepted-repo-policy",
+    "proposed-from-observation",
+    "unanswered",
+    "not-applicable"
+  ],
+  "alignmentRequiredBeforeGeneration": true,
+  "questions": [
+    {
+      "id": "project.name",
+      "group": "project",
+      "prompt": "What is the project name?",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "project.intent",
+      "group": "project",
+      "prompt": "Who is the project for, and what outcome and non-goals should guide it?",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "project.owner",
+      "group": "project",
+      "prompt": "Name the maintainer, team, or accepted decision authority that owns conventions and resolves material conflicts.",
+      "type": "text",
+      "required": true,
+      "default": "repository-maintainer"
+    },
+    {
+      "id": "workflow.mode",
+      "group": "workflow",
+      "prompt": "Should this repository use the defaults, retain its accepted conventions, or migrate to the defaults?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "bootstrap",
+        "adopt",
+        "migrate"
+      ],
+      "default": "bootstrap"
+    },
+    {
+      "id": "workflow.instructions",
+      "group": "workflow",
+      "prompt": "Which existing instruction and owner documents remain authoritative?",
+      "type": "text",
+      "required": false,
+      "applicability": {
+        "tracks": [
+          "existing"
+        ]
+      }
+    },
+    {
+      "id": "workflow.review",
+      "group": "workflow",
+      "prompt": "What branch, review, tracking, commit and release conventions should apply?",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "documentation.taxonomy",
+      "group": "documentation",
+      "prompt": "Use the MenuLogiq-derived default taxonomy or preserve mapped canonical homes?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "default",
+        "mapped"
+      ],
+      "default": "default"
+    },
+    {
+      "id": "documentation.audiences",
+      "group": "documentation",
+      "prompt": "Which documentation audiences are needed?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "internal",
+        "public-and-internal"
+      ],
+      "default": "public-and-internal"
+    },
+    {
+      "id": "documentation.lifecycle",
+      "group": "documentation",
+      "prompt": "Use draft, accepted, active, complete and deprecated as document states, archive by location, and separate execution status?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "default",
+        "mapped-legacy"
+      ],
+      "default": "default"
+    },
+    {
+      "id": "documentation.naming.style",
+      "group": "document-naming",
+      "prompt": "Choose document filename style: camelCase, snake_case, kebab-case, PascalCase, or identifier.file-type.md.",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "camelCase",
+        "snake_case",
+        "kebab-case",
+        "PascalCase",
+        "typed"
+      ],
+      "default": "typed"
+    },
+    {
+      "id": "documentation.naming.identifierCase",
+      "group": "document-naming",
+      "prompt": "For typed filenames, which case should the identifier use? The document type stays kebab-case.",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "camel",
+        "snake",
+        "kebab",
+        "pascal",
+        "any"
+      ],
+      "default": "kebab",
+      "applicability": {
+        "answer": "documentation.naming.style",
+        "equals": "typed"
+      }
+    },
+    {
+      "id": "documentation.naming.generatedIdentifierCase",
+      "group": "document-naming",
+      "prompt": "When preserving mixed identifier cases, which case should new generated identifiers use?",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "camel",
+        "snake",
+        "kebab",
+        "pascal"
+      ],
+      "default": "kebab",
+      "applicability": {
+        "answer": "documentation.naming.identifierCase",
+        "equals": "any"
+      }
+    },
+    {
+      "id": "source.languages",
+      "group": "source",
+      "prompt": "List language identifiers for applicable source scopes, for example [\"python\"] or [\"typescript\", \"javascript\"].",
+      "type": "list",
+      "required": true
+    },
+    {
+      "id": "source.naming.identifierCase",
+      "group": "source",
+      "prompt": "Choose source identifier casing independently of documentation naming. Language-required filenames remain exceptions.",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "camel",
+        "snake",
+        "kebab",
+        "pascal",
+        "any"
+      ],
+      "default": "kebab"
+    },
+    {
+      "id": "source.scopes",
+      "group": "source",
+      "prompt": "Do source roots need different language, naming, role or rule conventions? Optionally provide an object mapping repository-relative roots to scoped overrides; the longest matching root wins.",
+      "type": "object",
+      "required": false
+    },
+    {
+      "id": "source.structure",
+      "group": "source",
+      "prompt": "Which source structure, suffix roles, formatter and linter conventions are accepted?",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "architecture.boundaries",
+      "group": "architecture",
+      "prompt": "Which domain, adapter, frontend/backend and API boundaries are required?",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "architecture.contracts",
+      "group": "architecture",
+      "prompt": "Which API protocols, schema owners, client approach and compatibility commitments apply?",
+      "type": "text",
+      "required": false,
+      "applicability": {
+        "capability": "api"
+      }
+    },
+    {
+      "id": "data.ownership",
+      "group": "data",
+      "prompt": "Which data owners, stores, isolation boundaries, migrations and recovery expectations apply?",
+      "type": "text",
+      "required": true,
+      "applicability": {
+        "capability": "persistence"
+      }
+    },
+    {
+      "id": "interfaces.expectations",
+      "group": "interfaces",
+      "prompt": "Which accessibility, localization, forms, errors and testing-target conventions apply?",
+      "type": "text",
+      "required": true,
+      "applicability": {
+        "capability": "human-interface"
+      }
+    },
+    {
+      "id": "verification.commands",
+      "group": "verification",
+      "prompt": "Which actual test, build and validation commands establish the required behaviors?",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "verification.boundaries",
+      "group": "verification",
+      "prompt": "Which test layers, fixtures, provider boundaries and evidence are required?",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "observability.expectations",
+      "group": "observability",
+      "prompt": "What diagnostics, correlation, privacy, telemetry and retention are required?",
+      "type": "text",
+      "required": false,
+      "applicability": {
+        "capability": "runtime"
+      }
+    },
+    {
+      "id": "delivery.environments",
+      "group": "delivery",
+      "prompt": "Which environments, runtime/deploy owners, configuration, secrets and recovery paths apply?",
+      "type": "text",
+      "required": true,
+      "applicability": {
+        "capability": "deployment"
+      }
+    },
+    {
+      "id": "delivery.integrations",
+      "group": "delivery",
+      "prompt": "Which external integrations are already authorized, for what purpose and data?",
+      "type": "text",
+      "required": false,
+      "applicability": {
+        "capability": "external-integrations"
+      }
+    },
+    {
+      "id": "tooling.modules",
+      "group": "tooling",
+      "prompt": "Use the default Markdown checks and choose any optional source rules.",
+      "type": "choice",
+      "required": true,
+      "options": [
+        "markdown-defaults",
+        "markdown-and-javascript-typescript",
+        "custom"
+      ],
+      "default": "markdown-defaults"
+    },
+    {
+      "id": "tooling.recurringIssues",
+      "group": "tooling",
+      "prompt": "Which repeated corrections, defects or manual tasks should tooling help reduce?",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "history.constraints",
+      "group": "history",
+      "prompt": "Which historical decisions, rejected approaches, known failures or compatibility obligations remain unresolved?",
+      "type": "text",
+      "required": false,
+      "applicability": {
+        "tracks": [
+          "existing"
+        ]
+      }
+    }
+  ]
+}

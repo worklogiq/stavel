@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "java",
+  "status": "example",
+  "implementedLanguageRules": false,
+  "language": "java",
+  "scope": "backend",
+  "decisions": {
+    "sourceNaming": "PascalCase classes; camelCase members; package paths follow accepted Java conventions",
+    "architecture": "Choose framework and module boundaries; no Java framework is mandated",
+    "verification": "Choose actual build/test commands and record JDK compatibility"
+  },
+  "requiresProjectAlignment": true
+}

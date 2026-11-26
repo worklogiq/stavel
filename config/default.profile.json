@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "id": "default",
+  "version": 1,
+  "documentation": {
+    "roots": [
+      "docs/internal",
+      "docs/public"
+    ],
+    "naming": {
+      "shape": "typed",
+      "identifierCase": "kebab",
+      "generatedIdentifierCase": "kebab"
+    },
+    "kinds": [
+      "accessibility-plan",
+      "architecture-diagram",
+      "contract",
+      "decision",
+      "design",
+      "documentation-plan",
+      "example",
+      "execution-plan",
+      "execution-prompt",
+      "execution-slice",
+      "execution-slices",
+      "experiment",
+      "guide",
+      "help-documentation",
+      "interface-design",
+      "macro-execution",
+      "overview",
+      "philosophy",
+      "policy",
+      "product",
+      "profiles",
+      "project-phase-status",
+      "prompt",
+      "recon",
+      "requirements",
+      "roadmap",
+      "runbook",
+      "template",
+      "test-plan",
+      "ui-design",
+      "verification"
+    ],
+    "states": [
+      "draft",
+      "accepted",
+      "active",
+      "complete",
+      "deprecated"
+    ],
+    "audiences": [
+      "public",
+      "internal"
+    ],
+    "defaultAudience": "internal",
+    "metadata": {
+      "format": "comment",
+      "requiredFields": [
+        "title",
+        "kind",
+        "state",
+        "audience",
+        "owner",
+        "updated"
+      ],
+      "acceptedRequires": "acceptance"
+    },
+    "archive": {
+      "root": "docs/internal/_archive",
+      "allowedStates": [
+        "complete",
+        "deprecated"
+      ],
+      "historicalHeading": "Historical context (archived)",
+      "buckets": [
+        "delivery",
+        "recon",
+        "cutover"
+      ]
+    },
+    "exceptions": [
+      "AGENTS.md",
+      "SKILL.md",
+      "README.md",
+      "index.md"
+    ],
+    "templateRoots": [
+      "docs/internal/templates"
+    ],
+    "ownershipRoots": {
+      "architecture": "docs/internal/architecture",
+      "philosophies": "docs/internal/philosophies",
+      "process": "docs/internal/process",
+      "developerGuides": "docs/internal/dev",
+      "decisions": "docs/internal/decisions",
+      "platform": "docs/internal/platform",
+      "modules": "docs/internal/modules",
+      "edge": "docs/internal/edge",
+      "public": "docs/public"
+    }
+  },
+  "source": {
+    "naming": {
+      "shape": "typed",
+      "identifierCase": "kebab",
+      "generatedIdentifierCase": "kebab"
+    },
+    "languages": [
+      "javascript",
+      "typescript"
+    ],
+    "exceptions": [
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json",
+      "LICENSE",
+      "VERSION",
+      "AGENTS.md",
+      "SKILL.md",
+      "README.md",
+      "index.md",
+      "openai.yaml"
+    ],
+    "maxLines": 500
+  },
+  "rules": {
+    "doc-naming": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "doc-metadata": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "doc-states": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "doc-audience": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "doc-archive": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "encoding": {
+      "enabled": true,
+      "severity": "error"
+    },
+    "docs-impact": {
+      "enabled": false,
+      "severity": "warning"
+    },
+    "readme": {
+      "enabled": false,
+      "severity": "error"
+    },
+    "source-naming": {
+      "enabled": false,
+      "severity": "error"
+    },
+    "file-length": {
+      "enabled": false,
+      "severity": "warning"
+    },
+    "api-client-usage": {
+      "enabled": false,
+      "severity": "error"
+    },
+    "api-error-codes": {
+      "enabled": false,
+      "severity": "error"
+    },
+    "frontend-i18n-copy": {
+      "enabled": false,
+      "severity": "error"
+    },
+    "frontend-error-surfaces": {
+      "enabled": false,
+      "severity": "error"
+    }
+  },
+  "configuration": {
+    "requiredHostFiles": [
+      "AGENTS.md",
+      "SKILL.md",
+      "README.md",
+      "LICENSE",
+      "VERSION",
+      "package.json"
+    ],
+    "generatedRoot": ".generated",
+    "defaultTrack": "greenfield"
+  }
+}

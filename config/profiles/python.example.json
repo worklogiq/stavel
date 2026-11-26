@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "python",
+  "status": "example",
+  "implementedLanguageRules": false,
+  "language": "python",
+  "scope": "backend",
+  "decisions": {
+    "sourceNaming": "snake_case modules/functions; PascalCase classes; preserve language-required files",
+    "architecture": "Choose packaging, validation and boundary approach",
+    "verification": "Choose actual test/type/lint commands and supported Python versions"
+  },
+  "requiresProjectAlignment": true
+}

@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "fromVersion": "0.1.0",
+  "toVersion": "0.2.0",
+  "defaultProfile": "default@1",
+  "renames": [
+    {
+      "from": "docs/origins.md",
+      "to": "docs/internal/dev/framework-origins.overview.md"
+    },
+    {
+      "from": "docs/skill.md",
+      "to": "docs/public/skill-installation.guide.md"
+    },
+    {
+      "from": "docs/tooling.md",
+      "to": "docs/public/framework-cli.contract.md"
+    },
+    {
+      "from": "docs/verification.md",
+      "to": "docs/internal/_archive/delivery/initial-verification.overview.md"
+    },
+    {
+      "from": "examples/README.md",
+      "to": "examples/README.md"
+    },
+    {
+      "from": "examples/existing-system.md",
+      "to": "examples/existing-system.example.md"
+    },
+    {
+      "from": "examples/greenfield.md",
+      "to": "examples/greenfield.example.md"
+    },
+    {
+      "from": "examples/research.md",
+      "to": "examples/research.example.md"
+    },
+    {
+      "from": "framework/archive/index.md",
+      "to": "docs/internal/_archive/index.md"
+    },
+    {
+      "from": "framework/capabilities/framework.design.md",
+      "to": "docs/internal/platform/tooling-and-packaging/constitutional-dev/framework.design.md"
+    },
+    {
+      "from": "framework/capabilities/framework.requirements.md",
+      "to": "docs/internal/platform/tooling-and-packaging/constitutional-dev/framework.requirements.md"
+    },
+    {
+      "from": "framework/capabilities/index.md",
+      "to": "docs/internal/platform/tooling-and-packaging/constitutional-dev/index.md"
+    },
+    {
+      "from": "framework/constitution.md",
+      "to": "docs/internal/process/development-constitution.policy.md"
+    },
+    {
+      "from": "framework/decisions/index.md",
+      "to": "docs/internal/decisions/index.md"
+    },
+    {
+      "from": "framework/guides/adoption.md",
+      "to": "docs/internal/dev/framework-adoption.guide.md"
+    },
+    {
+      "from": "framework/guides/existing-system.md",
+      "to": "docs/internal/dev/existing-system.guide.md"
+    },
+    {
+      "from": "framework/guides/extending.md",
+      "to": "docs/internal/process/framework-extension.policy.md"
+    },
+    {
+      "from": "framework/guides/greenfield.md",
+      "to": "docs/internal/dev/greenfield.guide.md"
+    },
+    {
+      "from": "framework/guides/handoff.md",
+      "to": "docs/internal/process/session-handoff.guide.md"
+    },
+    {
+      "from": "framework/guides/lifecycle.md",
+      "to": "docs/internal/process/development-lifecycle.policy.md"
+    },
+    {
+      "from": "framework/guides/research.md",
+      "to": "docs/internal/dev/research.guide.md"
+    },
+    {
+      "from": "framework/index.md",
+      "to": "docs/internal/index.md"
+    },
+    {
+      "from": "framework/modes/design.md",
+      "to": "docs/internal/process/prompts/design.prompt.md"
+    },
+    {
+      "from": "framework/modes/experiment.md",
+      "to": "docs/internal/process/prompts/experiment.prompt.md"
+    },
+    {
+      "from": "framework/modes/explore.md",
+      "to": "docs/internal/process/prompts/explore.prompt.md"
+    },
+    {
+      "from": "framework/modes/index.md",
+      "to": "docs/internal/process/prompts/index.md"
+    },
+    {
+      "from": "framework/modes/review.md",
+      "to": "docs/internal/process/prompts/review.prompt.md"
+    },
+    {
+      "from": "framework/modes/strict.md",
+      "to": "docs/internal/process/prompts/strict.prompt.md"
+    },
+    {
+      "from": "framework/philosophies/ai-collaboration.md",
+      "to": "docs/internal/philosophies/ai-collaboration.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/architecture.md",
+      "to": "docs/internal/philosophies/architecture.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/code-quality.md",
+      "to": "docs/internal/philosophies/code-quality.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/data-and-persistence.md",
+      "to": "docs/internal/philosophies/data-and-persistence.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/delivery-and-infrastructure.md",
+      "to": "docs/internal/philosophies/delivery-and-infrastructure.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/documentation.md",
+      "to": "docs/internal/philosophies/documentation.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/index.md",
+      "to": "docs/internal/philosophies/index.md"
+    },
+    {
+      "from": "framework/philosophies/interfaces-and-accessibility.md",
+      "to": "docs/internal/philosophies/interfaces-and-accessibility.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/observability.md",
+      "to": "docs/internal/philosophies/observability.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/product-intent.md",
+      "to": "docs/internal/philosophies/product-intent.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/security-and-privacy.md",
+      "to": "docs/internal/philosophies/security-and-privacy.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/tooling.md",
+      "to": "docs/internal/philosophies/tooling.philosophy.md"
+    },
+    {
+      "from": "framework/philosophies/verification.md",
+      "to": "docs/internal/philosophies/verification.philosophy.md"
+    },
+    {
+      "from": "framework/project-profile.md",
+      "to": "docs/internal/dev/project-profile.overview.md"
+    },
+    {
+      "from": "framework/proposals/index.md",
+      "to": "docs/internal/proposals/index.md"
+    },
+    {
+      "from": "framework/templates/AGENTS.template.md",
+      "to": "docs/internal/templates/agents.template.md"
+    },
+    {
+      "from": "framework/templates/decision.template.md",
+      "to": "docs/internal/templates/design/decision.template.md"
+    },
+    {
+      "from": "framework/templates/design.template.md",
+      "to": "docs/internal/templates/design/design.template.md"
+    },
+    {
+      "from": "framework/templates/experiment.template.md",
+      "to": "docs/internal/templates/execution/experiment.template.md"
+    },
+    {
+      "from": "framework/templates/index.md",
+      "to": "docs/internal/templates/index.md"
+    },
+    {
+      "from": "framework/templates/interface.template.md",
+      "to": "docs/internal/templates/design/interface.template.md"
+    },
+    {
+      "from": "framework/templates/philosophy.template.md",
+      "to": "docs/internal/templates/design/philosophy.template.md"
+    },
+    {
+      "from": "framework/templates/plan.template.md",
+      "to": "docs/internal/templates/execution/execution-plan.template.md"
+    },
+    {
+      "from": "framework/templates/product.template.md",
+      "to": "docs/internal/templates/design/product.template.md"
+    },
+    {
+      "from": "framework/templates/recon.template.md",
+      "to": "docs/internal/templates/execution/recon.template.md"
+    },
+    {
+      "from": "framework/templates/requirements.template.md",
+      "to": "docs/internal/templates/design/requirements.template.md"
+    },
+    {
+      "from": "framework/templates/slice.template.md",
+      "to": "docs/internal/templates/execution/execution-slice.template.md"
+    },
+    {
+      "from": "framework/templates/test-plan.template.md",
+      "to": "docs/internal/templates/design/test-plan.template.md"
+    },
+    {
+      "from": "framework/templates/verification.template.md",
+      "to": "docs/internal/templates/execution/verification.template.md"
+    }
+  ]
+}

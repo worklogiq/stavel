@@ -1,0 +1,68 @@
+{
+  "name": "@worklogiq/stavel",
+  "version": "0.1.0",
+  "description": "Repository-owned development conventions, evidence, Markdown tooling, and agent-guided adoption.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Steven Sheaves",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/worklogiq/stavel.git"
+  },
+  "homepage": "https://github.com/worklogiq/stavel#readme",
+  "bugs": {
+    "url": "https://github.com/worklogiq/stavel/issues"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./rules": {
+      "types": "./dist/types/rules/policy.service.d.ts",
+      "import": "./dist/rules.js",
+      "require": "./dist/rules.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "stavel": "dist/stavel.cli.cjs"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.cjs",
+    "dist/*.txt",
+    "dist/types",
+    "config",
+    "docs",
+    "examples",
+    "skills",
+    "LICENSE",
+    "VERSION",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.tool.mjs",
+    "test": "npm run build && node scripts/test.tool.mjs",
+    "check": "node dist/stavel.cli.cjs check --target .",
+    "pack:check": "npm pack --dry-run",
+    "export:skill": "node dist/stavel.cli.cjs export-skill --output dist/stavel-skill",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@worklogiq/mdcomposer": "file:tools/vendor/worklogiq-mdcomposer-0.1.0-d5bd0b7.tgz",
+    "esbuild": "^0.28.1",
+    "typescript": "^5.9.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "backend",
+  "status": "example",
+  "implementedLanguageRules": false,
+  "language": "project-selected",
+  "scope": "backend",
+  "decisions": {
+    "sourceNaming": "Choose route/service/adapter/repository roles appropriate to language",
+    "architecture": "Choose authoritative validation, contracts, data isolation and integration boundaries",
+    "verification": "Choose contract/integration/recovery checks and provider fixtures"
+  },
+  "requiresProjectAlignment": true
+}

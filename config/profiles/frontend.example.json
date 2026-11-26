@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "frontend",
+  "status": "example",
+  "implementedLanguageRules": false,
+  "language": "project-selected",
+  "scope": "frontend",
+  "decisions": {
+    "sourceNaming": "Choose component/page/hook roles and accepted casing",
+    "architecture": "Choose framework, state/data fetching, design system, forms and i18n",
+    "verification": "Choose component/browser/a11y checks and stable selectors"
+  },
+  "requiresProjectAlignment": true
+}
