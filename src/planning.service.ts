@@ -131,7 +131,7 @@ function setAudience(content: string, audience: string): string {
   return content.replace(/(<!--\s*mdcomposer:meta[\s\S]*?)(-->)/, (_block, body: string, closing: string) => `${body.replace(/^(\s*audience:\s*).*$/m, `$1${audience}`)}${closing}`);
 }
 
-function generateMetadata(content: string, name: string, answers: AnswersDocument, allowedStates = ['draft', 'accepted', 'active', 'complete', 'deprecated']): string {
+function generateMetadata(content: string, name: string, answers: AnswersDocument, allowedStates = ['draft', 'accepted', 'active', 'complete', 'deprecated'], owner = 'project-maintainer'): string {
   if (name.includes('/templates/') || fixedFilenames.has(path.posix.basename(name))) return content;
   if (/<!--\s*mdcomposer:meta\b/.test(content) || /^---\r?\n/.test(content)) {
     const existing = parseMetadata(content);
@@ -163,7 +163,7 @@ function generateMetadata(content: string, name: string, answers: AnswersDocumen
   const acceptanceRecord = answers.acceptanceRecords?.[name];
   if ((state === 'accepted' || state === 'active') && !acceptanceRecord?.trim()) throw new Refused(`legacy ${state} declaration needs an actual acceptance record before metadata conversion: ${name}; supply acceptanceRecords rather than inventing approval evidence`);
   const acceptance = acceptanceRecord ? `acceptance: ${JSON.stringify(acceptanceRecord)}\n` : '';
-  return `<!-- mdcomposer:meta\ntitle: ${JSON.stringify(title)}\nkind: ${kind}\nstate: ${state}\naudience: ${name.startsWith('docs/public/') ? 'public' : 'internal'}\nowner: project-maintainer\nupdated: ${new Date().toISOString().slice(0, 10)}\n${acceptance}-->\n\n${content}`;
+  return `<!-- mdcomposer:meta\ntitle: ${JSON.stringify(title)}\nkind: ${kind}\nstate: ${state}\naudience: ${name.startsWith('docs/public/') ? 'public' : 'internal'}\nowner: ${JSON.stringify(owner)}\nupdated: ${new Date().toISOString().slice(0, 10)}\n${acceptance}-->\n\n${content}`;
 }
 
 function fillTemplate(text: string, values: Record<string, string>): string {
@@ -176,6 +176,7 @@ function fillTemplate(text: string, values: Record<string, string>): string {
 }
 
 function contextDocument(name: string, track: string, answers: AnswersDocument, decisions: Record<string, unknown>, contextPath: string, mapping: Record<string, string>): string {
+  const owner = String(decisions['project.owner'] ?? 'project-maintainer');
   const history = answers.history ?? [];
   const entries = history.length ? history.map(item => {
     if (!item.sources?.length) throw new Refused(`historical observation needs source references: ${item.topic}`);
@@ -186,7 +187,7 @@ function contextDocument(name: string, track: string, answers: AnswersDocument, 
     });
     return `### ${item.topic}\n\nEvidence status: ${item.status ?? 'observed; acceptance unverified'}.\n\n${item.observation}\n\nSources: ${citations.join(', ')}\n`;
   }).join('\n') : 'Historical constraints, rejected approaches, recurring issues, compatibility obligations, and unresolved discrepancies are not yet established. Consult repository history and current owners before relying on historical claims.\n';
-  return `# ${name}: repository context\n\n<!-- mdcomposer:meta\ntitle: ${JSON.stringify(`${name} repository context`)}\nkind: overview\nstate: draft\naudience: internal\nowner: project-maintainer\nupdated: ${new Date().toISOString().slice(0, 10)}\n-->\n\nAdoption route: ${track}. This record distinguishes observations from accepted policy.\n\n## Established choices\n\n\`\`\`json\n${JSON.stringify(decisions, null, 2)}\n\`\`\`\n\n## Historical context and open questions\n\n${entries}`;
+  return `# ${name}: repository context\n\n<!-- mdcomposer:meta\ntitle: ${JSON.stringify(`${name} repository context`)}\nkind: overview\nstate: draft\naudience: internal\nowner: ${JSON.stringify(owner)}\nupdated: ${new Date().toISOString().slice(0, 10)}\n-->\n\nAdoption route: ${track}. This record distinguishes observations from accepted policy.\n\n## Established choices\n\n\`\`\`json\n${JSON.stringify(decisions, null, 2)}\n\`\`\`\n\n## Historical context and open questions\n\n${entries}`;
 }
 
 function migrationMappings(files: string[], answers: AnswersDocument, naming: NamingConvention, kinds: string[]): Record<string, string> {
@@ -228,6 +229,7 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
   const decisions = alignedDecisions({ ...options, root, track, answers: normalizedAnswers });
   decisions['project.name'] = options.name;
   decisions['workflow.mode'] = mode;
+  const projectOwner = String(decisions['project.owner'] ?? 'project-maintainer');
   const config = configurationForAnswers(distribution.config, normalizedAnswers, decisions);
   const frameworkRoot = options.frameworkPath ?? (normalizedAnswers.configuration?.documentation?.roots || decisions['documentation.taxonomy'] === 'mapped' ? config.documentation?.roots?.[0] : undefined);
   if (frameworkRoot) {
@@ -271,7 +273,7 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
     if (destination.endsWith('.md')) {
       let text = rewriteMarkdownLinks(desired.get(destination)!.toString('utf8'), asset.source, destination, catalogMapping);
       if (decisions['documentation.audiences'] === 'internal') text = setAudience(text, 'internal');
-      text = generateMetadata(text, destination, normalizedAnswers, config.documentation?.states);
+      text = generateMetadata(text, destination, normalizedAnswers, config.documentation?.states, projectOwner);
       desired.set(destination, Buffer.from(text));
     }
   }
@@ -279,11 +281,14 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
   const entrypoints = Object.fromEntries(Object.entries(originalEntrypoints).map(([key, name]) => [key, catalogMapping[name] ?? remapAsset(name, frameworkRoot, config)])) as typeof DEFAULT_ENTRYPOINTS;
   if (!fixedFilenames.has(path.posix.basename(entrypoints.profile))) entrypoints.profile = renameDocument(entrypoints.profile, naming, config.documentation?.kinds ?? []);
   const sourceProfile = distribution.catalog.profileTemplate ? fileBytes(distribution.root, distribution.catalog.profileTemplate) : null;
-  const ownerDecision = decisions['project.owner'];
   const values = {
     PROJECT_NAME: options.name, TRACK: track, FRAMEWORK_VERSION: distribution.version,
-    ALIGNMENT_INSTRUCTION: options.answers.alignment.instruction, OWNER: String(ownerDecision ?? 'project-maintainer'),
-    DECISIONS_JSON: JSON.stringify(decisions, null, 2), OWNERSHIP_LINKS: Object.entries(normalizedAnswers.ownership ?? {}).map(([role, name]) => `- ${role}: [${name}](${path.posix.relative(path.posix.dirname(entrypoints.profile), relativeName(name))})`).join('\n') || 'Canonical owners are not yet established; discover and link them before relying on an architecture assumption.',
+    ALIGNMENT_INSTRUCTION: options.answers.alignment.instruction, OWNER: projectOwner,
+    DECISIONS_JSON: JSON.stringify(decisions, null, 2), OWNERSHIP_LINKS: Object.entries(normalizedAnswers.ownership ?? {}).map(([role, name]) => {
+      const original = relativeName(name);
+      const destination = mapping[original] ?? original;
+      return `- ${role}: [${destination}](${path.posix.relative(path.posix.dirname(entrypoints.profile), destination)})`;
+    }).join('\n') || 'Canonical owners are not yet established; discover and link them before relying on an architecture assumption.',
     PROJECT_CONTEXT: 'Historical observations and open questions are recorded separately from accepted policy.',
     INDEX_PATH: entrypoints.index, CONSTITUTION_PATH: entrypoints.constitution, PROFILE_PATH: entrypoints.profile,
     FRAMEWORK_ROOT: path.posix.dirname(entrypoints.index),
@@ -292,7 +297,7 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
   if (!profileExisting && !desired.has(entrypoints.profile)) {
     const profileValues = { ...values, INDEX_PATH: path.posix.relative(path.posix.dirname(entrypoints.profile), entrypoints.index), CONSTITUTION_PATH: path.posix.relative(path.posix.dirname(entrypoints.profile), entrypoints.constitution), PROFILE_PATH: path.posix.basename(entrypoints.profile) };
     const profile = sourceProfile ? fillTemplate(sourceProfile.toString('utf8'), profileValues).replace(/^(\s*kind:\s*)["']?template["']?\s*$/m, '$1overview').replace(/^(\s*audience:\s*).*$/m, '$1internal').replace(/<!--\s*Template output:[\s\S]*?-->/g, '') : `# ${options.name}: development profile\n\nStatus: draft local adoption. Owner: ${values.OWNER}.\n\nAcceptance authority/record: pending review.\n\nRoute: ${track}.\n\n[Development index](${path.posix.relative(path.posix.dirname(entrypoints.profile), entrypoints.index)})\n\n[Constitution](${path.posix.relative(path.posix.dirname(entrypoints.profile), entrypoints.constitution)})\n\n## Decisions\n\n\`\`\`json\n${values.DECISIONS_JSON}\n\`\`\`\n`;
-    desired.set(entrypoints.profile, Buffer.from(generateMetadata(profile, entrypoints.profile, normalizedAnswers, config.documentation?.states)));
+    desired.set(entrypoints.profile, Buffer.from(generateMetadata(profile, entrypoints.profile, normalizedAnswers, config.documentation?.states, projectOwner)));
     reasons.set(entrypoints.profile, 'draft local profile; alignment does not manufacture document acceptance');
   }
   const contextName = path.posix.join(path.posix.dirname(entrypoints.profile), documentFilename('repository-context', 'overview', naming));
@@ -325,7 +330,7 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
       const destination = mapping[file.path] ?? file.path;
       let content = desired.get(destination)?.toString('utf8') ?? fileBytes(root, file.path)!.toString('utf8');
       const rewritten = rewriteMarkdownLinks(content, file.path, destination, combinedMapping);
-      content = mapping[file.path] ? generateMetadata(rewritten, destination, normalizedAnswers, config.documentation?.states) : rewritten;
+      content = mapping[file.path] ? generateMetadata(rewritten, destination, normalizedAnswers, config.documentation?.states, projectOwner) : rewritten;
       if (content !== fileBytes(root, file.path)!.toString('utf8') || mapping[file.path]) { desired.set(destination, Buffer.from(content)); reasons.set(destination, mapping[file.path] ? 'taxonomy move and reference/lifecycle transformation' : 'update references to moved documents'); }
     }
   }

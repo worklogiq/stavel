@@ -51,6 +51,8 @@ Inspection and questions print JSON without writing target files. The agent gath
 
 Use `ownership` for role-to-existing-document links in adoption. Migration-only `mappings` maps existing filenames to destination filenames; it is not an ownership map. `lifecycleMappings` maps legacy lifecycle labels to reviewed states, and `acceptanceRecords` maps affected document paths to actual acceptance evidence. Never fill approval evidence from a label alone. `configuration` supplies explicit scoped configuration overrides when a project needs more detail than the general questions.
 
+Generated local context and newly synthesized document metadata use the resolved project owner. Existing declared owners remain intact. When migration renames an owning document, generated profile links follow its destination while retaining the canonical role.
+
 `source.languages` is a list of language identifiers; `source.naming.identifierCase` affects source policy independently of documentation naming. Existing-language decisions do not rename application source files or install a language toolchain. The questions command identifies additional applicable required answers; the example shows the record shape rather than an exhaustive answer list for every repository.
 
 ## Scoped source conventions

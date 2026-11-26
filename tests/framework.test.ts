@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { parseMetadata } from '@worklogiq/mdcomposer';
 import {
   applyPlan, checkRepository, createPlan, digest, documentFilename, exportSkill, getQuestions, inspectRepository,
   jsonText, markdownLinks, planDigest, relativeName, resumeMigration, rollbackMigration, rewriteMarkdownLinks,
@@ -313,6 +314,55 @@ test('aligned answers configure source languages and casing without renaming sou
   const profile = Buffer.from(plan.operations.find(operation => operation.path === 'docs/internal/dev/project-profile.overview.md')!.content!, 'base64').toString('utf8');
   assert.match(profile, /audience: internal/);
   const generated = plan.decisions; assert.equal(generated['project.owner'], 'Demo Maintainer'); assert.equal(generated['workflow.mode'], 'adopt');
+});
+
+test('repository context and local profile retain the same selected project owner', () => {
+  for (const owner of ['Demo Maintainer', 'Demo: "Maintainer"\nTeam']) {
+    const f = fixture();
+    addQuestions(f, [{ id: 'project.owner', group: 'project', prompt: 'Owner?', type: 'text', required: true }]);
+    f.answers.answers['project.owner'] = owner;
+    const template = path.join(f.sourceRoot, 'docs/internal/templates/project-profile.template.md');
+    fs.writeFileSync(template, fs.readFileSync(template, 'utf8').replace('owner: test-maintainer', 'owner: "{{OWNER}}"'));
+    const plan = planFor(f);
+    const generatedMetadata = (name: string): Record<string, unknown> => parseMetadata(Buffer.from(plan.operations.find(operation => operation.path === name)!.content!, 'base64').toString('utf8')).data;
+    assert.equal(generatedMetadata('docs/internal/dev/project-profile.overview.md').owner, owner);
+    assert.equal(generatedMetadata('docs/internal/dev/repository-context.overview.md').owner, owner);
+    assert.equal(plan.decisions['project.owner'], owner);
+  }
+  const fallback = fixture();
+  const plan = planFor(fallback);
+  const context = Buffer.from(plan.operations.find(operation => operation.path === 'docs/internal/dev/repository-context.overview.md')!.content!, 'base64').toString('utf8');
+  assert.equal(parseMetadata(context).data.owner, 'project-maintainer');
+});
+
+test('migration ownership links follow renamed canonical documents and preserve metadata ownership', async () => {
+  for (const selectedOwner of ['Demo: "Owner"\nTeam', undefined]) {
+    const f = fixture();
+    addQuestions(f, [{ id: 'project.owner', group: 'project', prompt: 'Owner?', type: 'text', required: true, default: 'Default Maintainer' }]);
+    if (selectedOwner !== undefined) f.answers.answers['project.owner'] = selectedOwner;
+    const expectedOwner = selectedOwner ?? 'Default Maintainer';
+    const configuration = path.join(f.sourceRoot, 'config/default.profile.json');
+    const profileConfig = JSON.parse(fs.readFileSync(configuration, 'utf8')); profileConfig.documentation.kinds.push('requirements'); fs.writeFileSync(configuration, jsonText(profileConfig));
+    const template = path.join(f.sourceRoot, 'docs/internal/templates/project-profile.template.md');
+    fs.appendFileSync(template, '\n## Canonical owners\n\n{{OWNERSHIP_LINKS}}\n');
+    write(f.root, 'AGENTS.md', '# Existing instructions\nPreserve the required two stages.\n');
+    write(f.root, 'docs/internal/project/normalize-inputs.requirements.md', '# Normalize inputs\n\nStatus: draft.\n\nPreserve the required two stages.\n');
+    write(f.root, 'docs/internal/project/pinned-policy.requirements.md', metadata('Pinned policy', 'requirements', 'Existing owner remains authoritative.\n'));
+    f.answers.answers['documentation.naming.identifierCase'] = 'camel';
+    f.answers.ownership = { requirements: 'docs/internal/project/normalize-inputs.requirements.md' };
+    const plan = planFor(f, { mode: 'migrate' }); applyPlan(plan);
+    assert.equal(plan.decisions['project.owner'], expectedOwner);
+    const manifest = JSON.parse(fs.readFileSync(path.join(f.root, '.stavel.json'), 'utf8'));
+    const profile = fs.readFileSync(path.join(f.root, manifest.entrypoints.profile), 'utf8');
+    const owned = markdownLinks(f.root, manifest.entrypoints.profile, profile);
+    assert.ok(owned.targets.includes('docs/internal/project/normalizeInputs.requirements.md'));
+    assert.deepEqual(owned.diagnostics, []);
+    assert.equal(parseMetadata(fs.readFileSync(path.join(f.root, 'docs/internal/project/normalizeInputs.requirements.md'), 'utf8')).data.owner, expectedOwner);
+    assert.equal(parseMetadata(fs.readFileSync(path.join(f.root, 'docs/internal/project/pinnedPolicy.requirements.md'), 'utf8')).data.owner, 'test-maintainer');
+    fs.appendFileSync(path.join(f.root, 'AGENTS.md'), `\n[Index](${manifest.entrypoints.index})\n[Constitution](${manifest.entrypoints.constitution})\n`);
+    const checked = await checkRepository({ root: f.root, sourceRoot: f.sourceRoot });
+    assert.equal(checked.ok, true, jsonText(checked));
+  }
 });
 
 test('unsupported answers, migration mappings during adoption, and conflicting identity refuse', () => {
