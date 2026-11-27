@@ -89,21 +89,72 @@
             "status": "active"
           },
           "operation": "update"
+        },
+        {
+          "at": "2026-11-27T22:39:03.086Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "partial",
+            "mode": "EXECUTE",
+            "nextAction": "Execute the selected owner-local slices, integrate shared CLI/distribution behavior, and close only with actual checks and philosophy review.",
+            "phase": "implementation",
+            "record": "guided-workflows/execution/idea-capture/idea-capture.execution-plan.md",
+            "status": "active",
+            "tracker": "guided-workflows/execution/idea-capture/idea-capture.macro-execution.md"
+          },
+          "operation": "update"
+        },
+        {
+          "at": "2026-11-27T23:13:30.628Z",
+          "operation": "archive-reference-rebase",
+          "packetId": "idea-capture",
+          "references": [
+            {
+              "field": "record",
+              "from": "guided-workflows/execution/idea-capture/idea-capture.execution-plan.md",
+              "sourceSha256": "318981e2038b1972c25f631b2758d98e00b19a18f7a147f11dc75ef000d78b57",
+              "to": "../../../_archive/product/capabilities/skill/guided-workflows/execution/idea-capture/idea-capture.execution-plan.md"
+            },
+            {
+              "field": "tracker",
+              "from": "guided-workflows/execution/idea-capture/idea-capture.macro-execution.md",
+              "sourceSha256": "a3ee901b1ff03b6c361ce2c20cbf59223adef4b7b03e0aa371d3d7648abd89d0",
+              "to": "../../../_archive/product/capabilities/skill/guided-workflows/execution/idea-capture/idea-capture.macro-execution.md"
+            }
+          ]
+        },
+        {
+          "at": "2026-11-27T23:13:31.817Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "complete",
+            "mode": "REVIEW",
+            "nextAction": "Review the delivered task branch; merge and publication remain explicit owner actions.",
+            "phase": "closed",
+            "status": "completed"
+          },
+          "closureEvidence": [
+            "guided-workflows/ideas-delivery.verification.md",
+            "guided-workflows/ideas-philosophy-review.verification.md"
+          ],
+          "operation": "update",
+          "semanticAcceptance": "caller-reviewed"
         }
       ],
       "id": "idea-capture",
-      "implementationStatus": "not-started",
-      "mode": "DESIGN",
-      "nextAction": "Review/select the draft IDEA workflow and CLI design, then use PLAN for execution slices.",
-      "phase": "design",
-      "record": "guided-workflows/idea-capture.design.md",
-      "status": "active",
+      "implementationStatus": "complete",
+      "mode": "REVIEW",
+      "nextAction": "Review the delivered task branch; merge and publication remain explicit owner actions.",
+      "phase": "closed",
+      "record": "../../../_archive/product/capabilities/skill/guided-workflows/execution/idea-capture/idea-capture.execution-plan.md",
+      "status": "completed",
       "title": "IDEA mode for quick capture and registration",
+      "tracker": "../../../_archive/product/capabilities/skill/guided-workflows/execution/idea-capture/idea-capture.macro-execution.md",
       "workType": "proposal"
     }
   ],
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "Skill",
-  "updated": "2026-11-27T19:22:27.435Z"
+  "updated": "2026-11-27T23:13:31.817Z"
 }

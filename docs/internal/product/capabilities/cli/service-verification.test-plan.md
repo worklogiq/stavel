@@ -85,3 +85,7 @@ The 21 modules have 266 declared direct cases. Integrated API/CLI/package cases 
 
 - [owner-local foundation packet](../../../_archive/product/capabilities/cli/services/execution/foundations/foundations.execution-plan.md)
 - [Foundation verification](../../../_archive/product/capabilities/cli/services/execution/foundations/foundations.verification.md)
+
+## IDEA and guard delivery increment
+
+The inventories above retain their historical counts. The current increment adds idea.service with 26 colocated cases and git-guard.service with 21, extends work to 24 cases, and adds readiness/doctor, CLI, help and artifact regression coverage beside their owners. [Current slice-to-evidence verification](../skill/guided-workflows/ideas-delivery.verification.md) records the actual final 387-test result (386 passed, one existing Windows permission skip) and 22 real commands on each Windows/Linux exported artifact. Every new service has behavioral preservation/refusal tests; no file-presence-only enforcement claim is made.

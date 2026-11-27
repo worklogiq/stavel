@@ -437,6 +437,20 @@
         "design": "recommended-for-substantial",
         "allowTaskException": true
       }
+    },
+    {
+      "id": "configuration.workflow.gitProtection",
+      "group": "workflow",
+      "prompt": "Select local commit/push guards. Protect the selected primary branch and preserve existing hooks; enable/disable and additional branch names are repository choices.",
+      "type": "object",
+      "required": false,
+      "default": {
+        "enabled": true,
+        "protectedBranches": [
+          "main"
+        ],
+        "hooksPath": ".stavel-hooks"
+      }
     }
   ]
 }

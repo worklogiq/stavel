@@ -104,7 +104,8 @@ function validateProfile(value: FrameworkConfig, source: string, strict: boolean
   const docs = value.documentation;
   if (strict && docs) keys(docs, ['roots', 'naming', 'kinds', 'states', 'audiences', 'defaultAudience', 'metadata', 'archive', 'exceptions', 'templateRoots', 'ownershipRoots', 'owners', 'publication'], `${source}.documentation`);
   if (strict && value.source) keys(value.source, ['roots', 'naming', 'languages', 'roles', 'scopes', 'exceptions', 'maxLines', 'decisions'], `${source}.source`);
-  if (strict && value.workflow) keys(value.workflow, ['stories', 'commits', 'review', 'definitions', 'amendments', 'scopes', 'workRegistry', 'work', 'status', 'packets', 'modes', 'phases'], `${source}.workflow`);
+  if (strict && value.workflow) keys(value.workflow, ['stories', 'commits', 'review', 'definitions', 'amendments', 'scopes', 'workRegistry', 'work', 'status', 'packets', 'modes', 'phases', 'ideas', 'gitProtection'], `${source}.workflow`);
+  for (const field of ['ideas', 'gitProtection']) if (value.workflow?.[field] !== undefined) object(value.workflow[field], `${source}.workflow.${field}`);
   if (docs?.roots !== undefined && (!Array.isArray(docs.roots) || !docs.roots.length || docs.roots.some(root => typeof root !== 'string'))) throw new Refused(`documentation roots must be a nonempty array at ${source}`);
   for (const root of docs?.roots ?? []) relativeName(root);
   if (docs?.naming && (!['plain', 'typed'].includes(docs.naming.shape) || !['camel', 'snake', 'kebab', 'pascal', 'any'].includes(docs.naming.identifierCase))) throw new Refused(`unsupported documentation naming at ${source}`);

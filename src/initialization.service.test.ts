@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { initializationProduct, augmentInitializationPlan } from './initialization.service.js';
+import { spawnSync } from 'node:child_process';
+import { initializationProduct, augmentInitializationPlan, initializationReadiness, previewInitializationCompletion } from './initialization.service.js';
 import { configurationForAnswers, createPlan } from './planning.service.js';
 import { plannedRepositoryConfiguration } from './configuration.service.js';
 import { locateDistribution } from './distribution.service.js';
 import { loadArtifactCatalog } from './artifact.service.js';
-import { applyPlan } from './migration.service.js';
+import { applyPlan, resumeMigration, rollbackMigration, verifyPlan } from './migration.service.js';
 import { checkRepository } from './checking.service.js';
 import type { AnswersDocument } from './framework.types.js';
 
@@ -75,4 +76,32 @@ test('multi-product setup asks for an actual selected product and does not creat
   assert.equal(selected.ready, true, selected.unresolved.join('; '));
   assert.equal(selected.artifacts[0].path, 'docs/internal/products/beta/product.overview.md');
   assert.ok(!selected.plan!.operations.some(operation => operation.path.includes('/alpha/'))); assert.deepEqual(fs.readdirSync(root), []);
+});
+
+test('selected guard setup stages actual assets without initializing Git and reports activation pending', () => {
+  const root = rootFixture(), document = answers(); document.answers['workflow.mode'] = 'bootstrap'; document.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main'], hooksPath: '.repo-hooks' } } };
+  const base = createPlan({ root, name: 'Example', track: 'greenfield', mode: 'bootstrap', answers: document, sourceRoot, configurationHome: 'directory' });
+  const config = plannedRepositoryConfiguration(base, locateDistribution(sourceRoot).config), plan = augmentInitializationPlan(base, { config, answers: document, sourceRoot });
+  assert.equal(plan.gitGuardActivation, undefined); assert.ok(plan.operations.some(operation => operation.path === '.repo-hooks/stavel.git-hook.cjs'));
+  applyPlan(plan, { dryRun: true }); assert.deepEqual(fs.readdirSync(root), []);
+  applyPlan(plan); const readiness = initializationReadiness({ root, sourceRoot });
+  assert.equal(readiness.documentsReady, true); assert.equal(readiness.state, 'partial'); assert.equal(readiness.guards!.state, 'pending-git'); assert.equal(readiness.guards!.active, false); assert.equal(fs.existsSync(path.join(root, '.git')), false);
+  assert.ok(readiness.gaps.every(gap => gap.component === 'guards'));
+  assert.throws(() => previewInitializationCompletion({ readiness, alignment: { confirmed: false, instruction: '' }, sourceRoot }), /alignment/);
+});
+
+test('guard-only completion reuses the shared preserving installer after Git becomes available', () => {
+  const root = rootFixture(), document = answers(); document.answers['workflow.mode'] = 'bootstrap'; document.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main'], hooksPath: '.repo-hooks' } } };
+  const base = createPlan({ root, name: 'Example', track: 'greenfield', mode: 'bootstrap', answers: document, sourceRoot, configurationHome: 'directory' });
+  const config = plannedRepositoryConfiguration(base, locateDistribution(sourceRoot).config); applyPlan(augmentInitializationPlan(base, { config, answers: document, sourceRoot }));
+  assert.equal(spawnSync('git', ['init', '-b', 'work', root], { windowsHide: true }).status, 0);
+  fs.unlinkSync(path.join(root, '.repo-hooks/pre-commit'));
+  const before = fs.readFileSync(path.join(root, '.git/config')), readiness = initializationReadiness({ root, sourceRoot });
+  assert.equal(readiness.documentsReady, true); assert.equal(readiness.guards!.state, 'incomplete');
+  const completion = previewInitializationCompletion({ readiness, alignment: document.alignment, sourceRoot });
+  assert.deepEqual(completion.plan.operations.map(operation => operation.path), ['.repo-hooks/pre-commit']); assert.ok(completion.plan.gitGuardActivation); assert.ok(completion.guardActivation); assert.equal(Object.hasOwn(completion.plan.inputs, '.git/config'), false, 'Git config belongs to the serialized activation effect'); assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), before);
+  applyPlan(completion.plan, { dryRun: true }); assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), before);
+  const saved = JSON.parse(JSON.stringify(completion.plan)), applied = applyPlan(saved); assert.equal(initializationReadiness({ root, sourceRoot }).state, 'ready'); assert.equal(verifyPlan(saved).ok, true);
+  assert.equal(resumeMigration({ root, journal: applied.journal! }).state, 'complete'); assert.equal(verifyPlan(saved).ok, true);
+  assert.equal(rollbackMigration({ root, journal: applied.journal! }).state, 'rolled-back'); assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), before); assert.equal(fs.existsSync(path.join(root, '.repo-hooks/pre-commit')), false); assert.equal(verifyPlan(saved).ok, false);
 });

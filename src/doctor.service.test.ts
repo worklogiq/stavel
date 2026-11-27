@@ -3,11 +3,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { diagnoseRepository, previewRepairs } from './doctor.service.js';
-import { applyPlan } from './migration.service.js';
+import { applyPlan, resumeMigration, rollbackMigration, verifyPlan } from './migration.service.js';
 import { digest, jsonText } from './filesystem.service.js';
 import { validatePlan } from './planning.service.js';
 import { AI_EFFECT_WARNING } from './effects.service.js';
+import { guidedInit } from './guided.service.js';
 
 const sourceRoot = process.cwd(), asset = 'docs/internal/dev/change-provenance.guide.md';
 const alignment = { confirmed: true, instruction: 'user:fixture:reviewed-repair' };
@@ -35,6 +37,32 @@ test('doctor refuses malformed configuration without falling back or changing by
   const report = await diagnoseRepository({ root, sourceRoot });
   assert.equal(report.mechanicalPassed, false); assert.equal(report.findings.find(item => item.id === 'configuration-or-inspection')?.state, 'failed');
   assert.deepEqual(snapshot(root), before);
+});
+
+test('doctor recognizes manual adoption and previews selected owned guard repairs without Git writes', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-doctor-guards-'));
+  assert.equal(spawnSync('git', ['init', '-b', 'work', root], { windowsHide: true }).status, 0);
+  const selected = await guidedInit({ target: root, sourceRoot, answers: { useDefaults: true, configuration: { schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main'], hooksPath: '.repo-hooks' } } }, alignment, answers: { 'project.name': 'Guard doctor', 'project.intent': 'Preserve selected repository safety.', 'source.languages': ['typescript'], 'verification.commands': 'npm test', 'product.audience': 'Repository contributors', 'product.scope': 'A repository library', 'product.outcomes': 'Reviewable changes and guarded Git actions' } } });
+  applyPlan(selected.plan!); fs.unlinkSync(path.join(root, '.stavel.json'));
+  const healthy = await diagnoseRepository({ root, sourceRoot });
+  assert.equal(healthy.findings.find(finding => finding.id === 'adoption')!.state, 'passed'); assert.equal(healthy.initialization!.adoption, 'manual'); assert.equal(healthy.findings.find(finding => finding.id === 'git-guards')!.state, 'passed');
+  fs.unlinkSync(path.join(root, '.repo-hooks/pre-commit')); const before = snapshot(root), report = await diagnoseRepository({ root, sourceRoot });
+  assert.equal(report.initialization!.guards!.state, 'incomplete'); assert.equal(report.mechanicalPassed, false); assert.ok(report.repairable.includes('git-guards')); assert.deepEqual(snapshot(root), before);
+  const repair = previewRepairs({ root, sourceRoot, report, alignment }); assert.deepEqual(repair.operations.map(operation => operation.path), ['.repo-hooks/pre-commit']); assert.ok(repair.gitGuardActivation); assert.deepEqual(snapshot(root), before);
+  applyPlan(repair, { dryRun: true }); assert.deepEqual(snapshot(root), before); applyPlan(repair);
+  assert.equal((await diagnoseRepository({ root, sourceRoot })).initialization!.guards!.state, 'ready');
+});
+
+test('doctor serialized repair owns Git config as an activation effect through verify resume and rollback', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-doctor-recovery-'));
+  const setup = await guidedInit({ target: root, sourceRoot, answers: { useDefaults: true, configuration: { schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main'], hooksPath: '.repo-hooks' } } }, alignment, answers: { 'project.name': 'Recovery doctor', 'project.intent': 'Preserve exact recovery boundaries.', 'source.languages': ['typescript'], 'verification.commands': 'npm test', 'product.audience': 'Contributors', 'product.scope': 'A temporary library', 'product.outcomes': 'Reviewable preserving recovery' } } });
+  applyPlan(setup.plan!); assert.equal(spawnSync('git', ['init', '-b', 'work', root], { windowsHide: true }).status, 0);
+  fs.unlinkSync(path.join(root, '.repo-hooks/pre-commit')); const beforeConfig = fs.readFileSync(path.join(root, '.git/config'));
+  const report = await diagnoseRepository({ root, sourceRoot }); assert.equal(report.initialization!.guards!.active, false); assert.ok(Object.hasOwn(report.inputs, '.git/config'));
+  const plan = JSON.parse(JSON.stringify(previewRepairs({ root, sourceRoot, report, alignment }))); assert.equal(Object.hasOwn(plan.inputs, '.git/config'), false); assert.ok(plan.gitGuardActivation);
+  const applied = applyPlan(plan); assert.equal(verifyPlan(plan).ok, true); assert.notDeepEqual(fs.readFileSync(path.join(root, '.git/config')), beforeConfig);
+  assert.equal(resumeMigration({ root, journal: applied.journal! }).state, 'complete'); assert.equal(verifyPlan(plan).ok, true);
+  assert.equal(rollbackMigration({ root, journal: applied.journal! }).state, 'rolled-back'); assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), beforeConfig); assert.equal(fs.existsSync(path.join(root, '.repo-hooks/pre-commit')), false); assert.equal(verifyPlan(plan).ok, false);
 });
 test('configured unavailable registry remains an explicit failed evidence boundary rather than valid empty work', async () => {
   const root = fixture('d'.repeat(64)); write(root, 'stavel.config.json', jsonText({ schemaVersion: 1, workflow: { work: { registryFile: 'custom/work-index.json' } } }));

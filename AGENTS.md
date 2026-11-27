@@ -17,3 +17,5 @@ For changes run npm test and npm run check, with focused checks appropriate to t
 Keep application-specific choices in profiles and owner docs. Follow the [extension process](docs/internal/process/framework-extension.policy.md), update [origins](docs/internal/dev/framework-origins.overview.md) when extraction scope changes, and keep skill exports sourced from the explicit portable asset catalog. Use subagents for independent implementation/review slices when authorized, with clear ownership and final integration verification.
 
 Do not commit or push to main, merge, deploy or publish without authorization. Local instructions do not create permissions beyond the user's actual task.
+
+Use a task branch for subsequent changes. A general instruction to commit/push is not explicit authorization to write main. Respect selected Git guards; never bypass a refusal with --no-verify, alternate hooks configuration or another Git invocation.

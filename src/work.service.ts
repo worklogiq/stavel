@@ -44,8 +44,10 @@ export interface WorkPlan {
 export interface WorkApplyResult { ok: true; changed: number; dryRun: boolean; recovered?: boolean; journal?: string }
 export interface WorkCreateInput { capabilityId: string; statusFile: string; title: string; owner: string; item?: WorkItem }
 export interface WorkUpdateInput { capabilityId: string; itemId: string; changes: Record<string, unknown>; add?: boolean; closureEvidence?: string[] }
+export interface WorkComposition { inputs: Record<string, string | null>; changes: Array<{ path: string; content: string | Buffer; reason: string }> }
+type ProjectedWorkFiles = Record<string, string | Buffer>;
 
-const defaultModes = ['EXPLORE', 'EXPERIMENT', 'DESIGN', 'PLAN', 'EXECUTE', 'VIBE', 'STRICT', 'REVIEW', 'CLOSE'];
+const defaultModes = ['IDEA', 'EXPLORE', 'EXPERIMENT', 'DESIGN', 'PLAN', 'EXECUTE', 'VIBE', 'STRICT', 'REVIEW', 'CLOSE'];
 const defaultPhases = ['exploration', 'experiment', 'design', 'planning', 'slice-planning', 'implementation', 'verification', 'closure', 'closed'];
 const defaultStatuses = ['planned', 'active', 'paused', 'blocked', 'completed', 'cancelled'];
 const plain = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
@@ -209,6 +211,9 @@ function plan(options: WorkOptions, operation: WorkPlan['operation'], sources: W
 
 /** statusFile is relative to the registry, while item record/tracker paths are relative to the capability file. */
 export function planWorkCreate(options: WorkOptions, input: WorkCreateInput): WorkPlan {
+  return createWorkPlan(options, input);
+}
+function createWorkPlan(options: WorkOptions, input: WorkCreateInput, projected?: ProjectedWorkFiles): WorkPlan {
   const { target, registryFile, runtimeDirectory } = settings(options);
   identity(input.capabilityId, 'capabilityId'); text(input.title, 'title'); text(input.owner, 'owner');
   const report = readWork(options);
@@ -226,21 +231,27 @@ export function planWorkCreate(options: WorkOptions, input: WorkCreateInput): Wo
       if (existingItem && Object.entries(requested).every(([key, value]) => jsonText(existingItem[key]) === jsonText(value))) return plan(options, 'create', report.sources, []);
       if (existingItem) throw new Refused('work item creation conflicts with existing data; use explicit update');
       if (input.item.history?.length) throw new Refused('new work cannot import history through create; use supported migration');
-      return planWorkUpdate(options, { capabilityId: input.capabilityId, itemId: input.item.id, changes: requested, add: true });
+      return updateWorkPlan(options, { capabilityId: input.capabilityId, itemId: input.item.id, changes: requested, add: true }, projected);
     }
     return plan(options, 'create', report.sources, []);
   }
   if (current.capabilities.some(entry => resolveReference(target, registryFile, entry.statusFile).toLowerCase() === name.toLowerCase()) || fileBytes(target, name)) throw new Refused(`capability destination already exists or is registered: ${name}`);
   const record: WorkCapability = { schemaVersion: 2, capabilityId: input.capabilityId, title: input.title, owner: input.owner, updated: timestamp(options), items: [] };
-  if (input.item) { const item = structuredClone(input.item); item.history ??= []; validateItem(item, name, options, 2); if (item.status === 'completed') throw new Refused('new work cannot be created completed; use verified closure'); validateReferences(target, name, item); record.items.push(item); }
+  if (input.item) { const item = structuredClone(input.item); item.history ??= []; validateItem(item, name, options, 2); if (item.status === 'completed') throw new Refused('new work cannot be created completed; use verified closure'); validateReferences(target, name, item, projected); record.items.push(item); }
   const next: WorkRegistry = { schemaVersion: 2, capabilities: [...current.capabilities, { id: input.capabilityId, statusFile: posix(input.statusFile) }] };
   registry(next as unknown as Record<string, unknown>, registryFile);
   return plan(options, 'create', report.sources, [change(target, name, record), change(target, registryFile, next)]);
 }
-function validateReferences(target: string, sourceFile: string, item: WorkItem): void {
-  for (const field of ['record', 'tracker']) if (item[field] !== undefined && fileHash(target, ownerReference(target, sourceFile, item[field] as string)) === null) throw new Refused(`${sourceFile}: ${field} source is unavailable`);
+function validateReferences(target: string, sourceFile: string, item: WorkItem, projected?: ProjectedWorkFiles): void {
+  for (const field of ['record', 'tracker']) if (item[field] !== undefined) {
+    const name = ownerReference(target, sourceFile, item[field] as string);
+    if (!projected || !Object.hasOwn(projected, name)) { if (fileHash(target, name) === null) throw new Refused(`${sourceFile}: ${field} source is unavailable`); }
+  }
 }
 export function planWorkUpdate(options: WorkOptions, input: WorkUpdateInput): WorkPlan {
+  return updateWorkPlan(options, input);
+}
+function updateWorkPlan(options: WorkOptions, input: WorkUpdateInput, projected?: ProjectedWorkFiles): WorkPlan {
   const report = readable(options); identity(input.itemId, 'itemId');
   const cap = report.capabilities.find(entry => entry.record.capabilityId === input.capabilityId);
   if (!cap) throw new Refused(`unregistered capability: ${input.capabilityId}`);
@@ -251,7 +262,7 @@ export function planWorkUpdate(options: WorkOptions, input: WorkUpdateInput): Wo
   if (!existing && record.items.some(item => item.id.toLowerCase() === input.itemId.toLowerCase())) throw new Refused(`duplicate case-insensitive work item identity: ${input.itemId}`);
   if (!existing && !input.add) throw new Refused(`unknown work item: ${input.itemId}`);
   const next = { ...(existing ?? { id: input.itemId, history: [] }), ...structuredClone(input.changes) } as WorkItem;
-  validateItem(next, cap.sourceFile, options, 2); validateReferences(report.target, cap.sourceFile, next);
+  validateItem(next, cap.sourceFile, options, 2); validateReferences(report.target, cap.sourceFile, next, projected);
   if (jsonText(next) === jsonText(existing)) return plan(options, 'update', report.sources, []);
   if (next.status === 'completed' && existing?.status !== 'completed') {
     if (!input.closureEvidence?.length) throw new Refused('work completion requires explicit verified closure evidence; setting status is not verification');
@@ -266,6 +277,27 @@ export function planWorkUpdate(options: WorkOptions, input: WorkUpdateInput): Wo
   record.items = existing ? record.items.map(item => item.id === input.itemId ? next : item) : [...record.items, next]; record.updated = at;
   capability(record, cap.sourceFile, input.capabilityId, options);
   return plan(options, 'update', report.sources, [change(report.target, cap.sourceFile, record)]);
+}
+
+/** Compose new referenced files and work registration into one outer migration plan; never apply the work subset independently. */
+export function composeWorkCreate(options: WorkOptions, input: WorkCreateInput, projectedFiles: ProjectedWorkFiles): WorkComposition {
+  if (!plain(projectedFiles)) throw new Refused('projected work files must be a path/content mapping');
+  const { target, registryFile, runtimeDirectory } = settings(options);
+  const names = Object.keys(projectedFiles); validateDestinations(names);
+  for (const name of names) {
+    const content = projectedFiles[name]; relativeName(name); contained(target, name);
+    if (typeof content !== 'string' && !Buffer.isBuffer(content) || !Buffer.byteLength(content)) throw new Refused(`projected work file must have nonempty text or bytes: ${name}`);
+    if (name === registryFile || name === runtimeDirectory || name.startsWith(`${runtimeDirectory}/`) || name.startsWith('.stavel/')) throw new Refused(`projected reference cannot replace work authority/runtime state: ${name}`);
+    if (fileHash(target, name) !== null) throw new Refused(`projected work file already exists; explicit update required: ${name}`);
+  }
+  const value = createWorkPlan(options, input, projectedFiles);
+  for (const name of names) if (!value.sources.some(source => source.path === name)) throw new Refused(`projected file is not referenced by the composed work item: ${name}`);
+  const changes: WorkComposition['changes'] = [
+    ...names.map(name => ({ path: name, content: projectedFiles[name], reason: 'create the explicitly projected work reference in the same checked operation' })),
+    ...value.changes.map(entry => ({ path: entry.path, content: entry.content, reason: `compose validated work ${value.operation}` })),
+  ];
+  validateDestinations(changes.map(entry => entry.path));
+  return { inputs: Object.fromEntries(value.sources.map(source => [source.path, source.sha256])), changes };
 }
 
 /** The only supported conversion is schema 1 -> 2. It changes no user-selected state or policy. */

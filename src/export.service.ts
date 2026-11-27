@@ -36,6 +36,11 @@ export function exportSkill(options: { output: string; sourceRoot?: string; dryR
   const cli = fileBytes(source, 'dist/stavel.cli.cjs');
   if (!cli) throw new Refused('built CLI is missing; run npm run build before exporting the standalone skill');
   files.set('scripts/stavel.cli.cjs', cli);
+  if (catalog.assets.some(asset => asset.role === 'git-hook-runtime')) {
+    const guard = fileBytes(source, 'dist/stavel.git-hook.cjs');
+    if (!guard) throw new Refused('packaged Git hook runtime is missing; rebuild the complete package');
+    files.set('scripts/stavel.git-hook.cjs', guard);
+  }
   const markdownCli = fileBytes(source, 'dist/mdcomposer.cli.cjs');
   if (!markdownCli) throw new Refused('packaged mdcomposer CLI is missing; run npm run build before exporting');
   files.set('scripts/mdcomposer.cli.cjs', markdownCli);

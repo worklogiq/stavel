@@ -10,6 +10,7 @@ import { parseMetadata } from '@worklogiq/mdcomposer';
 import { resolveTestingConfig } from './testing.service.js';
 import { configurationDecisionOverrides, directoryConfigurationFiles, mergeConfigurationOverrides, ownConfigurationValue, packagedConfigurationDefinitions, resolveRepositoryConfiguration, type ConfigurationAmendment } from './configuration.service.js';
 import { AI_EFFECT_WARNING } from './effects.service.js';
+import { validateGitGuardActivation } from './git-guard.service.js';
 
 export const DEFAULT_ENTRYPOINTS = { index: 'docs/internal/index.md', constitution: 'docs/internal/process/development-constitution.policy.md', profile: 'docs/internal/dev/project-profile.overview.md' };
 const styleCases: Record<string, 'camel' | 'snake' | 'kebab' | 'pascal'> = { camelCase: 'camel', snake_case: 'snake', 'kebab-case': 'kebab', PascalCase: 'pascal' };
@@ -286,6 +287,7 @@ export function createPlan(options: CreatePlanOptions & { configurationHome?: 'r
   const repositoryTemplates = new Set<string>();
   const preservedTemplates = new Set<string>();
   for (const asset of distribution.catalog.assets) {
+    if (asset.role === 'git-hook-runtime') continue;
     const destination = remapAsset(asset.target, frameworkRoot, config);
     const filename = path.posix.basename(destination);
     const typedDestination = destination.endsWith('.md') && !fixedFilenames.has(filename) ? renameDocument(destination, naming, config.documentation?.kinds ?? []) : destination;
@@ -302,6 +304,7 @@ export function createPlan(options: CreatePlanOptions & { configurationHome?: 'r
     else { desired.set(typedDestination, bytes); reasons.set(typedDestination, `portable asset: ${asset.role}`); }
   }
   for (const asset of distribution.catalog.assets) {
+    if (asset.role === 'git-hook-runtime') continue;
     const destination = catalogMapping[asset.source];
     if (preservedTemplates.has(destination) || origins[destination] || (mode === 'migrate' && fileBytes(root, destination))) continue;
     if (destination.endsWith('.md')) {
@@ -435,6 +438,10 @@ export function validatePlan(plan: MigrationPlan): void {
   if (!plan || plan.product !== 'stavel') throw new Refused('unsupported plan product; Stavel accepts only plans generated for Stavel. Legacy plans and journals are not supported.');
   if (!plan || plan.schemaVersion !== 2 || !Array.isArray(plan.operations) || !plan.inputs || typeof plan.inputs !== 'object') throw new Refused('unsupported migration plan; expected schemaVersion 2');
   if (plan.id !== planDigest(plan)) throw new Refused('plan checksum does not match; regenerate the plan rather than editing serialized operations');
+  if (plan.gitGuardActivation !== undefined) {
+    validateGitGuardActivation(plan.gitGuardActivation, plan.root);
+    if (Object.keys(plan.inputs).some(name => name.replace(/\\/g, '/').toLowerCase() === '.git/config') || plan.operations.some(operation => [operation.path, operation.from].some(name => name?.replace(/\\/g, '/').toLowerCase() === '.git/config'))) throw new Refused('Git activation owns local config preconditions/effects; regenerate the plan without a competing generic Git config input or operation');
+  }
   if (plan.execution !== undefined) {
     const execution = plan.execution;
     if (!execution || typeof execution !== 'object' || Array.isArray(execution) || Object.keys(execution).some(key => !['kind', 'source', 'warnings'].includes(key)) || !['deterministic', 'agent-assisted'].includes(execution.kind) || !Array.isArray(execution.warnings) || execution.warnings.some(warning => typeof warning !== 'string' || !warning.trim())) throw new Refused('invalid plan execution provenance');

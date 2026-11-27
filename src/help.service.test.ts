@@ -23,7 +23,9 @@ test('general help works without target adoption and does not read even explicit
   assert.equal(result.contextual, false); assert.equal(result.configuration, undefined);
   assert.equal(result.conventions!.provenance.layer, 'packaged-baseline');
   assert.equal((result.conventions!.commits as { convention: string }).convention, 'conventional');
-  assert.equal(result.modes.length, 8);
+  assert.equal(result.modes.length, 9);
+  assert(result.modes.some(mode => mode.name === 'IDEA' && mode.availability === 'available'));
+  assert(result.commands.some(command => command.name === 'idea'));
   assert(result.commands.some(command => command.id === 'command.init' && command.availability === 'available'));
   assert.deepEqual(fs.readdirSync(root), ['stavel.config.json']);
 });
@@ -78,7 +80,7 @@ test('relocated portable assets suffice without source checkout code or adopted 
   const relocatedRoot = relocated(), target = fixture();
   const result = effectiveHelp({ sourceRoot: relocatedRoot, root: target, contextual: true });
   assert.equal(result.configuration!.kind, 'absent');
-  assert.equal(result.artifacts.filter(artifact => artifact.availability === 'available').length, 22);
+  assert.equal(result.artifacts.filter(artifact => artifact.availability === 'available').length, 23);
   assert(result.modes.every(mode => mode.availability === 'available'));
   assert.equal(fs.existsSync(path.join(relocatedRoot, 'src')), false);
   assert.equal(result.commands.find(command => command.name === 'export-skill')!.availability, 'unavailable');

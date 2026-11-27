@@ -37,6 +37,8 @@ Feature docs map observable behaviors; shared services can support multiple feat
 | [src/rules/policy.service.ts](../../../../../src/rules/policy.service.ts) | [checking](checking/checking.design.md) |
 | [src/rules/shared.service.ts](../../../../../src/rules/shared.service.ts) | [services](services/policy-support/policy-support.design.md) |
 | [src/testing.service.ts](../../../../../src/testing.service.ts) | [testing policy and inspection](services/testing/testing.design.md) |
+| [src/idea.service.ts](../../../../../src/idea.service.ts) | [IDEA capture](idea-capture/idea-capture.design.md) |
+| [src/git-guard.service.ts](../../../../../src/git-guard.service.ts) | [selected guard installation](initialization/commit-safety-hooks.design.md) |
 
 The capability documentation correction did not refactor implementation boundaries. The subsequent authorized test-placement task moved existing suites beside their actual owners and added the testing service with colocated tests. Documentation ownership does not require changing public imports or making every implementation file a product feature. New services must add their contract/test owner; feature growth can justify a new owner directory without copying shared definitions.
 
@@ -62,3 +64,7 @@ CLI foundations and service contracts execution plan (archived; see historical c
 ## Historical context (archived)
 
 - [CLI foundations and service contracts execution plan](../../../_archive/product/capabilities/cli/services/execution/foundations/foundations.execution-plan.md)
+
+## Guard runtime boundary
+
+[src/git-hook.cli.ts](../../../../../src/git-hook.cli.ts) is the self-contained Git adapter built into the owned runner. It delegates policy/runtime inspection to the guard service and executes no project scripts. File plans own asset effects; the guard descriptor owns local Git configuration activation and private recovery. The [delivery evidence](../skill/guided-workflows/ideas-delivery.verification.md) records real Git and recovery checks.

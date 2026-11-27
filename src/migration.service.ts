@@ -5,6 +5,7 @@ import type { FileTransition, MigrationJournal, MigrationPlan } from './framewor
 import { assertNoLinks, contained, digest, fileBytes, fileHash, jsonText, readJson, Refused, relativeName, targetRoot, validateDestinations } from './filesystem.service.js';
 import { validatePlan } from './planning.service.js';
 import { loadManifest } from './decisions.service.js';
+import { activateGitGuards, preflightGitGuardActivation, recoverGitGuardInstallation, verifyGitGuardActivation } from './git-guard.service.js';
 
 const writerLockName = '.stavel/runtime/writer.lock';
 const recoveryLockName = '.stavel/runtime/migration-recovery.lock';
@@ -37,6 +38,7 @@ function releaseMigrationLock(root: string, plan: MigrationPlan, journal: string
 
 export function preflightPlan(plan: MigrationPlan): void {
   validatePlan(plan);
+  if (plan.gitGuardActivation) preflightGitGuardActivation(plan.gitGuardActivation);
   const root = targetRoot(plan.root);
   loadManifest(root);
   for (const [name, expected] of Object.entries(plan.inputs)) {
@@ -196,12 +198,13 @@ function applyTransition(root: string, file: FileTransition, target: 'before' | 
   saveJournal(root, journalName, journal);
 }
 
-export function applyPlan(plan: MigrationPlan, options: { dryRun?: boolean; journalPath?: string; failAfterOperations?: number } = {}): { ok: true; changed: number; journal?: string } {
+export function applyPlan(plan: MigrationPlan, options: { dryRun?: boolean; journalPath?: string; failAfterOperations?: number } = {}): { ok: true; changed: number; journal?: string; gitGuards?: ReturnType<typeof activateGitGuards> } {
   preflightPlan(plan);
   const root = targetRoot(plan.root);
   const journalName = relativeName(options.journalPath ?? `.stavel/journals/${plan.id}.json`);
   validateJournalLocation(plan, journalName);
-  if (options.dryRun || plan.operations.length === 0) return { ok: true, changed: plan.operations.length };
+  if (options.dryRun) return { ok: true, changed: plan.operations.length };
+  if (plan.operations.length === 0) return { ok: true, changed: 0, ...(plan.gitGuardActivation ? { gitGuards: activateGitGuards(plan.gitGuardActivation) } : {}) };
   const journalFile = contained(root, journalName);
   if (fs.existsSync(journalFile)) throw new Refused(`migration journal already exists; use resume or rollback: ${journalName}`);
   migrationLock(root, plan, journalName);
@@ -226,7 +229,8 @@ export function applyPlan(plan: MigrationPlan, options: { dryRun?: boolean; jour
     journal.state = 'complete'; saveJournal(root, journalName, journal);
   } catch (error) { throw new Refused(`apply stopped; earlier writes may remain. Resume or rollback using ${journalName}: ${(error as Error).message}`); }
   releaseMigrationLock(root, plan, journalName);
-  return { ok: true, changed: plan.operations.length, journal: journalName };
+  const gitGuards = plan.gitGuardActivation ? activateGitGuards(plan.gitGuardActivation) : undefined;
+  return { ok: true, changed: plan.operations.length, journal: journalName, ...(gitGuards ? { gitGuards } : {}) };
 }
 
 function recover(options: { root: string; journal: string }, direction: 'before' | 'after'): { ok: true; state: string } {
@@ -262,12 +266,24 @@ function recover(options: { root: string; journal: string }, direction: 'before'
     throw new Refused(`migration recovery refused/stopped; ${changed ? `partial changes may remain; journal retained at ${name}` : 'no planned records written'}: ${(error as Error).message}`);
   } finally { fs.unlinkSync(guard); }
 }
-export function resumeMigration(options: { root: string; journal: string }): { ok: true; state: string } { return recover(options, 'after'); }
-export function rollbackMigration(options: { root: string; journal: string }): { ok: true; state: string } { return recover(options, 'before'); }
+export function resumeMigration(options: { root: string; journal: string }): { ok: true; state: string } {
+  const { root, journal } = readJournal(options.root, options.journal);
+  preflightJournal(root, journal);
+  if (journal.state === 'complete' && journal.plan.gitGuardActivation) activateGitGuards(journal.plan.gitGuardActivation);
+  const result = recover(options, 'after');
+  if (journal.plan.gitGuardActivation) activateGitGuards(journal.plan.gitGuardActivation);
+  return result;
+}
+export function rollbackMigration(options: { root: string; journal: string }): { ok: true; state: string } {
+  const { root, journal } = readJournal(options.root, options.journal); preflightJournal(root, journal);
+  if (journal.plan.gitGuardActivation) recoverGitGuardInstallation({ root, mode: 'rollback', activation: journal.plan.gitGuardActivation });
+  return recover(options, 'before');
+}
 
 export function verifyPlan(plan: MigrationPlan): { ok: boolean; diagnostics: Array<{ ruleId: string; severity: 'error'; path: string; message: string }> } {
   validatePlan(plan);
   const diagnostics: Array<{ ruleId: string; severity: 'error'; path: string; message: string }> = [];
+  if (plan.gitGuardActivation && !verifyGitGuardActivation(plan.gitGuardActivation)) diagnostics.push({ ruleId: 'git-guard-verification', severity: 'error', path: '.git/config', message: 'selected guard activation or owned assets do not match the planned result' });
   for (const item of plannedAfter(plan)) if (fileHash(plan.root, item.path) !== encodedHash(item.content) || (item.content !== null && !exactFilename(plan.root, item.path))) diagnostics.push({ ruleId: 'migration-verification', severity: 'error', path: item.path, message: 'current file does not match the planned result' });
   return { ok: diagnostics.length === 0, diagnostics };
 }

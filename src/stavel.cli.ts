@@ -5,7 +5,7 @@ import { spawnSync } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
 import { listRules } from './rules/policy.service.js';
 import { inspectRepository, getQuestions } from './decisions.service.js';
-import { createPlan } from './planning.service.js';
+import { createPlan, validatePlan } from './planning.service.js';
 import { applyPlan, preflightPlan, resumeMigration, rollbackMigration, verifyPlan } from './migration.service.js';
 import { checkRepository } from './checking.service.js';
 import { exportSkill } from './export.service.js';
@@ -14,18 +14,23 @@ import type { AnswersDocument, MigrationPlan, Track } from './framework.types.js
 import { discoverScope, guidedInit } from './guided.service.js';
 import { diagnoseRepository, previewRepairs } from './doctor.service.js';
 import { annotateEffects, bindPlanInputs } from './effects.service.js';
-import { resolveRepositoryConfiguration, packagedConfigurationDefinitions } from './configuration.service.js';
+import { resolveRepositoryConfiguration, packagedConfigurationDefinitions, plannedRepositoryConfiguration } from './configuration.service.js';
 import { locateDistribution } from './distribution.service.js';
 import { effectiveHelp } from './help.service.js';
 import { loadArtifactCatalog, artifactBaselineDefinitions, previewArtifacts } from './artifact.service.js';
 import { readWork, workOptionsForConfiguration, bindWorkPlanInputs, planWorkCreate, planWorkUpdate, planWorkMigration, applyWorkPlan, recoverWork } from './work.service.js';
 import type { WorkPlan, WorkCreateInput, WorkUpdateInput } from './work.service.js';
 import { planExecutionPacket, planPacketMigration, readExecutionPacket, planPacketArchive, planVibeCheckpoint, planSliceTransition } from './lifecycle.service.js';
+import { planIdeaCapture } from './idea.service.js';
+import { augmentGitGuardPlan, inspectGitGuards, recoverGitGuardInstallation } from './git-guard.service.js';
+import { initializationReadiness } from './initialization.service.js';
 
 const help = `Usage: stavel <command> [options]
 
 Guided commands (detect project root; explicit --target always wins):
   init                     Ask questions, align choices, preview and offer setup.
+  idea "short thought"     Capture and register an idea; --capability resolves its owner.
+  hooks inspect|resume|rollback  Inspect local guard setup or recover its activation.
   doctor                   Report findings, then offer a repair preview.
   help --json [--target PATH] Explain available CLI and agent capabilities.
   config explain           Explain effective configuration and provenance.
@@ -88,23 +93,26 @@ Options:
 Discovery/questions/plan print JSON to stdout and never generate target files.
 Generation requires all applicable required decisions and user alignment. Existing
 authorization counts; silence and preselected UI options are not answers.
-Tools do not run application code, mutate Git, install packages, or contact services.
+Tools do not run application code, install packages, commit, push or contact services.
+Aligned selected hook setup may modify owned local hook assets and local hooks config.
 Inspection reads bounded local Git history when available and reports its limits.
 Checks validate structural properties; document acceptance and application semantics require review.
 `;
 
 function humanPreview(plan: MigrationPlan): string {
-  return `Preview ${plan.id.slice(0, 12)} for ${plan.root}\n${plan.operations.length} file operations; no changes applied. Use --json for the full serialized plan.\n\n${plan.operations.map(operation => `${operation.kind.padEnd(6)} ${operation.path} (${operation.reason})`).join('\n')}\n`;
+  const activation = plan.gitGuardActivation ? `Local Git activation after file application: core.hooksPath => ${plan.gitGuardActivation.hooksPath} (.git/config; no global/system changes).\n` : '';
+  return `Preview ${plan.id.slice(0, 12)} for ${plan.root}\n${plan.operations.length} file operations; no changes applied. Use --json for the full serialized plan.\n${activation}\n${plan.operations.map(operation => `${operation.kind.padEnd(6)} ${operation.path} (${operation.reason})`).join('\n')}\n`;
 }
 
-interface Parsed { command: string; subcommand?: string; values: Record<string, string>; flags: Set<string> }
+interface Parsed { command: string; subcommand?: string; ideaText?: string; values: Record<string, string>; flags: Set<string> }
 function parse(argv: string[]): Parsed {
   const tokens = [...argv];
   const command = tokens.shift() ?? 'help';
-  const subcommand = ['migrate', 'work', 'config', 'artifacts', 'packet'].includes(command) && tokens[0] && !tokens[0].startsWith('-') ? tokens.shift() : undefined;
+  const ideaText = command === 'idea' && tokens[0] && !tokens[0].startsWith('-') ? tokens.shift() : undefined;
+  const subcommand = ['migrate', 'work', 'config', 'artifacts', 'packet', 'hooks'].includes(command) && tokens[0] && !tokens[0].startsWith('-') ? tokens.shift() : undefined;
   const values: Record<string, string> = {};
   const flags = new Set<string>();
-  const options = new Set(['target', 'name', 'track', 'mode', 'answers', 'plan', 'journal', 'output', 'framework-path', 'source-root', 'input', 'instruction', 'performed-by', 'configuration-home', 'registry', 'scope', 'capability', 'status-file', 'title', 'owner']);
+  const options = new Set(['target', 'name', 'track', 'mode', 'answers', 'plan', 'journal', 'output', 'framework-path', 'source-root', 'input', 'instruction', 'performed-by', 'configuration-home', 'registry', 'scope', 'capability', 'status-file', 'title', 'owner', 'request-id']);
   while (tokens.length) {
     const token = tokens.shift()!;
     if (['--help', '-h', '--dry-run', '--json', '--non-interactive', '--preview', '--apply', '--repair', '--reset-session', '--upgrade-baseline'].includes(token)) { flags.add(token.replace(/^--?/, '')); continue; }
@@ -115,7 +123,7 @@ function parse(argv: string[]): Parsed {
     if (!value || value.startsWith('--')) throw new Refused(`missing value for --${name}`);
     values[name] = value;
   }
-  return { command, subcommand, values, flags };
+  return { command, subcommand, ideaText, values, flags };
 }
 
 export async function runCli(argv: string[], io: { out?: (text: string) => void; error?: (text: string) => void; ask?: (prompt: string) => Promise<string> } = {}): Promise<number> {
@@ -184,19 +192,62 @@ export async function runCli(argv: string[], io: { out?: (text: string) => void;
     const input = <T,>(): T => readJson<T>(path.resolve(required('input')));
     let configurationInputs: Record<string, string | null> = {};
     const applyOrPreview = (plan: MigrationPlan): void => { const reviewed = reportProvenance(bindPlanInputs(plan, configurationInputs)); out(jsonText(flags.has('apply') ? applyPlan(reviewed, { dryRun: flags.has('dry-run') }) : reviewed)); };
+    if (parsed.command === 'hooks') {
+      if (values.scope) throw new Refused('Git guards apply to the repository; select a project --target rather than a capability --scope');
+      const selected = await selectedScope(); if (!selected) return 2;
+      if (!parsed.subcommand || parsed.subcommand === 'inspect') { out(jsonText(inspectGitGuards({ root: selected, sourceRoot }))); return 0; }
+      if (!['resume', 'rollback'].includes(parsed.subcommand)) throw new Refused('use hooks inspect, resume or rollback');
+      const selectedPlan = values.plan ? readJson<MigrationPlan>(path.resolve(values.plan)) : undefined;
+      if (selectedPlan) { validatePlan(selectedPlan); if (targetRoot(selectedPlan.root) !== selected || !selectedPlan.gitGuardActivation) throw new Refused('guard recovery plan must select this target and an activation descriptor'); }
+      out(jsonText(recoverGitGuardInstallation({ root: selected, mode: parsed.subcommand as 'resume' | 'rollback', dryRun: flags.has('dry-run'), ...(selectedPlan?.gitGuardActivation ? { activation: selectedPlan.gitGuardActivation } : {}) }))); return 0;
+    }
+    if (parsed.command === 'idea') {
+      const selected = await selectedScope(); if (!selected) return 2;
+      if (parsed.ideaText !== undefined && values.input) throw new Refused('idea text and --input cannot be combined; use one capture source');
+      const supplied = values.input ? input<Record<string, unknown>>() : {};
+      if (!supplied || typeof supplied !== 'object' || Array.isArray(supplied) || Object.keys(supplied).some(key => !['text', 'title', 'source', 'requestId', 'capabilityId', 'ownerId', 'contextPath'].includes(key))) throw new Refused('idea input must contain only text, title, source, requestId, capabilityId, ownerId or contextPath');
+      for (const [key, value] of Object.entries(supplied)) if (typeof value !== 'string') throw new Refused(`idea ${key} must be text`);
+      for (const [flag, key] of [['title', 'title'], ['capability', 'capabilityId'], ['owner', 'ownerId'], ['request-id', 'requestId'], ['instruction', 'source']]) if (values[flag] !== undefined && supplied[key] !== undefined && values[flag] !== supplied[key]) throw new Refused(`--${flag} conflicts with idea input ${key}`);
+      const contextRelative = path.relative(selected, process.cwd());
+      const localContext = contextRelative === '' || contextRelative !== '..' && !contextRelative.startsWith(`..${path.sep}`) && !path.isAbsolute(contextRelative) ? process.cwd() : undefined;
+      const ideaDistribution = locateDistribution(sourceRoot);
+      const resolution = resolveRepositoryConfiguration({ root: selected, packagedBaseline: ideaDistribution.config, packagedDefinitions: packagedConfigurationDefinitions(ideaDistribution), scope: values.scope });
+      const capture = { root: selected, sourceRoot, resolution, text: parsed.ideaText ?? supplied.text as string | undefined, title: values.title ?? supplied.title as string | undefined, source: values.instruction ?? supplied.source as string | undefined, requestId: values['request-id'] ?? supplied.requestId as string | undefined, capabilityId: values.capability ?? supplied.capabilityId as string | undefined, ownerId: values.owner ?? supplied.ownerId as string | undefined, contextPath: supplied.contextPath as string | undefined ?? localContext };
+      let result = planIdeaCapture(capture);
+      let attempts = 0;
+      while (result.state === 'input-required' && ask && result.questions.length) {
+        if (++attempts > 8) throw new Refused('idea questions did not converge; select a valid owner and capture text');
+        const question = result.questions[0];
+        const reply = await ask(`${question.prompt}${question.options ? `\nOptions: ${JSON.stringify(question.options)}` : ''}`);
+        if (/capability/i.test(question.id)) capture.capabilityId = reply.trim();
+        else if (/owner/i.test(question.id)) capture.ownerId = reply.trim();
+        else if (/text/i.test(question.id)) capture.text = reply;
+        else { out(jsonText(result)); return 2; }
+        result = planIdeaCapture(capture);
+      }
+      if (result.state === 'input-required' || result.state === 'setup-needed') { out(jsonText(result)); return 2; }
+      if (!result.plan) { out(jsonText(result)); return 0; }
+      const plan = reportProvenance(result.plan);
+      if (flags.has('preview') || flags.has('dry-run')) { out(jsonText({ ...result, plan, ...(flags.has('dry-run') ? { preflight: applyPlan(plan, { dryRun: true }) } : {}) })); return 0; }
+      const effect = applyPlan(plan); const { plan: ignoredPlan, ...summary } = result;
+      out(jsonText({ ...summary, state: 'captured', result: effect })); return 0;
+    }
     if (values.scope && ['init', 'bootstrap', 'adopt', 'plan', 'migrate'].includes(parsed.command)) throw new Refused('--scope selects workflow/check views; adoption writes repository policy and require a project --target instead');
     if (parsed.command === 'init' && (!answers || !values.name)) {
-      const result = await guidedInit({ target: values.target, sourceRoot, name: values.name, track: values.track as Track | undefined, answers, ask, resetSession: flags.has('reset-session'), frameworkPath: values['framework-path'], configurationHome: values['configuration-home'] as 'root' | 'directory' | undefined, mode: values.mode as 'bootstrap' | 'adopt' | 'migrate' | undefined, upgradeBaseline: flags.has('upgrade-baseline') });
+      const result = await guidedInit({ target: values.target, sourceRoot, name: values.name, track: values.track as Track | undefined, answers, ask, resetSession: flags.has('reset-session'), frameworkPath: values['framework-path'], configurationHome: values['configuration-home'] as 'root' | 'directory' | undefined, mode: values.mode as 'bootstrap' | 'adopt' | 'migrate' | undefined, upgradeBaseline: flags.has('upgrade-baseline'), ...(values.instruction ? { alignment: { confirmed: true, instruction: values.instruction } } : {}) });
+      if (result.state === 'already-initialized') { out(jsonText(result)); return 0; }
       if (!result.plan) { out(jsonText(result)); return 2; }
       const plan = reportProvenance(result.plan);
       if (flags.has('dry-run')) { out(jsonText({ state: 'preview', root: result.root, plan, preflight: applyPlan(plan, { dryRun: true }) })); return 0; }
       if (ask) error(humanPreview(plan));
       const applied = flags.has('apply') || ask && !flags.has('preview') && (await ask('Apply this exact preview? Type apply to continue; any other response leaves the repository unchanged.')).trim() === 'apply';
-      if (!applied) { out(jsonText(ask ? { state: 'preview', root: result.root, plannedOperations: plan.operations.length, changed: 0 } : { state: 'preview', root: result.root, plan })); return 0; }
+      if (!applied) { out(jsonText(ask ? { state: 'preview', root: result.root, plannedOperations: plan.operations.length, plannedGitActivation: Boolean(plan.gitGuardActivation), changed: 0 } : { state: 'preview', root: result.root, plan })); return 0; }
       const appliedResult = applyPlan(plan);
       const verification = await checkRepository({ root: result.root!, sourceRoot });
-      out(jsonText({ state: verification.ok ? 'applied' : 'applied-with-findings', root: result.root, ...(!ask ? { plan } : {}), result: appliedResult, verification }));
-      return verification.ok ? 0 : 1;
+      const readiness = initializationReadiness({ root: result.root!, sourceRoot });
+      const complete = verification.ok && readiness.state === 'ready';
+      out(jsonText({ state: complete ? 'applied' : 'applied-with-findings', root: result.root, ...(!ask ? { plan } : {}), result: appliedResult, verification, readiness }));
+      return complete ? 0 : 1;
     }
     if (parsed.command === 'doctor') {
       const selected = await selectedScope(); if (!selected) return 2;
@@ -262,7 +313,9 @@ export async function runCli(argv: string[], io: { out?: (text: string) => void;
       if (!answers) throw new Refused('--answers FILE with complete aligned decisions is required; run inspect and questions first');
       const mode = parsed.command === 'migrate' ? 'migrate' : command === 'bootstrap' ? 'bootstrap' : command === 'adopt' ? 'adopt' : (values.mode ?? (track === 'greenfield' ? 'bootstrap' : 'adopt'));
       if (!['bootstrap', 'adopt', 'migrate'].includes(mode)) throw new Refused(`invalid mode: ${mode}`);
-      const plan = reportProvenance(createPlan({ root, name: required('name'), track, mode: mode as 'bootstrap' | 'adopt' | 'migrate', answers, sourceRoot, frameworkPath: values['framework-path'], configurationHome: values['configuration-home'] as 'root' | 'directory' | undefined, upgradeBaseline: flags.has('upgrade-baseline') }));
+      const basePlan = createPlan({ root, name: required('name'), track, mode: mode as 'bootstrap' | 'adopt' | 'migrate', answers, sourceRoot, frameworkPath: values['framework-path'], configurationHome: values['configuration-home'] as 'root' | 'directory' | undefined, upgradeBaseline: flags.has('upgrade-baseline') });
+      const distribution = locateDistribution(sourceRoot);
+      const plan = reportProvenance(augmentGitGuardPlan(basePlan, { config: plannedRepositoryConfiguration(basePlan, distribution.config), sourceRoot, upgradeRuntime: flags.has('upgrade-baseline') }).plan);
       if (command === 'init' && !flags.has('preview')) out(jsonText(applyPlan(plan, { dryRun: flags.has('dry-run') })));
       else out(jsonText(plan));
     } else if (command === 'apply') {

@@ -3,10 +3,11 @@
 <!-- mdcomposer:meta
 title: "IDEA capture design"
 kind: design
-state: draft
+state: accepted
 audience: internal
 owner: repository-maintainer
 updated: 2026-11-27
+acceptance: "user:2026-11-27:execute-idea-and-guard-designs"
 -->
 
 The owner requested quick IDEA capture and subsequently requested DESIGN. This is a draft technical design; the mode and commands are not implemented. The owner supplied the product intent; technical choices below are recommendations, not invented approval.
@@ -58,3 +59,7 @@ Later exploration/design updates the same work identity and links its source ide
 ## Design-pass verification
 
 The documentation/work-record update passed npm run check with zero diagnostics and npm test with 323 passed, zero failed and one existing Windows permission skip (324 total). These results validate the current repository; they do not prove the proposed capture commands or hooks, which remain unimplemented. Both work items are in DESIGN with implementation not started.
+
+## Execution selection
+
+The owner subsequently selected this design through the explicit 2026-11-27 EXECUTE instruction. Earlier unimplemented/DESIGN-only statements describe that original baseline, not current execution status. Actual results belong to the execution packet and capability status record.

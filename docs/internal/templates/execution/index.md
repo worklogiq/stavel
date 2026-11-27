@@ -14,4 +14,5 @@ acceptance: "user:2026-11-25:framework-v02-implementation"
 - [execution-slice](execution-slice.template.md)
 - [experiment](experiment.template.md)
 - [recon](recon.template.md)
+- [idea capture](idea.template.md): a small recon record registered as planned work
 - [verification](verification.template.md)

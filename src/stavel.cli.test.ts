@@ -5,6 +5,79 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 
+function ideaCliFixture(): string {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-idea-cli-'));
+  fs.mkdirSync(path.join(root, 'areas/cli'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'stavel.config.json'), JSON.stringify({ schemaVersion: 1, documentation: { owners: [{ id: 'cli', role: 'capability', path: 'areas/cli' }] }, workflow: { gitProtection: { enabled: false }, work: { registryFile: 'work.json' } } }));
+  fs.writeFileSync(path.join(root, 'work.json'), JSON.stringify({ schemaVersion: 2, capabilities: [{ id: 'cli', statusFile: 'areas/cli/cli.status.json' }] }));
+  fs.writeFileSync(path.join(root, 'areas/cli/cli.status.json'), JSON.stringify({ schemaVersion: 2, capabilityId: 'cli', title: 'CLI', owner: 'fixture-maintainer', updated: '2026-11-27', items: [] }));
+  return root;
+}
+const ideaCli = (root: string, args: string[]) => spawnSync(process.execPath, [path.resolve('dist/stavel.cli.cjs'), ...args, '--target', root, '--json'], { encoding: 'utf8', timeout: 30000 });
+
+test('idea CLI preview/capture/retry uses the same owner and work identity without a questionnaire', () => {
+  const root = ideaCliFixture();
+  const before = fs.readFileSync(path.join(root, 'areas/cli/cli.status.json'));
+  const args = ['idea', 'Keep the original thought\nincluding its detail.', '--request-id', 'cli-capture-1'];
+  const preview = ideaCli(root, [...args, '--preview']); assert.equal(preview.status, 0, preview.stderr);
+  const proposed = JSON.parse(preview.stdout); assert.equal(proposed.state, 'preview');
+  assert.deepEqual(fs.readFileSync(path.join(root, 'areas/cli/cli.status.json')), before);
+  assert.equal(fs.existsSync(path.join(root, proposed.recordPath)), false);
+  const captured = ideaCli(root, args); assert.equal(captured.status, 0, captured.stderr);
+  const first = JSON.parse(captured.stdout); assert.equal(first.state, 'captured'); assert.equal(first.id, proposed.id);
+  const recorded = fs.readFileSync(path.join(root, first.recordPath));
+  const status = fs.readFileSync(path.join(root, 'areas/cli/cli.status.json'));
+  const repeated = ideaCli(root, args); assert.equal(repeated.status, 0, repeated.stderr); assert.equal(JSON.parse(repeated.stdout).state, 'existing');
+  assert.deepEqual(fs.readFileSync(path.join(root, first.recordPath)), recorded);
+  assert.deepEqual(fs.readFileSync(path.join(root, 'areas/cli/cli.status.json')), status);
+  const queried = ideaCli(root, ['work', 'list']); assert.equal(queried.status, 0, queried.stderr);
+  const item = JSON.parse(queried.stdout).items[0].item; assert.equal(item.id, first.id); assert.equal(item.mode, 'IDEA');
+});
+
+test('idea CLI refuses conflicting sources and reports setup/text gaps without bootstrap or waiting', () => {
+  const root = ideaCliFixture();
+  fs.writeFileSync(path.join(root, 'capture.json'), JSON.stringify({ text: 'Structured original' }));
+  const conflict = ideaCli(root, ['idea', 'Different text', '--input', path.join(root, 'capture.json')]);
+  assert.equal(conflict.status, 1); assert.match(conflict.stderr, /cannot be combined/);
+  const empty = ideaCli(root, ['idea']); assert.equal(empty.status, 2, empty.stderr); assert.equal(JSON.parse(empty.stdout).questions[0].id, 'text');
+  const unadopted = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-idea-unadopted-'));
+  const missing = ideaCli(unadopted, ['idea', 'Remember this']); assert.equal(missing.status, 2, missing.stderr);
+  assert.equal(JSON.parse(missing.stdout).state, 'setup-needed'); assert.deepEqual(fs.readdirSync(unadopted), []);
+  assert.equal(fs.existsSync(path.join(root, 'areas/cli/ideas')), false);
+});
+
+test('bare init recognizes the validated source adoption without an installer manifest or questions', () => {
+  const root = process.cwd(); const before = fs.readFileSync(path.join(root, '.git/config'));
+  assert.equal(fs.existsSync(path.join(root, '.stavel.json')), false);
+  const result = ideaCli(root, ['init', '--non-interactive']); assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).state, 'already-initialized');
+  assert.equal(fs.existsSync(path.join(root, '.stavel.json')), false); assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), before);
+});
+
+test('aligned CLI init activates real hooks that reject protected commits and destination pushes', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-guard-cli-'));
+  const root = path.join(directory, 'target'), remote = path.join(directory, 'remote.git');
+  const git = (args: string[], cwd = root) => spawnSync('git', args, { cwd, encoding: 'utf8', timeout: 30000 });
+  const initialized = spawnSync('git', ['init', '-b', 'main', root], { encoding: 'utf8' }); assert.equal(initialized.status, 0, initialized.stderr);
+  assert.equal(git(['config', 'user.name', 'Stavel fixture']).status, 0);
+  assert.equal(git(['config', 'user.email', 'fixture@example.invalid']).status, 0);
+  const answers = path.join(directory, 'answers.json');
+  fs.writeFileSync(answers, JSON.stringify({ useDefaults: true, answers: { 'project.name': 'Guard fixture', 'project.intent': 'Verify actual configured guard effects.', 'source.languages': ['typescript'], 'verification.commands': 'npm test', 'product.audience': 'Contributors', 'product.scope': 'Temporary repository', 'product.outcomes': 'Protected writes are prevented' }, alignment: { confirmed: true, instruction: 'user:fixture:aligned-guard-setup' } }));
+  const init = spawnSync(process.execPath, [path.resolve('dist/stavel.cli.cjs'), 'init', '--target', root, '--answers', answers, '--apply', '--json'], { cwd: directory, encoding: 'utf8', timeout: 45000, maxBuffer: 8 * 1024 * 1024 });
+  assert.equal(init.status, 0, init.stderr + init.stdout.slice(-1200)); assert.equal(JSON.parse(init.stdout).state, 'applied');
+  assert.equal(git(['config', '--local', '--get', 'core.hooksPath']).stdout.trim(), '.stavel-hooks');
+  const repeated = ideaCli(root, ['init', '--non-interactive']); assert.equal(repeated.status, 0, repeated.stderr); assert.equal(JSON.parse(repeated.stdout).state, 'already-initialized');
+  fs.writeFileSync(path.join(root, 'example.txt'), 'A fixture change\n'); assert.equal(git(['add', 'example.txt']).status, 0);
+  const blocked = git(['commit', '-m', 'test: refuse main']); assert.notEqual(blocked.status, 0); assert.match(blocked.stderr, /blocked commit on protected branch main/);
+  assert.notEqual(git(['rev-parse', '--verify', 'HEAD']).status, 0);
+  assert.equal(git(['switch', '-c', 'feat/guard-fixture']).status, 0);
+  const allowed = git(['commit', '-m', 'test: allow task branch']); assert.equal(allowed.status, 0, allowed.stderr);
+  assert.equal(spawnSync('git', ['init', '--bare', remote], { encoding: 'utf8' }).status, 0);
+  const refusedPush = git(['push', remote, 'HEAD:refs/heads/main']); assert.notEqual(refusedPush.status, 0); assert.match(refusedPush.stderr, /blocked push.*protected destination/);
+  assert.notEqual(git(['--git-dir', remote, 'rev-parse', '--verify', 'refs/heads/main']).status, 0);
+  const allowedPush = git(['push', remote, 'HEAD:refs/heads/feat/guard-fixture']); assert.equal(allowedPush.status, 0, allowedPush.stderr);
+});
+
 test('CLI help explains distinct agent workflows outside a repo without advertising execution subcommands', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'stavel-workflow-help-'));
   const cli = path.resolve('dist/stavel.cli.cjs');

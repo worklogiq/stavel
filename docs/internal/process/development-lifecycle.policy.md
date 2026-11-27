@@ -12,6 +12,8 @@ acceptance: "user:2026-11-25:framework-v02-implementation"
 
 Use this single phase vocabulary in plans, prompts, and handoffs. Modes describe the activity; phases describe progress. Return to an earlier phase when evidence changes a decision.
 
+IDEA is a lightweight capture posture before deeper work: preserve the thought and register it as planned work in exploration, without starting that exploration or requiring a story/design packet. The capability record owns progress; later modes retain the same identity and original source.
+
 | Phase | Outcome | Typical mode |
 | --- | --- | --- |
 | 0 Recon | Relevant docs, behavior, gaps, and side effects mapped | EXPLORE or REVIEW |

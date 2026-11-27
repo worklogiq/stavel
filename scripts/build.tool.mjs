@@ -25,6 +25,8 @@ for (const [entry, output] of entries) {
 }
 await build({ entryPoints: ['src/stavel.cli.ts'], outfile: 'dist/stavel.cli.cjs',
   bundle: true, platform: 'node', target: 'node20.19', format: 'cjs', sourcemap: true, plugins: [markdownDependency], define: { 'import.meta.url': 'undefined' } });
+await build({ entryPoints: ['src/git-hook.cli.ts'], outfile: 'dist/stavel.git-hook.cjs',
+  bundle: true, minify: true, platform: 'node', target: 'node20.19', format: 'cjs', plugins: [markdownDependency], define: { 'import.meta.url': 'undefined' } });
 execFileSync(process.execPath, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json'], { stdio: 'inherit' });
 const markdownDist = path.dirname(require.resolve('@worklogiq/mdcomposer'));
 copyFileSync(path.join(markdownDist, 'mdcomposer.cli.cjs'), 'dist/mdcomposer.cli.cjs');

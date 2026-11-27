@@ -21,6 +21,8 @@ export interface EffectiveHelp {
 const commands: Array<[string, string, string[], string]> = [
   ['help', 'Explain CLI commands and agent workflows; general help needs no adopted repository.', [], 'stavel help --json'],
   ['init', 'Discover the project, ask applicable questions, align choices and preview setup.', [], 'stavel init'],
+  ['idea', 'Capture original idea text and register it in capability-owned work without an execution plan.', [], 'stavel idea "Add an export view" --capability cli'],
+  ['hooks', 'Inspect selected local Git guards or recover their checked activation.', ['inspect', 'resume', 'rollback'], 'stavel hooks inspect'],
   ['doctor', 'Report mechanical findings and offer a bounded repair preview.', [], 'stavel doctor'],
   ['config', 'Explain effective repository configuration and provenance.', ['explain'], 'stavel config explain'],
   ['work', 'Read and manage pointer-indexed capability work records.', ['list', 'create', 'update', 'migrate', 'apply', 'recover'], 'stavel work list'],
@@ -38,6 +40,7 @@ const commands: Array<[string, string, string[], string]> = [
   ['docs', 'Run the bundled mdcomposer CLI; its own help describes supported operations.', [], 'stavel docs --help'],
 ];
 const modes: Array<[string, string, string, string[]]> = [
+  ['idea', 'IDEA', 'Quickly capture a thought and register it for later exploration, design or planning.', ['An adopted target and resolvable capability/feature owner; no design or story questionnaire.']],
   ['experiment', 'EXPERIMENT', 'Standalone experiments, proofs of concept and bounded learning.', ['A bounded question or learning objective; experiments do not silently change production contracts.']],
   ['explore', 'EXPLORE', 'Clarify requirements and understand the codebase; capture evidence and recon.', ['The user task and relevant repository instructions.']],
   ['design', 'DESIGN', 'Turn exploration, experiments, stories or VIBE output into design documents.', ['Actual scope, canonical owners and unresolved material choices.']],

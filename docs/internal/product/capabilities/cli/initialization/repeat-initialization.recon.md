@@ -92,3 +92,7 @@ The smallest next useful step is a bounded DESIGN pass for repeat recognition an
 ## Verification of exploration artifacts
 
 npm test completed: 324 cases, 323 passed, zero failed and one existing Windows permission skip. The local log is .cache/explore-init-doc-tests.log. npm run check returned zero diagnostics, including after the accepted Q&A choices and work handoff were recorded. Only documentation and source-owned work records changed; production code was not modified. Scratch trial observations above are independent current-behavior evidence, not proposed regression tests or proof of the fix. The passing pre-existing suite does not remove the observed repeat-run coverage gap.
+
+## Subsequent bounded implementation
+
+The selected [commit-safety design](commit-safety-hooks.design.md) subsequently delivered shared initialization readiness, healthy manual/installed recognition before cached onboarding, preserved original tracks and selected guard completion/repair. Real repeat/cache and serialized repair recovery tests now pass; the [delivery verification](../../skill/guided-workflows/ideas-delivery.verification.md) owns results. Earlier observations remain historical evidence. The separate repeat-initialization item retains broader non-guard partial-setup reconstruction as its next scope; this bounded guard delivery does not claim general damaged-repository recovery.

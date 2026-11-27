@@ -27,3 +27,5 @@ export * from './work.service.js';
 export * from './lifecycle.service.js';
 
 export * from './help.service.js';
+export * from './idea.service.js';
+export * from './git-guard.service.js';

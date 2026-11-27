@@ -22,7 +22,7 @@ Status: accepted for the initial framework implementation under the repository o
 | CF-06 | Honest structural validation | Broken local links, unsafe targets, missing structure, and pending entrypoint integration detected; semantic limits stated |
 | CF-07 | Self-contained optional skill | Export includes entrypoint, scaffolder, framework assets, provenance, and no external checkout dependency |
 | CF-08 | Adoption respects source/distribution boundaries | Application artifacts remain unchanged unless rebuilding them is explicitly in scope; source-tree adoption remains distinct |
-| CF-09 | Preserve task authorization and branch boundaries | Tools perform no Git operations; contributions use the project's authorized branch and review process |
+| CF-09 | Preserve task authorization and branch boundaries | Tools may inspect Git and apply explicitly aligned, owned local hook/configuration effects with preserving recovery; they do not automatically initialize Git, commit, push, merge or change global/system configuration. Contributions use the project's authorized branch and review process. See the [execution amendment](../../capabilities/skill/guided-workflows/ideas-execution.decision.md). |
 
 Non-goals: enforce model behavior, validate scientific claims, modify application runtime, choose an application architecture, or install an agent skill automatically.
 

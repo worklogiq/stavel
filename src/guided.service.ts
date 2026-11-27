@@ -2,13 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
-import type { AnswersDocument, FrameworkConfig, MigrationPlan, Question, Track } from './framework.types.js';
+import type { Alignment, AnswersDocument, FrameworkConfig, MigrationPlan, Question, Track } from './framework.types.js';
 import { assertNoLinks, contained, digest, fileBytes, fileHash, jsonText, readJson, Refused, targetRoot } from './filesystem.service.js';
 import { getQuestions, inspectRepository } from './decisions.service.js';
 import { locateDistribution } from './distribution.service.js';
 import { configurationForAnswers, createPlan, validateAnswers } from './planning.service.js';
 import { packagedConfigurationDefinitions, plannedRepositoryConfiguration, resolveRepositoryConfiguration } from './configuration.service.js';
-import { augmentInitializationPlan, initializationProduct } from './initialization.service.js';
+import { augmentInitializationPlan, initializationProduct, initializationReadiness, previewInitializationCompletion, type InitializationReadiness } from './initialization.service.js';
 
 export interface ScopeResult { state: 'selected' | 'ambiguous'; root?: string; candidates: Array<{ path: string; evidence: string[] }> }
 export function discoverScope(options: { cwd?: string; target?: string } = {}): ScopeResult {
@@ -76,8 +76,8 @@ export function saveDecisionSession(root: string, binding: string, answers: Answ
 }
 
 export type Ask = (prompt: string) => Promise<string>;
-export interface GuidedInitOptions { target?: string; cwd?: string; sourceRoot?: string; name?: string; track?: Track; mode?: 'bootstrap' | 'adopt' | 'migrate'; answers?: AnswersDocument; ask?: Ask; cache?: string; resetSession?: boolean; frameworkPath?: string; configurationHome?: 'root' | 'directory'; upgradeBaseline?: boolean }
-export interface GuidedInitResult { state: 'input-required' | 'preview'; root?: string; questions: Array<{ id: string; prompt: string; options?: unknown[] }>; scope: ScopeResult; plan?: MigrationPlan; session?: string; config?: FrameworkConfig }
+export interface GuidedInitOptions { target?: string; cwd?: string; sourceRoot?: string; name?: string; track?: Track; mode?: 'bootstrap' | 'adopt' | 'migrate'; answers?: AnswersDocument; ask?: Ask; cache?: string; resetSession?: boolean; frameworkPath?: string; configurationHome?: 'root' | 'directory'; upgradeBaseline?: boolean; alignment?: Alignment; guardBundlePath?: string }
+export interface GuidedInitResult { state: 'input-required' | 'preview' | 'already-initialized' | 'incomplete'; root?: string; questions: Array<{ id: string; prompt: string; options?: unknown[] }>; scope: ScopeResult; plan?: MigrationPlan; session?: string; config?: FrameworkConfig; readiness?: InitializationReadiness; guardActivation?: ReturnType<typeof previewInitializationCompletion>['guardActivation'] }
 function parseAnswer(question: Question, text: string): unknown {
   if (question.type === 'boolean') { if (!/^(true|false|yes|no)$/i.test(text)) throw new Refused(`${question.id}: answer yes/no or true/false`); return /^(true|yes)$/i.test(text); }
   if (['object', 'list', 'array', 'multi-choice'].includes(String(question.type))) { try { return JSON.parse(text); } catch { if (question.type !== 'object') return text.split(',').map(value => value.trim()).filter(Boolean); throw new Refused(`${question.id}: expected JSON object`); } }
@@ -95,8 +95,25 @@ export async function prepareGuidedInit(options: GuidedInitOptions = {}): Promis
   }
   const root = scope.root!, distribution = locateDistribution(options.sourceRoot);
   const resolved = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution), upgradeBaseline: options.upgradeBaseline });
+  const readiness = initializationReadiness({ root, sourceRoot: options.sourceRoot, guardBundlePath: options.guardBundlePath });
+  const reconfigure = options.answers !== undefined || options.name !== undefined || options.track !== undefined || options.mode !== undefined || options.frameworkPath !== undefined || options.configurationHome !== undefined || options.upgradeBaseline;
+  // Durable selected setup wins over old pre-apply sessions. A session is only
+  // authoritative while the installation itself is still incomplete.
+  if (!reconfigure && readiness.state === 'ready') return { state: 'already-initialized', root, scope, questions: [], config: readiness.config, readiness };
+  if (!reconfigure && readiness.documentsReady && readiness.state === 'partial') {
+    let alignment = options.alignment;
+    if (!alignment?.confirmed && options.ask && readiness.guards?.repairable) {
+      const recap = jsonText({ root, gaps: readiness.gaps, policy: readiness.guards.policy });
+      if ((await options.ask(`Review the selected setup gaps:\n${recap}\nType preview to prepare a preserving guard completion plan: `)).trim() === 'preview') alignment = { confirmed: true, instruction: `terminal:accepted-guard-preview:${digest(recap)}` };
+    }
+    if (alignment?.confirmed && readiness.guards && ['incomplete', 'pending-git'].includes(readiness.guards.state) && readiness.guards.repairable) {
+      const completion = previewInitializationCompletion({ readiness, alignment, sourceRoot: options.sourceRoot, guardBundlePath: options.guardBundlePath });
+      return { state: 'preview', root, scope, questions: [], config: readiness.config, readiness, ...completion };
+    }
+    return { state: 'incomplete', root, scope, questions: readiness.gaps.map(gap => ({ id: gap.id, prompt: gap.message })), config: readiness.config, readiness };
+  }
   const inspection = inspectRepository({ root, sourceRoot: options.sourceRoot });
-  const track = options.track ?? (inspection.files.length ? 'existing' : 'greenfield');
+  const track = options.track ?? readiness.track ?? (inspection.files.length ? 'existing' : 'greenfield');
   const requested = { name: options.name ?? null, track: options.track ?? null, mode: options.mode ?? null, frameworkPath: options.frameworkPath ?? null, configurationHome: options.configurationHome ?? null, upgradeBaseline: Boolean(options.upgradeBaseline) };
   const bindingFor = (): string => {
     const source = locateDistribution(options.sourceRoot); const inspected = inspectRepository({ root, sourceRoot: options.sourceRoot });
@@ -105,7 +122,9 @@ export async function prepareGuidedInit(options: GuidedInitOptions = {}): Promis
   };
   const binding = bindingFor();
   if (options.resetSession) clearDecisionSession(root, options.cache);
-  const answers: AnswersDocument = options.answers ? structuredClone(options.answers) : readDecisionSession(root, binding, options.cache) ?? { answers: {}, alignment: { confirmed: false, instruction: '' } };
+  const saved = options.answers ? undefined : readDecisionSession(root, binding, options.cache);
+  if (!reconfigure && readiness.state === 'partial' && !saved) return { state: 'incomplete', root, scope, questions: readiness.gaps.map(gap => ({ id: gap.id, prompt: gap.message })), config: readiness.config, readiness };
+  const answers: AnswersDocument = options.answers ? structuredClone(options.answers) : saved ?? { answers: {}, alignment: { confirmed: false, instruction: '' } };
   validateAnswers(answers);
   const persistent = !options.answers;
   const currentSession = sessionFile(root, options.cache);
@@ -168,8 +187,8 @@ export async function prepareGuidedInit(options: GuidedInitOptions = {}): Promis
   if (!['bootstrap', 'adopt', 'migrate'].includes(mode)) throw new Refused('selected initialization mode must be bootstrap, adopt or migrate');
   const basePlan = createPlan({ root, name, track, mode: mode as 'bootstrap' | 'adopt' | 'migrate', answers, sourceRoot: options.sourceRoot, configurationHome: options.configurationHome ?? (resolved.kind === 'absent' ? 'directory' : undefined), frameworkPath: options.frameworkPath, upgradeBaseline: options.upgradeBaseline });
   effectiveConfig = plannedRepositoryConfiguration(basePlan, effectiveConfig);
-  const plan = augmentInitializationPlan(basePlan, { config: effectiveConfig, answers: selectedAnswers(), sourceRoot: options.sourceRoot });
-  return { state: 'preview', root, scope, questions: [], plan, config: effectiveConfig, ...(persistent ? { session: currentSession } : {}) };
+  const plan = augmentInitializationPlan(basePlan, { config: effectiveConfig, answers: selectedAnswers(), sourceRoot: options.sourceRoot, guardBundlePath: options.guardBundlePath, upgradeRuntime: Boolean(options.upgradeBaseline) });
+  return { state: 'preview', root, scope, questions: [], plan, config: effectiveConfig, readiness, ...(plan.gitGuardActivation ? { guardActivation: plan.gitGuardActivation } : {}), ...(persistent ? { session: currentSession } : {}) };
 }
 
 export { prepareGuidedInit as guidedInit };

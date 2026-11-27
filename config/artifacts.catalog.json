@@ -482,6 +482,29 @@
         "section.story.non-goals-open-decisions-and-status"
       ],
       "version": 1
+    },
+    {
+      "id": "artifact.idea",
+      "family": "execution",
+      "title": "Captured idea",
+      "kind": "recon",
+      "template": "docs/internal/templates/execution/idea.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner",
+        "originalText",
+        "source",
+        "capturedAt"
+      ],
+      "sections": [
+        "section.idea.original",
+        "section.idea.source"
+      ],
+      "version": 1,
+      "identifierSuffix": "idea"
     }
   ],
   "sections": [
@@ -938,6 +961,16 @@
     {
       "id": "section.story.non-goals-open-decisions-and-status",
       "title": "Non-goals, open decisions and status",
+      "version": 1
+    },
+    {
+      "id": "section.idea.original",
+      "title": "Original idea",
+      "version": 1
+    },
+    {
+      "id": "section.idea.source",
+      "title": "Source",
       "version": 1
     }
   ],

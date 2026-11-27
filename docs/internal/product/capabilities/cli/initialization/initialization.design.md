@@ -28,11 +28,11 @@ The guided and initialization services have colocated behavioral suites. The own
 
 ## Active exploration
 
-The [repeat-initialization recon](repeat-initialization.recon.md) records the owner's 2026-11-27 discovery request and observed repeat-run/session failures. The owner accepted [recognition without registration and preserving gap previews](repeat-initialization.decision.md). Technical classification/session changes still need a design; this paragraph does not claim current runtime behavior changed. Current lifecycle state remains in the capability status file.
+The [repeat-initialization recon](repeat-initialization.recon.md) records the owner's 2026-11-27 discovery request and observed repeat-run/session failures. The owner accepted [recognition without registration and preserving gap previews](repeat-initialization.decision.md). The selected hook delivery implemented shared readiness before cached onboarding, recognition of healthy manual/installed adoption, stable original tracks and selected preserving completion previews. Broader non-guard reconstruction remains separate; the capability status file owns that remaining work. See the [delivery verification](../../skill/guided-workflows/ideas-delivery.verification.md).
 
 ## Captured ideas
 
-- [Idea 001](commit-safety-hooks.recon.md) now has a [draft commit-safety hook design](commit-safety-hooks.design.md). Current initialization does not install Git hooks.
+- [Idea 001](commit-safety-hooks.recon.md) now has a [selected commit-safety hook design](commit-safety-hooks.design.md). Selected initialization now installs owned pre-commit/pre-push assets and activates local configuration after checked file application. Foreign hook integrations are preserved; [guard usage](../../../../dev/git-guards.guide.md) owns configuration and recovery instructions.
 
 ## Historical context (archived)
 

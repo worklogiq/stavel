@@ -136,7 +136,9 @@
       "SKILL.md",
       "README.md",
       "index.md",
-      "openai.yaml"
+      "openai.yaml",
+      "pre-commit",
+      "pre-push"
     ],
     "maxLines": 500
   },
@@ -205,7 +207,9 @@
       "README.md",
       "LICENSE",
       "VERSION",
-      "package.json"
+      "package.json",
+      "pre-commit",
+      "pre-push"
     ],
     "generatedRoot": ".generated",
     "defaultTrack": "greenfield"
@@ -239,6 +243,13 @@
     "review": {
       "design": "recommended-for-substantial",
       "allowTaskException": true
+    },
+    "gitProtection": {
+      "enabled": true,
+      "protectedBranches": [
+        "main"
+      ],
+      "hooksPath": ".stavel-hooks"
     }
   }
 }

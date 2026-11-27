@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { clearDecisionSession, discoverScope, guidedInit, readDecisionSession, saveDecisionSession, sessionFile } from './guided.service.js';
 import { applyPlan } from './migration.service.js';
 import { plannedRepositoryConfiguration } from './configuration.service.js';
@@ -38,6 +39,50 @@ test('scope discovery selects a unique ancestor and asks when package/workspace 
   const before = snapshot(f.root); const ambiguous = discoverScope({ cwd: path.join(f.root, 'apps/web/src') });
   assert.equal(ambiguous.state, 'ambiguous'); assert.deepEqual(ambiguous.candidates.map(candidate => candidate.path), [fs.realpathSync.native(path.join(f.root, 'apps/web')), fs.realpathSync.native(f.root)]);
   const explicit = discoverScope({ cwd: path.join(f.root, 'apps/web/src'), target: f.root }); assert.equal(explicit.state, 'selected'); assert.equal(explicit.candidates[0].evidence[0], 'explicit --target'); assert.deepEqual(snapshot(f.root), before);
+});
+
+test('completed greenfield init is a zero-prompt no-op before stale or corrupt cache inspection', async () => {
+  const f = fixture(), record = complete(); record.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: false } } };
+  const first = await guidedInit({ target: f.root, sourceRoot, cache: f.cache, answers: record }); assert.equal(first.plan!.track, 'greenfield'); applyPlan(first.plan!);
+  write(f.root, 'README.md', '# Ordinary project edit\n');
+  write(f.cache, path.basename(sessionFile(f.root, f.cache)), '{ deliberately corrupt pre-apply cache');
+  const before = snapshot(f.root), cached = snapshot(f.cache); let prompts = 0;
+  for (const cache of [f.cache, path.join(f.directory, 'different-machine-cache')]) {
+    const repeated = await guidedInit({ target: f.root, sourceRoot, cache, ask: async () => { prompts++; throw new Error('Completed setup must not ask'); } });
+    assert.equal(repeated.state, 'already-initialized'); assert.equal(repeated.readiness!.track, 'greenfield'); assert.equal(repeated.plan, undefined); assert.equal(repeated.questions.length, 0);
+  }
+  assert.equal(prompts, 0); assert.deepEqual(snapshot(f.root), before); assert.deepEqual(snapshot(f.cache), cached);
+  const explicit = await guidedInit({ target: f.root, sourceRoot, cache: f.cache, answers: record }); assert.equal(explicit.state, 'preview'); assert.equal(explicit.plan!.track, 'greenfield', 'explicit reconfiguration still reuses the installed track');
+});
+
+test('validated manual adoption requires no installer registration and partial documents do not restart onboarding', async () => {
+  const f = fixture(), record = complete(); record.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: false } } };
+  applyPlan((await guidedInit({ target: f.root, sourceRoot, answers: record })).plan!); fs.unlinkSync(path.join(f.root, '.stavel.json'));
+  const before = snapshot(f.root); const manual = await guidedInit({ target: f.root, sourceRoot, cache: f.cache, ask: async () => { throw new Error('Manual adoption must not ask'); } });
+  assert.equal(manual.state, 'already-initialized'); assert.equal(manual.readiness!.adoption, 'manual'); assert.deepEqual(snapshot(f.root), before); assert.equal(fs.existsSync(f.cache), false);
+  fs.unlinkSync(path.join(f.root, 'docs/internal/product/product.overview.md')); const partialBefore = snapshot(f.root);
+  const partialResult = await guidedInit({ target: f.root, sourceRoot, cache: f.cache, ask: async () => { throw new Error('Partial setup must report exact gaps'); } });
+  assert.equal(partialResult.state, 'incomplete'); assert.ok(partialResult.questions.some(question => question.id === 'product:product')); assert.equal(partialResult.plan, undefined); assert.deepEqual(snapshot(f.root), partialBefore); assert.equal(fs.existsSync(f.cache), false);
+});
+
+test('incomplete installed setup preserves stale-session refusal instead of ignoring uncertain answers', async () => {
+  const f = fixture(), record = complete(); record.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: false } } };
+  applyPlan((await guidedInit({ target: f.root, sourceRoot, answers: record })).plan!);
+  fs.unlinkSync(path.join(f.root, 'docs/internal/product/product.overview.md'));
+  saveDecisionSession(f.root, 'old-pre-apply-input-identity', partial(), f.cache); const before = snapshot(f.root), cached = snapshot(f.cache);
+  await assert.rejects(guidedInit({ target: f.root, sourceRoot, cache: f.cache }), /incompatible or stale/);
+  assert.deepEqual(snapshot(f.root), before); assert.deepEqual(snapshot(f.cache), cached);
+});
+
+test('guard-only bare init reports pending Git and previews activation using existing choices', async () => {
+  const f = fixture(), record = complete(); record.configuration = { schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main'], hooksPath: '.repo-hooks' } } };
+  applyPlan((await guidedInit({ target: f.root, sourceRoot, answers: record })).plan!);
+  write(f.cache, path.basename(sessionFile(f.root, f.cache)), '{ obsolete onboarding cache');
+  const pending = await guidedInit({ target: f.root, sourceRoot, cache: f.cache }); assert.equal(pending.state, 'incomplete'); assert.equal(pending.readiness!.guards!.state, 'pending-git'); assert.equal(pending.plan, undefined); assert.equal(fs.existsSync(path.join(f.root, '.git')), false);
+  assert.equal(spawnSync('git', ['init', '-b', 'work', f.root], { windowsHide: true }).status, 0); const before = snapshot(f.root);
+  const completion = await guidedInit({ target: f.root, sourceRoot, cache: f.cache, alignment: { confirmed: true, instruction: 'user:fixture:preview-selected-guard-completion' } });
+  assert.equal(completion.state, 'preview'); assert.equal(completion.plan!.operations.length, 0); assert.ok(completion.guardActivation); assert.deepEqual(snapshot(f.root), before);
+  applyPlan(completion.plan!); assert.equal((await guidedInit({ target: f.root, sourceRoot, cache: f.cache })).state, 'already-initialized');
 });
 
 test('headless ambiguous scope returns structured choices without reading policy or creating caches', async () => {

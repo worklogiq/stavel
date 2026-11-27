@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { applyWorkPlan, bindWorkPlanInputs, planWorkCreate, planWorkMigration, planWorkUpdate, readWork, recoverWork, workOptionsForConfiguration, type WorkItem, type WorkOptions, type WorkPlan } from './work.service.js';
+import { applyWorkPlan, bindWorkPlanInputs, composeWorkCreate, planWorkCreate, planWorkMigration, planWorkUpdate, readWork, recoverWork, workOptionsForConfiguration, type WorkItem, type WorkOptions, type WorkPlan } from './work.service.js';
 
 const now = '2026-11-26T12:00:00.000Z';
 const registry = 'docs/work-index.json';
@@ -231,4 +231,50 @@ test('plan checksum, effects provenance, escaped paths and symlink destinations 
   assert.throws(() => planWorkCreate(options, { capabilityId: 'unsafe', statusFile: '../linked/unsafe.json', title: 'Unsafe', owner: 'maintainer' }), /symlink|junction/);
   assert.deepEqual(fs.readdirSync(outside), []);
   const final = snapshot(options.target); assert.throws(() => planWorkCreate(options, { capabilityId: 'unsafe', statusFile: '../../escape.json', title: 'Unsafe', owner: 'maintainer' })); assert.deepEqual(snapshot(options.target), final);
+});
+
+test('projected reference composition validates one complete record/status/registry result without exposing an applicable work subset', t => {
+  const options = fixture(t), before = snapshot(options.target), idea = item({ id: 'captured', mode: 'IDEA', phase: 'exploration', status: 'planned', record: 'ideas/captured.recon.md', workType: 'idea' });
+  const input = { capabilityId: 'cli', statusFile, title: 'CLI', owner: 'maintainer', item: idea };
+  assert.throws(() => planWorkCreate(options, input), /source is unavailable/);
+  const projected = 'docs/capabilities/cli/ideas/captured.recon.md';
+  const composed = composeWorkCreate(options, input, { [projected]: '# Actual captured record\n' });
+  assert.equal(composed.changes.length, 3); assert.equal(composed.inputs[projected], null);
+  assert.equal(composed.inputs[registry], null); assert.equal(composed.inputs[capFile], null);
+  const status = JSON.parse(String(composed.changes.find(change => change.path === capFile)!.content));
+  assert.equal(status.schemaVersion, 2); assert.equal(status.items[0].mode, 'IDEA'); assert.equal(status.items[0].record, 'ideas/captured.recon.md');
+  const index = JSON.parse(String(composed.changes.find(change => change.path === registry)!.content));
+  assert.deepEqual(Object.keys(index).sort(), ['capabilities', 'schemaVersion']);
+  assert.deepEqual(snapshot(options.target), before);
+  assert.throws(() => applyWorkPlan(composed as unknown as WorkPlan), /unsupported work plan/);
+});
+
+test('projected additions reuse existing work serialization/history and preserve the registry route', t => {
+  const options = fixture(t); install(options, item()); const before = snapshot(options.target);
+  const projected = 'docs/capabilities/cli/ideas/another.recon.md';
+  const composed = composeWorkCreate(options, { capabilityId: 'cli', statusFile, title: 'CLI', owner: 'maintainer', item: item({ id: 'another', mode: 'IDEA', phase: 'exploration', status: 'planned', record: 'ideas/another.recon.md', workType: 'idea' }) }, { [projected]: '# Another original record\n' });
+  assert.equal(composed.changes.length, 2); assert(!composed.changes.some(change => change.path === registry));
+  const status = JSON.parse(String(composed.changes.find(change => change.path === capFile)!.content));
+  assert.deepEqual(status.items[0], read(options.target, capFile).items[0]); assert.equal(status.items[1].history[0].operation, 'create');
+  assert.deepEqual(snapshot(options.target), before);
+});
+
+test('projection cannot mask existing files, introduce unused references, collide or replace runtime authority', t => {
+  const options = fixture(t), input = { capabilityId: 'cli', statusFile, title: 'CLI', owner: 'maintainer', item: item({ record: 'new.md' }) }, before = snapshot(options.target);
+  for (const files of [
+    { 'docs/capabilities/cli/design.md': '# Replacement' },
+    { 'docs/capabilities/cli/new.md': '# New', 'docs/unused.md': '# Unrelated' },
+    { 'docs/capabilities/cli/new.md': '# New', 'docs/capabilities/cli/NEW.md': '# Collision' },
+    { '.stavel/runtime/new.md': '# Not reference data' },
+    { '../outside.md': '# Unsafe' },
+  ]) assert.throws(() => composeWorkCreate(options, input, files));
+  assert.deepEqual(snapshot(options.target), before);
+});
+
+test('IDEA extends defaults while explicit custom vocabularies and legacy EXPLORE ideas remain authoritative', t => {
+  const options = fixture(t); install(options, item({ mode: 'EXPLORE', workType: 'idea', phase: 'exploration' }));
+  const selected = { ...options, modes: ['EXPLORE'] }; assert.equal(readWork(selected).state, 'ready');
+  const before = snapshot(options.target), projected = 'docs/capabilities/cli/new.md';
+  assert.throws(() => composeWorkCreate(selected, { capabilityId: 'cli', statusFile, title: 'CLI', owner: 'maintainer', item: item({ id: 'new', mode: 'IDEA', record: 'new.md' }) }, { [projected]: '# New' }), /unconfigured mode IDEA/);
+  assert.deepEqual(snapshot(options.target), before);
 });

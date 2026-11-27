@@ -42,9 +42,11 @@ node /path/to/stavel/dist/stavel.cli.cjs init
 node /path/to/stavel/dist/stavel.cli.cjs doctor
 node /path/to/stavel/dist/stavel.cli.cjs help --json
 node /path/to/stavel/dist/stavel.cli.cjs work list
+node /path/to/stavel/dist/stavel.cli.cjs idea "Remember this improvement" --capability example
+node /path/to/stavel/dist/stavel.cli.cjs hooks inspect
 ~~~
 
-Init detects the project scope, gathers decisions, aligns them and offers a concrete preview before applying. Doctor reports findings and offers bounded repairs. Explicit arguments remain available; --json/--non-interactive return unresolved questions without waiting. Use --preview or --dry-run to preserve target files. See the CLI contract for the compatibility answers-file adapter and structured work/artifact/packet inputs.
+Init detects the project scope, reuses valid existing setup, or gathers missing decisions and offers a concrete preview. Doctor reports findings and offers bounded repairs. IDEA preserves a quick thought and registers it for later work. Selected [Git guards](./docs/internal/dev/git-guards.guide.md) install through aligned init and reject protected-branch commits/pushes while preserving existing hook setups. Explicit arguments remain available; --json/--non-interactive return unresolved questions without waiting. Use --preview or --dry-run to preserve target files. See the CLI contract for compatibility and structured inputs.
 
 Repository-owned .stavel-config pins defaults and scoped overrides across upgrades. Conventional commits are the overridable default. AI-authored nondeterministic migrations/repairs carry a warning; fixed plan application is a separate mechanism. Java/Python-specific integration packs and npm publication remain future work.
 

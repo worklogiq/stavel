@@ -4,3 +4,6 @@
 /.stavel-config/baseline.profile.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
 /docs/internal/_archive/product/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 /docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/docs/internal/product/capabilities/skill/guided-workflows/idea-capture.design.md -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/docs/internal/product/capabilities/cli/idea-capture/idea-capture.design.md -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/docs/internal/product/capabilities/cli/initialization/commit-safety-hooks.design.md -text whitespace=trailing-space,space-before-tab,cr-at-eol

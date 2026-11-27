@@ -21,7 +21,8 @@ function options(root = fixture()): ArtifactPreviewOptions { return { root, sour
 
 test('portable catalog closes real template membership and exposes stable family/section identities', () => {
   const catalog = loadArtifactCatalog(sourceRoot);
-  assert.equal(catalog.artifacts.length, 22);
+  assert.equal(catalog.artifacts.length, 23);
+  assert(catalog.artifacts.some(artifact => artifact.id === 'artifact.idea' && artifact.kind === 'recon'));
   assert.equal(new Set(catalog.sections.map(item => item.id)).size, catalog.sections.length);
   for (const family of ['product', 'requirements', 'backend', 'interface', 'architecture', 'decisions', 'tests', 'accessibility', 'authorization', 'observability', 'documentation', 'execution', 'story']) assert(catalog.artifacts.some(item => item.family === family), family);
   assert(catalog.artifacts.every(artifact => artifact.sections.every(id => catalog.sections.some(section => section.id === id))));
@@ -218,12 +219,13 @@ test('common configuration resolver applies real repo/task amendments before ren
 
 test('explicit all-family rendering creates drafts with no unresolved tokens or application-specific seeds', () => {
   const opts = options();
-  const preview = previewArtifacts({ ...opts, facts: { ...facts, revision: 'fixture-revision', branch: 'fixture-task' }, selectedIds: loadArtifactCatalog(sourceRoot).artifacts.map(artifact => artifact.id) });
+  const preview = previewArtifacts({ ...opts, facts: { ...facts, revision: 'fixture-revision', branch: 'fixture-task', originalText: 'Remember the original fixture idea.', source: 'user:fixture:explicit-idea', capturedAt: '2026-11-27T00:00:00.000Z' }, selectedIds: loadArtifactCatalog(sourceRoot).artifacts.map(artifact => artifact.id) });
   assert(preview.ready, preview.unresolved.join(' '));
   const content = preview.artifacts.map(artifact => artifact.content ?? '').join('\n');
   assert(!/\{\{[^}]+\}\}/.test(content));
   assert(!/tenant_id|VITE_ENABLE_OTEL|HelpComponent|\/admin\b/.test(content));
   assert(preview.artifacts.some(artifact => artifact.id === 'artifact.story'));
+  assert.notEqual(preview.artifacts.find(artifact => artifact.id === 'artifact.idea')!.path, preview.artifacts.find(artifact => artifact.id === 'artifact.recon')!.path);
   assert.throws(() => createArtifactPlan({ ...opts, facts: { ...facts, purpose: '' } }), /unresolved/);
   const wrongKinds = previewArtifacts({ ...opts, selectedIds: ['artifact.design'], config: { schemaVersion: 1, documentation: { kinds: ['overview'] } } });
   assert.equal(wrongKinds.ready, false);

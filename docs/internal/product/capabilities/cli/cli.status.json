@@ -26,13 +26,25 @@
             "nextAction": "Prepare a bounded DESIGN for shared setup recognition and repeat/session behavior using the two accepted product decisions."
           },
           "operation": "update"
+        },
+        {
+          "at": "2026-11-27T23:13:34.011Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "partial",
+            "mode": "REVIEW",
+            "nextAction": "Review the delivered healthy-repeat/manual-adoption/cache behavior; separately design broader non-guard partial/damaged setup reconstruction.",
+            "phase": "verification",
+            "status": "active"
+          },
+          "operation": "update"
         }
       ],
       "id": "repeat-initialization",
-      "implementationStatus": "not-started",
-      "mode": "EXPLORE",
-      "nextAction": "Prepare a bounded DESIGN for shared setup recognition and repeat/session behavior using the two accepted product decisions.",
-      "phase": "exploration",
+      "implementationStatus": "partial",
+      "mode": "REVIEW",
+      "nextAction": "Review the delivered healthy-repeat/manual-adoption/cache behavior; separately design broader non-guard partial/damaged setup reconstruction.",
+      "phase": "verification",
       "record": "initialization/repeat-initialization.recon.md",
       "status": "active",
       "title": "Repeat initialization and setup recognition"
@@ -67,21 +79,72 @@
             "status": "active"
           },
           "operation": "update"
+        },
+        {
+          "at": "2026-11-27T22:39:03.406Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "partial",
+            "mode": "EXECUTE",
+            "nextAction": "Execute the selected owner-local slices, integrate shared CLI/distribution behavior, and close only with actual checks and philosophy review.",
+            "phase": "implementation",
+            "record": "initialization/execution/commit-safety-hooks/commit-safety-hooks.execution-plan.md",
+            "status": "active",
+            "tracker": "initialization/execution/commit-safety-hooks/commit-safety-hooks.macro-execution.md"
+          },
+          "operation": "update"
+        },
+        {
+          "at": "2026-11-27T23:13:32.782Z",
+          "operation": "archive-reference-rebase",
+          "packetId": "commit-safety-hooks",
+          "references": [
+            {
+              "field": "record",
+              "from": "initialization/execution/commit-safety-hooks/commit-safety-hooks.execution-plan.md",
+              "sourceSha256": "ffad297d40c355b8cbc3d57be472e86a5b5729a422ddea01436d981443844f62",
+              "to": "../../../_archive/product/capabilities/cli/initialization/execution/commit-safety-hooks/commit-safety-hooks.execution-plan.md"
+            },
+            {
+              "field": "tracker",
+              "from": "initialization/execution/commit-safety-hooks/commit-safety-hooks.macro-execution.md",
+              "sourceSha256": "ada4d55f798b78f979224db387ea5c03a6968061871e8cb0a9e407c2a44857ad",
+              "to": "../../../_archive/product/capabilities/cli/initialization/execution/commit-safety-hooks/commit-safety-hooks.macro-execution.md"
+            }
+          ]
+        },
+        {
+          "at": "2026-11-27T23:13:33.938Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "complete",
+            "mode": "REVIEW",
+            "nextAction": "Review the delivered task branch; merge and publication remain explicit owner actions.",
+            "phase": "closed",
+            "status": "completed"
+          },
+          "closureEvidence": [
+            "../skill/guided-workflows/ideas-delivery.verification.md",
+            "../skill/guided-workflows/ideas-philosophy-review.verification.md"
+          ],
+          "operation": "update",
+          "semanticAcceptance": "caller-reviewed"
         }
       ],
       "id": "commit-safety-hooks",
-      "implementationStatus": "not-started",
-      "mode": "DESIGN",
-      "nextAction": "Review/select the draft guard and preserving init-integration design, then use PLAN for execution slices.",
-      "phase": "design",
-      "record": "initialization/commit-safety-hooks.design.md",
-      "status": "active",
+      "implementationStatus": "complete",
+      "mode": "REVIEW",
+      "nextAction": "Review the delivered task branch; merge and publication remain explicit owner actions.",
+      "phase": "closed",
+      "record": "../../../_archive/product/capabilities/cli/initialization/execution/commit-safety-hooks/commit-safety-hooks.execution-plan.md",
+      "status": "completed",
       "title": "Idea 001: packaged commit-safety hooks installed by init",
+      "tracker": "../../../_archive/product/capabilities/cli/initialization/execution/commit-safety-hooks/commit-safety-hooks.macro-execution.md",
       "workType": "idea"
     }
   ],
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "CLI",
-  "updated": "2026-11-27T19:22:28.013Z"
+  "updated": "2026-11-27T23:13:34.011Z"
 }

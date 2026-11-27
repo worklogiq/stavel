@@ -14,7 +14,7 @@ export interface ArtifactSection { id: string; title: string; guidance?: string;
 export interface ArtifactDefinition {
   id: string; family: string; title: string; kind: string; template: string;
   surfaces: string[]; requiredFacts: string[]; sections: string[];
-  version?: number; required?: boolean; dependencies?: string[]; templateSource?: 'distribution' | 'repository';
+  version?: number; required?: boolean; dependencies?: string[]; templateSource?: 'distribution' | 'repository'; identifierSuffix?: string;
   [key: string]: unknown;
 }
 export interface ArtifactDefinitions { artifacts?: Record<string, ConfigurationDefinition>; sections?: Record<string, ConfigurationDefinition>; questions?: Record<string, ConfigurationDefinition> }
@@ -61,6 +61,7 @@ function definition(value: unknown, expectedId: string, section = false): Artifa
   if (typeof item.template !== 'string' || !item.template.endsWith('.md')) throw new Refused(`artifact template must be Markdown: ${expectedId}`);
   relativeName(item.template);
   if (item.templateSource !== undefined && !['repository', 'distribution'].includes(item.templateSource)) throw new Refused(`unknown artifact template source: ${expectedId}`);
+  if (item.identifierSuffix !== undefined && (typeof item.identifierSuffix !== 'string' || !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(item.identifierSuffix))) throw new Refused(`artifact identifierSuffix must be a portable kebab identifier: ${expectedId}`);
   for (const field of ['surfaces', 'requiredFacts', 'sections', 'dependencies'] as const) {
     if (field === 'dependencies' && item[field] === undefined) continue;
     if (!Array.isArray(item[field]) || item[field]!.some(value => typeof value !== 'string' || !value.trim()) || new Set(item[field]).size !== item[field]!.length) throw new Refused(`invalid artifact ${field}: ${expectedId}`);
@@ -305,7 +306,8 @@ export function previewArtifacts(options: ArtifactPreviewOptions): ArtifactPrevi
   for (const artifact of selection.artifacts) {
     const targetOwner = artifact.id === 'artifact.product-overview' ? product : owner;
     const existing = canonical[artifact.id] ?? targetOwner.canonical?.[artifact.id];
-    const id = artifact.id === 'artifact.product-overview' ? 'product' : options.identifier ?? owner.id;
+    const baseId = artifact.id === 'artifact.product-overview' ? 'product' : options.identifier ?? owner.id;
+    const id = artifact.identifierSuffix ? `${baseId}-${artifact.identifierSuffix}` : baseId;
     const filename = documentFilename(naming.shape === 'plain' && artifact.id !== 'artifact.product-overview' ? `${id}-${artifact.kind}` : id, artifact.kind, naming);
     const destination = existing ? relativeName(existing) : `${targetOwner.path}/${filename}`;
     contained(root, destination); destinations.set(artifact.id, destination);

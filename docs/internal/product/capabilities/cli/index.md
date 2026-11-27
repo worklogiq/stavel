@@ -27,7 +27,7 @@ The CLI is an implemented Stavel capability alongside the [skill](../skill/index
 | [CLI help and capability discovery](help/help.design.md) | help; --help; -h |
 | [Diagnosis and reviewed repair](doctor/doctor.design.md) | doctor; bounded preview/repair |
 | [Work records, queries and schema upgrades](work-management/work-management.design.md) | work list/create/update/migrate/apply/recover |
-| [IDEA capture](idea-capture/idea-capture.design.md) | Proposed idea command; draft design, not shipped |
+| [IDEA capture](idea-capture/idea-capture.design.md) | idea; aligned capture, preview and stable retry |
 
 ## Shared services and delivery
 

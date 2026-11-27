@@ -56,6 +56,7 @@ export interface MigrationPlan {
   decisions: Record<string, unknown>; inputs: Record<string, string | null>; operations: PlanOperation[];
   diagnostics: Diagnostic[]; createdAt: string;
   execution?: { kind: 'deterministic' | 'agent-assisted'; source?: string; warnings: string[] };
+  gitGuardActivation?: import('./git-guard.service.js').GitGuardActivation;
 }
 export interface FileTransition { path: string; beforePath?: string; before: string | null; after: string | null }
 export interface MigrationJournal {

@@ -3,10 +3,11 @@
 <!-- mdcomposer:meta
 title: "Commit-safety hooks design"
 kind: design
-state: draft
+state: accepted
 audience: internal
 owner: repository-maintainer
 updated: 2026-11-27
+acceptance: "user:2026-11-27:execute-idea-and-guard-designs"
 -->
 
 Source: [Idea 001](commit-safety-hooks.recon.md), requested after Stavel committed and pushed directly to main despite the task-branch rule. The owner requested DESIGN, not implementation. The selected mechanism below is proposed technical direction; it does not claim hooks are already installed.
@@ -55,3 +56,7 @@ Doctor reports policy state, ownership/integrity, active path and missing runtim
 | Distribution and configuration | Relocated/offline bundle works on Windows/Linux, uses mapped policy, retains old pins and supports explicit disable/upgrade. |
 
 Each new/changed service has colocated behavioral tests. Hook tests must invoke actual Git processes; unit tests of a branch-name function alone cannot prove prevention. No hooks or Git configuration were changed during this DESIGN pass. Next: select the design, then PLAN coherent implementation and verification slices.
+
+## Execution selection
+
+The owner subsequently selected this design through the explicit 2026-11-27 EXECUTE instruction. Earlier unimplemented/DESIGN-only statements describe that original baseline, not current execution status. Actual results belong to the execution packet and capability status record.

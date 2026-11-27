@@ -1,0 +1,5 @@
+#!/bin/sh
+# Stavel-owned guard adapter; do not bypass a refusal.
+command -v node >/dev/null 2>&1 || { printf '%s\n' 'Stavel refused: Node runtime is missing; restore Node before Git actions.' >&2; exit 1; }
+hook_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd) || exit 1
+exec node "$hook_dir/stavel.git-hook.cjs" pre-push "$@"

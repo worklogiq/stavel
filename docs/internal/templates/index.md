@@ -21,6 +21,7 @@ Copy the sections that clarify the task, then remove unused guidance. Do not cre
 | [Design](design/design.template.md) | Data flow, boundaries, alternatives, compatibility |
 | [Decision](design/decision.template.md) | Accept or supersede a meaningful choice |
 | [Recon](execution/recon.template.md) | Evidence-backed map before changing an existing system |
+| [Idea capture](execution/idea.template.md) | Preserve a quick thought and register it without a design packet |
 | [Plan](execution/execution-plan.template.md) | Sequence multiple reviewable slices |
 | [Slice](execution/execution-slice.template.md) | Execute a small change with explicit acceptance |
 | [Test plan](design/test-plan.template.md) | Coordinate verification across boundaries |

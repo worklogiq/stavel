@@ -15,6 +15,8 @@ Start at the [development index]({{INDEX_PATH}}), [constitution]({{CONSTITUTION_
 
 These instructions govern development sessions, not workers inside the application unless explicitly integrated. Respect current user instructions and authorization. Modes and profiles do not grant external permissions.
 
+Respect the selected protected-branch and review policy. General commit/push authorization is not an exception for a protected branch. Never bypass a Git-guard refusal with --no-verify, alternate hooks configuration or another Git invocation.
+
 For bootstrap, adoption or migration, inspect first and use native Q&A when available or grouped numbered questions otherwise. Gather applicable answers and align the complete configuration before generating target files. Existing explicit instructions count as answers. Preserve existing instruction files and canonical owners; merge routing deliberately.
 
 Choose discovery, experiment, design, strict implementation or review for the actual task. Preserve accepted behavior and required mechanisms. Surface material ambiguity and discrepancies; make routine reversible implementation choices autonomously within the contract. Do not weaken requirements or tests to hide omissions.

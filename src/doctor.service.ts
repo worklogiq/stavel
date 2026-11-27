@@ -10,16 +10,25 @@ import { readWork, planWorkMigration, workOptionsForConfiguration } from './work
 import { suggestArtifactOwners } from './artifact.service.js';
 import { documentFilename } from './naming.service.js';
 import { recommendTestingLayout } from './testing.service.js';
+import { initializationReadiness, type InitializationReadiness } from './initialization.service.js';
+import { augmentGitGuardPlan } from './git-guard.service.js';
 
 export interface Finding { id: string; state: 'passed' | 'failed' | 'skipped' | 'unavailable' | 'review-required'; severity: 'error' | 'warning' | 'info'; path?: string; message: string; evidence: string[]; repairable?: boolean }
-export interface DoctorReport { root: string; state: 'failed' | 'review-required'; mechanicalPassed: boolean; readyForClosure: false; findings: Finding[]; repairable: string[]; inputs: Record<string, string | null>; workRegistryFile?: string; scope?: string }
-export async function diagnoseRepository(options: { root: string; sourceRoot?: string; scope?: string }): Promise<DoctorReport> {
+export interface DoctorReport { root: string; state: 'failed' | 'review-required'; mechanicalPassed: boolean; readyForClosure: false; findings: Finding[]; repairable: string[]; inputs: Record<string, string | null>; workRegistryFile?: string; scope?: string; initialization?: InitializationReadiness }
+export async function diagnoseRepository(options: { root: string; sourceRoot?: string; scope?: string; guardBundlePath?: string }): Promise<DoctorReport> {
   const root = targetRoot(options.root), findings: Finding[] = [];
   let inputs: Record<string, string | null> = {};
   let workRegistryFile: string | undefined;
+  let initialization: InitializationReadiness | undefined;
   try {
     const distribution = locateDistribution(options.sourceRoot);
     const resolved = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution), scope: options.scope });
+    initialization = initializationReadiness({ root, sourceRoot: options.sourceRoot, guardBundlePath: options.guardBundlePath });
+    Object.assign(inputs, initialization.inputs);
+    const guards = initialization.guards;
+    if (guards) {
+      findings.push({ id: 'git-guards', state: ['not-selected', 'disabled', 'ready'].includes(guards.state) ? 'passed' : guards.state === 'incomplete' ? 'failed' : 'unavailable', severity: ['not-selected', 'disabled', 'ready'].includes(guards.state) ? 'info' : 'error', message: `Git protection is ${guards.state}; activation is ${guards.active ? 'active' : 'inactive'}. ${guards.issues.map(issue => issue.message).join(' ')}`.trim(), evidence: [`policy: ${guards.policy.state}`, `hooksPath: ${guards.policy.hooksPath}`, `Git: ${guards.git.state}`, ...guards.assets.map(asset => `${asset.path}: ${asset.currentHash === asset.expectedHash ? 'verified' : asset.currentHash === null ? 'missing' : 'modified'}`)], repairable: guards.repairable });
+    }
     for (const owner of resolved.owners.filter(owner => owner.role === 'product')) {
       const overview = owner.canonical?.['artifact.product-overview'] ?? `${owner.path}/${documentFilename('product', 'overview', resolved.config.documentation?.naming ?? { shape: 'typed', identifierCase: 'kebab' })}`;
       const hash = fileHash(root, overview); inputs[overview] = hash;
@@ -45,7 +54,7 @@ export async function diagnoseRepository(options: { root: string; sourceRoot?: s
     for (const note of result.notes) findings.push({ id: `review:${findings.length}`, state: 'review-required', severity: 'info', message: note, evidence: ['checkRepository observation'] });
     const manifest = loadManifest(root);
     inputs['.stavel.json'] = fileHash(root, '.stavel.json');
-    if (!manifest) findings.push({ id: 'adoption', state: 'unavailable', severity: 'warning', message: 'No installed framework manifest. Use guided init to align adoption before repair.', evidence: ['.stavel.json absent'] });
+    if (!manifest) findings.push(initialization.state === 'ready' || initialization.documentsReady ? { id: 'adoption', state: 'passed', severity: 'info', message: 'Validated manual/source adoption uses its selected configuration and owner documents; no installer registration is required.', evidence: ['.stavel.json absent', `selected adoption: ${initialization.adoption}`] } : { id: 'adoption', state: 'unavailable', severity: 'warning', message: 'Setup is incomplete; inspect the selected component gaps before adoption or repair.', evidence: ['.stavel.json absent', ...initialization.gaps.map(gap => gap.id)] });
     for (const [name, expected] of Object.entries(manifest?.files as Record<string, string> ?? {})) {
       inputs[name] = fileHash(root, name);
       if (inputs[name] !== null) continue;
@@ -56,10 +65,10 @@ export async function diagnoseRepository(options: { root: string; sourceRoot?: s
     }
   } catch (error) { findings.push({ id: 'configuration-or-inspection', state: 'failed', severity: 'error', message: (error as Error).message, evidence: ['read-only diagnosis refused invalid inputs'] }); }
   findings.push({ id: 'semantic-review', state: 'review-required', severity: 'info', message: 'An agent or human must review ownership, duplicated concepts, stale reasoning and philosophy adherence. Structural success cannot establish those properties.', evidence: [] });
-  return { root, state: findings.some(item => item.state === 'failed' || item.state === 'unavailable' && item.severity === 'error') ? 'failed' : 'review-required', mechanicalPassed: !findings.some(item => (item.state === 'failed' || item.state === 'unavailable') && item.severity === 'error'), readyForClosure: false, findings, repairable: findings.filter(item => item.repairable).map(item => item.id), inputs, ...(workRegistryFile ? { workRegistryFile } : {}), ...(options.scope ? { scope: options.scope } : {}) };
+  return { root, state: findings.some(item => item.state === 'failed' || item.state === 'unavailable' && item.severity === 'error') ? 'failed' : 'review-required', mechanicalPassed: !findings.some(item => (item.state === 'failed' || item.state === 'unavailable') && item.severity === 'error'), readyForClosure: false, findings, repairable: findings.filter(item => item.repairable).map(item => item.id), inputs, ...(workRegistryFile ? { workRegistryFile } : {}), ...(options.scope ? { scope: options.scope } : {}), ...(initialization ? { initialization } : {}) };
 }
 
-export function previewRepairs(options: { root: string; sourceRoot?: string; report: DoctorReport; alignment: Alignment; kind?: 'deterministic' | 'agent-assisted'; source?: string; linkMappings?: Record<string, string>; linkFiles?: string[]; generatedBlocks?: Array<{ path: string; id: string; content: string; ownershipSource: string }> }): MigrationPlan {
+export function previewRepairs(options: { root: string; sourceRoot?: string; guardBundlePath?: string; report: DoctorReport; alignment: Alignment; kind?: 'deterministic' | 'agent-assisted'; source?: string; linkMappings?: Record<string, string>; linkFiles?: string[]; generatedBlocks?: Array<{ path: string; id: string; content: string; ownershipSource: string }> }): MigrationPlan {
   const root = targetRoot(options.root);
   if (root !== options.report.root) throw new Refused('diagnosis belongs to a different repository');
   const distribution = locateDistribution(options.sourceRoot);
@@ -67,6 +76,7 @@ export function previewRepairs(options: { root: string; sourceRoot?: string; rep
   const pending = new Map<string, { content: string | Buffer; reason: string }>();
   const manifest = loadManifest(root);
   for (const id of options.report.repairable) {
+    if (id === 'git-guards') continue;
     if (id === 'migrate-work-schema') {
       const config = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution) }).config;
       const migration = planWorkMigration(workOptionsForConfiguration(root, config));
@@ -104,5 +114,8 @@ export function previewRepairs(options: { root: string; sourceRoot?: string; rep
   // Schema migrations and accepted path rebases use their versioned planners;
   // this repair boundary never invents a schema or a semantic transformation.
   effectProvenance(options.kind, options.source);
-  return mutationPlan({ root, alignment: options.alignment, changes: [...pending].map(([path, change]) => ({ path, ...change })), inputs: options.report.inputs, kind: options.kind, source: options.source, version: distribution.version });
+  const plan = mutationPlan({ root, alignment: options.alignment, changes: [...pending].map(([path, change]) => ({ path, ...change })), inputs: options.report.inputs, kind: options.kind, source: options.source, version: distribution.version });
+  if (!options.report.repairable.includes('git-guards')) return plan;
+  const config = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution) }).config;
+  return augmentGitGuardPlan(plan, { config, sourceRoot: options.sourceRoot, bundlePath: options.guardBundlePath }).plan;
 }

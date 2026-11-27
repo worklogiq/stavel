@@ -498,6 +498,26 @@
       "source": "docs/internal/templates/execution/macro-execution.template.md",
       "target": "docs/internal/templates/execution/macro-execution.template.md",
       "role": "template"
+    },
+    {
+      "source": "docs/internal/process/prompts/idea.prompt.md",
+      "target": "docs/internal/process/prompts/idea.prompt.md",
+      "role": "mode-prompt"
+    },
+    {
+      "source": "dist/stavel.git-hook.cjs",
+      "target": ".stavel-hooks/stavel.git-hook.cjs",
+      "role": "git-hook-runtime"
+    },
+    {
+      "source": "docs/internal/dev/git-guards.guide.md",
+      "target": "docs/internal/dev/git-guards.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/templates/execution/idea.template.md",
+      "target": "docs/internal/templates/execution/idea.template.md",
+      "role": "repository-template"
     }
   ]
 }
