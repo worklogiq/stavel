@@ -7,18 +7,16 @@ import { contained, digest, fileBytes, fileHash, jsonText, Refused, relativeName
 import { rewriteMarkdownLinks } from './markdown.service.js';
 import { documentFilename, fixedFilenames, identifier, renameDocument } from './naming.service.js';
 import { parseMetadata } from '@worklogiq/mdcomposer';
+import { resolveTestingConfig } from './testing.service.js';
+import { configurationDecisionOverrides, directoryConfigurationFiles, mergeConfigurationOverrides, ownConfigurationValue, packagedConfigurationDefinitions, resolveRepositoryConfiguration, type ConfigurationAmendment } from './configuration.service.js';
+import { AI_EFFECT_WARNING } from './effects.service.js';
 
 export const DEFAULT_ENTRYPOINTS = { index: 'docs/internal/index.md', constitution: 'docs/internal/process/development-constitution.policy.md', profile: 'docs/internal/dev/project-profile.overview.md' };
 const styleCases: Record<string, 'camel' | 'snake' | 'kebab' | 'pascal'> = { camelCase: 'camel', snake_case: 'snake', 'kebab-case': 'kebab', PascalCase: 'pascal' };
 
 export function configurationForAnswers(base: FrameworkConfig, answers: AnswersDocument, decisions: Record<string, unknown>): FrameworkConfig {
-  const config = structuredClone(base);
-  if (answers.configuration) {
-    for (const [key, value] of Object.entries(answers.configuration)) {
-      if (value && typeof value === 'object' && !Array.isArray(value)) (config as Record<string, unknown>)[key] = { ...((config as Record<string, unknown>)[key] as object ?? {}), ...value };
-      else (config as Record<string, unknown>)[key] = value;
-    }
-  }
+  const selectedConfiguration = configurationDecisionOverrides(decisions);
+  const config = mergeConfigurationOverrides(mergeConfigurationOverrides(base, selectedConfiguration), answers.configuration);
   config.documentation ??= {};
   config.documentation.naming ??= { shape: 'typed', identifierCase: 'kebab', generatedIdentifierCase: 'kebab' };
   if (decisions['documentation.taxonomy'] === 'mapped' && (!answers.configuration?.documentation?.roots?.length || !Object.keys(answers.ownership ?? {}).length)) throw new Refused('mapped taxonomy requires explicit configuration.documentation.roots and ownership mappings');
@@ -69,7 +67,7 @@ export function configurationForAnswers(base: FrameworkConfig, answers: AnswersD
   }
   const selectedModules = decisions['tooling.modules'];
   if (selectedModules !== undefined) config.tooling = { modules: selectedModules };
-  if (selectedModules === 'custom' && !Object.keys(answers.configuration?.rules ?? {}).length) throw new Refused('custom tooling requires explicit configuration.rules');
+  if (selectedModules === 'custom' && !Object.keys({ ...selectedConfiguration.rules, ...answers.configuration?.rules }).length) throw new Refused('custom tooling requires explicit configuration.rules');
   if (selectedModules === 'markdown-and-javascript-typescript') {
     config.rules ??= {};
     config.rules['source-naming'] = { enabled: true, severity: 'error', ...(config.rules['source-naming'] as object ?? {}) };
@@ -77,13 +75,29 @@ export function configurationForAnswers(base: FrameworkConfig, answers: AnswersD
     config.rules['file-length'] = { enabled: true, severity: 'warning', maxLines: config.source.maxLines ?? 500, ...(config.rules['file-length'] as object ?? {}) };
     (config.rules['file-length'] as Record<string, unknown>).enabled = true;
     for (const id of ['api-client-usage', 'api-error-codes', 'frontend-i18n-copy', 'frontend-error-surfaces']) {
-      const rule = answers.configuration?.rules?.[id] as Record<string, unknown> | undefined;
-      if (!rule || typeof rule.enabled !== 'boolean') throw new Refused(`selected JavaScript/TypeScript tooling requires an explicit ${id} configuration or disabled reason`);
+      const supplied = ownConfigurationValue(answers.configuration, `rules.${id}`).present || ownConfigurationValue(selectedConfiguration, `rules.${id}`).present;
+      const rule = config.rules[id] as Record<string, unknown> | undefined;
+      if (!supplied || !rule || typeof rule.enabled !== 'boolean') throw new Refused(`selected JavaScript/TypeScript tooling requires an explicit ${id} configuration or disabled reason`);
       if (rule.enabled && (!Array.isArray(rule.roots) || !rule.roots.length || id === 'api-client-usage' && (typeof rule.apiClientModule !== 'string' || !rule.apiClientModule.trim()))) throw new Refused(`${id} needs explicit applicable roots${id === 'api-client-usage' ? ' and an accepted API client module' : ''}`);
       if (!rule.enabled && (typeof rule.reason !== 'string' || !rule.reason.trim())) throw new Refused(`disabled ${id} needs an explicit applicability reason`);
       for (const scope of rule.roots as string[] ?? []) relativeName(scope);
       config.rules[id] = rule;
     }
+  }
+  config.testing = resolveTestingConfig(config.testing, decisions['verification.testPlacement'], decisions['verification.testLayout']);
+  const selectedStories = decisions['workflow.stories.generation'];
+  const selectedTemplate = decisions['workflow.stories.template'];
+  if (config.workflow?.stories || selectedStories !== undefined || selectedTemplate !== undefined) {
+    const supplied = config.workflow?.stories;
+    if (supplied !== undefined && (!supplied || typeof supplied !== 'object' || Array.isArray(supplied))) throw new Refused('workflow.stories must be an object');
+    const stories = { generation: 'ask', template: 'docs/internal/templates/design/story.template.md', ...base.workflow?.stories, ...supplied };
+    if (selectedStories !== undefined && selectedStories !== 'profile-default') stories.generation = String(selectedStories) as typeof stories.generation;
+    if (selectedTemplate !== undefined) stories.template = String(selectedTemplate);
+    const generation = stories.generation;
+    if (Object.keys(stories).some(key => !['generation', 'template'].includes(key)) || generation !== 'ask' && generation !== 'always' && generation !== 'never') throw new Refused('workflow.stories requires generation ask, always or never and a template path');
+    if (typeof stories.template !== 'string' || !stories.template.endsWith('.md')) throw new Refused('workflow.stories.template must name a repository-relative Markdown template');
+    stories.template = relativeName(stories.template);
+    config.workflow = { ...config.workflow, stories: { generation, template: stories.template } };
   }
   return config;
 }
@@ -211,7 +225,7 @@ function migrationMappings(files: string[], answers: AnswersDocument, naming: Na
   return mapping;
 }
 
-export function createPlan(options: CreatePlanOptions): MigrationPlan {
+export function createPlan(options: CreatePlanOptions & { configurationHome?: 'root' | 'directory'; scope?: string; taskAmendments?: ConfigurationAmendment[] }): MigrationPlan {
   const root = targetRoot(options.root);
   if (!options.name?.trim() || /[\x00-\x1f]/.test(options.name)) throw new Refused('project name must be nonempty and contain no control characters');
   const track = options.track ?? 'existing';
@@ -226,22 +240,36 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
   const expanded = expandAnswers(options.answers) as AnswersDocument;
   const normalizedAnswers: AnswersDocument = { ...expanded, answers: { ...expanded.answers, 'project.name': expanded.answers['project.name'] ?? options.name, 'workflow.mode': expanded.answers['workflow.mode'] ?? mode } };
   const distribution = locateDistribution(options.sourceRoot);
+  if (options.upgradeBaseline && mode !== 'migrate') throw new Refused('baseline upgrade requires an aligned mode migrate plan');
+  const resolved = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution), scope: options.scope, taskAmendments: options.taskAmendments, upgradeBaseline: options.upgradeBaseline });
+  if (options.scope || options.taskAmendments?.length) throw new Refused('adoption plans persist repository policy only; task/scope amendments are read-only inputs for their workflow, not standing configuration writes');
+  if (options.configurationHome !== undefined && !['root', 'directory'].includes(options.configurationHome)) throw new Refused('configurationHome must be root or directory');
+  if (resolved.kind === 'configured-directory' && options.configurationHome === 'root') throw new Refused('directory-to-root configuration downgrade requires a separate explicit migration');
+  const configurationHome = options.configurationHome ?? (resolved.kind === 'configured-directory' ? 'directory' : 'root');
+  if (resolved.kind === 'legacy-root' && configurationHome === 'directory' && mode !== 'migrate') throw new Refused('root configuration retirement requires mode migrate with aligned decisions');
   const decisions = alignedDecisions({ ...options, root, track, answers: normalizedAnswers });
   decisions['project.name'] = options.name;
   decisions['workflow.mode'] = mode;
   const projectOwner = String(decisions['project.owner'] ?? 'project-maintainer');
-  const config = configurationForAnswers(distribution.config, normalizedAnswers, decisions);
-  const frameworkRoot = options.frameworkPath ?? (normalizedAnswers.configuration?.documentation?.roots || decisions['documentation.taxonomy'] === 'mapped' ? config.documentation?.roots?.[0] : undefined);
+  const persistedDecisions = new Map(resolved.decisions.filter(record => record.scope === 'repository').map(record => [record.id, record]));
+  const configurationDecisions = options.upgradeBaseline ? Object.fromEntries(Object.entries(decisions).filter(([id]) => Object.hasOwn(options.answers.answers, id) || persistedDecisions.has(id) && persistedDecisions.get(id)!.origin !== 'profile-default')) : decisions;
+  const config = configurationForAnswers(resolved.config, normalizedAnswers, configurationDecisions);
+  const frameworkRoot = options.frameworkPath ?? (normalizedAnswers.configuration?.documentation?.roots || decisions['documentation.taxonomy'] === 'mapped' || resolved.kind !== 'absent' ? config.documentation?.roots?.[0] : undefined);
   if (frameworkRoot) {
     relativeName(frameworkRoot);
     config.documentation!.roots = (config.documentation?.roots ?? ['docs/internal', 'docs/public']).map(name => name === 'docs/internal' || name.startsWith('docs/internal/') ? `${frameworkRoot}${name.slice('docs/internal'.length)}` : name);
     const owners = config.documentation?.ownershipRoots as Record<string, string> | undefined;
     if (owners) config.documentation!.ownershipRoots = Object.fromEntries(Object.entries(owners).map(([role, name]) => [role, name === 'docs/internal' || name.startsWith('docs/internal/') ? `${frameworkRoot}${name.slice('docs/internal'.length)}` : name]));
+    const defaultOwnerPaths = new Set((distribution.config.documentation?.owners as Array<{ path: string }> | undefined ?? []).map(owner => owner.path));
+    if (!normalizedAnswers.configuration?.documentation?.owners && Array.isArray(config.documentation?.owners)) config.documentation.owners = config.documentation.owners.map(owner => {
+      const record = owner as Record<string, unknown>; const name = String(record.path);
+      return defaultOwnerPaths.has(name) && (name === 'docs/internal' || name.startsWith('docs/internal/')) ? { ...record, path: `${frameworkRoot}${name.slice('docs/internal'.length)}` } : record;
+    });
     if (config.documentation?.archive && typeof config.documentation.archive.root === 'string' && config.documentation.archive.root.startsWith('docs/internal/')) config.documentation.archive.root = `${frameworkRoot}${config.documentation.archive.root.slice('docs/internal'.length)}`;
   }
   const naming = config.documentation?.naming ?? { shape: 'typed', identifierCase: 'kebab' };
   const inspection = inspectRepository({ root, track });
-  const inputs: Record<string, string | null> = Object.fromEntries(inspection.files.map(file => [file.path, file.hash]));
+  const inputs: Record<string, string | null> = { ...Object.fromEntries(inspection.files.map(file => [file.path, file.hash])), ...resolved.inputs };
   const desired = new Map<string, Buffer>();
   const reasons = new Map<string, string>();
   const origins: Record<string, string> = {};
@@ -255,21 +283,27 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
     reasons.set(to, 'approved taxonomy migration preserving the original document');
   }
   const catalogMapping: Record<string, string> = {};
+  const repositoryTemplates = new Set<string>();
+  const preservedTemplates = new Set<string>();
   for (const asset of distribution.catalog.assets) {
     const destination = remapAsset(asset.target, frameworkRoot, config);
     const filename = path.posix.basename(destination);
     const typedDestination = destination.endsWith('.md') && !fixedFilenames.has(filename) ? renameDocument(destination, naming, config.documentation?.kinds ?? []) : destination;
     catalogMapping[asset.source] = typedDestination;
+    if (asset.role === 'repository-template') repositoryTemplates.add(typedDestination);
     const bytes = fileBytes(distribution.root, asset.source);
     if (!bytes) throw new Refused(`missing source asset: ${asset.source}`);
     const existing = fileBytes(root, typedDestination);
     if (desired.has(typedDestination)) continue;
-    if (existing && mode === 'migrate') { desired.set(typedDestination, existing); reasons.set(typedDestination, 'preserve existing accepted document content'); }
+    if (existing && asset.role === 'repository-template') {
+      desired.set(typedDestination, existing); preservedTemplates.add(typedDestination); reasons.set(typedDestination, 'preserve repository-owned template customization');
+    }
+    else if (existing && mode === 'migrate') { desired.set(typedDestination, existing); reasons.set(typedDestination, 'preserve existing accepted document content'); }
     else { desired.set(typedDestination, bytes); reasons.set(typedDestination, `portable asset: ${asset.role}`); }
   }
   for (const asset of distribution.catalog.assets) {
     const destination = catalogMapping[asset.source];
-    if (origins[destination] || (mode === 'migrate' && fileBytes(root, destination))) continue;
+    if (preservedTemplates.has(destination) || origins[destination] || (mode === 'migrate' && fileBytes(root, destination))) continue;
     if (destination.endsWith('.md')) {
       let text = rewriteMarkdownLinks(desired.get(destination)!.toString('utf8'), asset.source, destination, catalogMapping);
       if (decisions['documentation.audiences'] === 'internal') text = setAudience(text, 'internal');
@@ -305,8 +339,32 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
     desired.set(contextName, Buffer.from(contextDocument(options.name, track, normalizedAnswers, decisions, contextName, mapping)));
     reasons.set(contextName, 'bounded historical context with observations distinguished from acceptance');
   }
-  desired.set('stavel.config.json', Buffer.from(jsonText(config)));
-  reasons.set('stavel.config.json', 'selected project configuration');
+  if (config.workflow?.stories) {
+    const stories = config.workflow.stories;
+    stories.template = catalogMapping[stories.template] ?? stories.template;
+    if (!desired.has(stories.template) && !fileBytes(root, stories.template)) throw new Refused(`configured story template is missing: ${stories.template}`);
+  }
+  if (configurationHome === 'directory') {
+    const naming = config.documentation?.naming;
+    const namingStyle = naming?.shape === 'typed' ? 'typed' : Object.entries(styleCases).find(([, value]) => value === naming?.identifierCase)?.[0];
+    const effectiveDefaults: Record<string, unknown> = { 'documentation.naming.style': namingStyle, 'documentation.naming.identifierCase': naming?.identifierCase, 'documentation.naming.generatedIdentifierCase': naming?.generatedIdentifierCase, 'source.naming.identifierCase': (config.source?.naming as Record<string, unknown> | undefined)?.identifierCase, 'source.languages': config.source?.languages, 'source.scopes': config.source?.scopes };
+    if (options.upgradeBaseline) {
+      for (const [id, value] of Object.entries(effectiveDefaults)) if (Object.hasOwn(decisions, id) && value !== undefined && !Object.hasOwn(options.answers.answers, id) && (!persistedDecisions.has(id) || persistedDecisions.get(id)!.origin === 'profile-default')) decisions[id] = value;
+      config.source = { ...config.source, decisions: Object.fromEntries(Object.entries(decisions).filter(([id]) => id.startsWith('source.'))) };
+    }
+    const records = Object.entries(decisions).map(([id, value]) => {
+      const prior = persistedDecisions.get(id); const property = id.startsWith('configuration.') ? ownConfigurationValue(normalizedAnswers.configuration, id.slice('configuration.'.length)) : { present: false };
+      const explicit = Object.hasOwn(options.answers.answers, id) || property.present;
+      return { id, value, scope: 'repository', source: explicit || prior && jsonText(prior.value) !== jsonText(value) || options.upgradeBaseline && prior?.origin === 'profile-default' ? normalizedAnswers.alignment.instruction : prior?.source ?? normalizedAnswers.alignment.instruction, status: 'accepted' as const, origin: explicit ? 'explicit-answer' : prior?.origin ?? (prior ? 'accepted-policy' : 'profile-default'), ...(property.present ? { declared: structuredClone(property.value) } : {}) };
+    });
+    const combined = new Map(resolved.decisions.map(record => [`${record.scope}:${record.id}`, record]));
+    for (const record of records) combined.set(`repository:${record.id}`, record);
+    const files = directoryConfigurationFiles({ config, baseline: resolved.baselineProfile, decisions: [...combined.values()], previous: resolved, explicit: normalizedAnswers.configuration });
+    for (const [name, bytes] of Object.entries(files)) { desired.set(name, bytes); reasons.set(name, 'aligned committed configuration with pinned baseline'); }
+  } else {
+    desired.set('stavel.config.json', Buffer.from(jsonText(config)));
+    reasons.set('stavel.config.json', 'selected project configuration');
+  }
   const license = fileBytes(distribution.root, 'LICENSE');
   if (!license) throw new Refused('upstream license is missing');
   const licenseName = `${path.posix.dirname(entrypoints.index)}/LICENSE`;
@@ -336,13 +394,17 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
   }
   validateDestinations([...desired.keys()]);
   const installedFiles: Record<string, string> = {};
-  for (const [name, content] of desired) installedFiles[name] = digest(content);
+  for (const [name, content] of desired) if (!repositoryTemplates.has(name)) installedFiles[name] = digest(content);
   const previousFiles = priorManifest?.files as Record<string, string> | undefined;
-  for (const [name, hash] of Object.entries(previousFiles ?? {})) if (!mapping[name] && fileBytes(root, name) && !installedFiles[name]) installedFiles[name] = hash;
+  for (const [name, hash] of Object.entries(previousFiles ?? {})) if (!(configurationHome === 'directory' && name === 'stavel.config.json') && !repositoryTemplates.has(name) && !mapping[name] && fileBytes(root, name) && !installedFiles[name]) installedFiles[name] = hash;
+  const generatedBlocks = priorManifest?.generatedBlocks;
+  const routingHash = generatedBlocks && typeof generatedBlocks === 'object' && !Array.isArray(generatedBlocks) ? (generatedBlocks as Record<string, unknown>)['AGENTS.md#routing'] : undefined;
+  const routingBlocks = agentsExisting?.toString('utf8').match(/<!-- stavel:generated routing -->[\s\S]*?<!-- \/stavel:generated routing -->/g) ?? [];
+  const preserveRouting = entrypoint === 'stavel-agents.policy.md' && priorManifest?.entrypoint === entrypoint && priorManifest.integration_at_install === 'owned-routing-block' && routingBlocks.length === 1 && typeof routingHash === 'string' && digest(routingBlocks[0]) === routingHash;
   const manifest = {
     product: 'stavel', format: 2, framework_version: distribution.version, profile_version: `${config.id ?? 'default'}@${config.version ?? 1}`,
     framework_path: path.posix.dirname(entrypoints.index), project_name: options.name, track, entrypoint,
-    integration_at_install: entrypoint === 'AGENTS.md' ? 'direct' : 'pending', entrypoints,
+    integration_at_install: entrypoint === 'AGENTS.md' ? 'direct' : preserveRouting ? 'owned-routing-block' : 'pending', ...(preserveRouting ? { generatedBlocks } : {}), entrypoints,
     alignment: options.answers.alignment, decisions, files: installedFiles,
   };
   desired.set('.stavel.json', Buffer.from(jsonText(manifest))); reasons.set('.stavel.json', 'versioned adoption record and installed hashes');
@@ -357,6 +419,7 @@ export function createPlan(options: CreatePlanOptions): MigrationPlan {
     operations.push({ id: `op-${operations.length + 1}`, kind, path: name, ...(from ? { from } : {}), beforeHash: before, afterHash: digest(content), content: content.toString('base64'), encoding: 'base64', reason: reasons.get(name) ?? 'selected framework adoption' });
     if (!(name in inputs)) inputs[name] = previous ? digest(previous) : null;
   }
+  if (configurationHome === 'directory' && resolved.kind === 'legacy-root') operations.push({ id: `op-${operations.length + 1}`, kind: 'delete', path: 'stavel.config.json', beforeHash: inputs['stavel.config.json'], afterHash: null, reason: 'explicit migration retires the legacy configuration authority' });
   const plan: MigrationPlan = {
     product: 'stavel', schemaVersion: 2, id: '', root, frameworkVersion: distribution.version, profileVersion: manifest.profile_version,
     mode, track, projectName: options.name, alignment: options.answers.alignment, decisions, inputs, operations,
@@ -372,6 +435,11 @@ export function validatePlan(plan: MigrationPlan): void {
   if (!plan || plan.product !== 'stavel') throw new Refused('unsupported plan product; Stavel accepts only plans generated for Stavel. Legacy plans and journals are not supported.');
   if (!plan || plan.schemaVersion !== 2 || !Array.isArray(plan.operations) || !plan.inputs || typeof plan.inputs !== 'object') throw new Refused('unsupported migration plan; expected schemaVersion 2');
   if (plan.id !== planDigest(plan)) throw new Refused('plan checksum does not match; regenerate the plan rather than editing serialized operations');
+  if (plan.execution !== undefined) {
+    const execution = plan.execution;
+    if (!execution || typeof execution !== 'object' || Array.isArray(execution) || Object.keys(execution).some(key => !['kind', 'source', 'warnings'].includes(key)) || !['deterministic', 'agent-assisted'].includes(execution.kind) || !Array.isArray(execution.warnings) || execution.warnings.some(warning => typeof warning !== 'string' || !warning.trim())) throw new Refused('invalid plan execution provenance');
+    if (execution.kind === 'agent-assisted' && (typeof execution.source !== 'string' || !execution.source.trim() || !execution.warnings.includes(AI_EFFECT_WARNING))) throw new Refused('AI-assisted migration or repair requires its source and nondeterministic judgment warning');
+  }
   if (plan.alignment?.confirmed !== true || typeof plan.alignment.instruction !== 'string' || !plan.alignment.instruction.trim()) throw new Refused('plan lacks aligned user decisions');
   targetRoot(plan.root);
   validateDestinations(plan.operations.filter(operation => operation.kind !== 'delete').map(operation => operation.path));

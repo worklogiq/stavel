@@ -1,0 +1,13 @@
+{
+  "capabilities": [
+    {
+      "id": "skill",
+      "statusFile": "product/capabilities/skill/skill.status.json"
+    },
+    {
+      "id": "cli",
+      "statusFile": "product/capabilities/cli/cli.status.json"
+    }
+  ],
+  "schemaVersion": 2
+}

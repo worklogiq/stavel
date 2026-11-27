@@ -22,3 +22,5 @@ Choose discovery, experiment, design, strict implementation or review for the ac
 Follow selected documentation and source naming independently, required filename exceptions, actual test/build commands, archive rules and evidence expectations in the profile. Recognize repeated corrections or failures and suggest existing or minimal tooling when useful. Keep checks proportional and distinguish structural validation from semantic evidence.
 
 Finish substantial work with actual implementation and verification evidence, deviations, open decisions and a durable next step. Canonical docs evolve with authorized behavior changes; preserve historical reasoning and superseded decisions.
+
+At startup use the committed .stavel-config entrypoint or supported root configuration before assuming defaults. Read the effective configuration and actual owner records. For migrations/repairs, disclose AI-authored nondeterministic transformations before changes and in evidence. Follow the selected commit convention; the default is conventional commits. These choices do not authorize Git operations.

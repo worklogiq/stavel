@@ -1,0 +1,45 @@
+{
+  "capabilityId": "cli",
+  "items": [
+    {
+      "blockers": [],
+      "history": [
+        {
+          "at": "2026-11-27T10:49:31.769Z",
+          "changes": {
+            "blockers": [],
+            "id": "repeat-initialization",
+            "implementationStatus": "not-started",
+            "mode": "EXPLORE",
+            "nextAction": "Align manual-adoption recognition and partial/damaged setup behavior, then prepare a bounded design.",
+            "phase": "exploration",
+            "record": "initialization/repeat-initialization.recon.md",
+            "status": "active",
+            "title": "Repeat initialization and setup recognition"
+          },
+          "operation": "create"
+        },
+        {
+          "at": "2026-11-27T10:51:49.548Z",
+          "changes": {
+            "blockers": [],
+            "nextAction": "Prepare a bounded DESIGN for shared setup recognition and repeat/session behavior using the two accepted product decisions."
+          },
+          "operation": "update"
+        }
+      ],
+      "id": "repeat-initialization",
+      "implementationStatus": "not-started",
+      "mode": "EXPLORE",
+      "nextAction": "Prepare a bounded DESIGN for shared setup recognition and repeat/session behavior using the two accepted product decisions.",
+      "phase": "exploration",
+      "record": "initialization/repeat-initialization.recon.md",
+      "status": "active",
+      "title": "Repeat initialization and setup recognition"
+    }
+  ],
+  "owner": "repository-maintainer",
+  "schemaVersion": 2,
+  "title": "CLI",
+  "updated": "2026-11-27T10:51:49.548Z"
+}

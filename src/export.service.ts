@@ -11,6 +11,8 @@ export function exportSkill(options: { output: string; sourceRoot?: string; dryR
   const output = targetRoot(options.output);
   const skillDirectory = distribution.catalog.skill?.source ?? 'skills/stavel';
   if (!fs.existsSync(contained(source, skillDirectory))) throw new Refused('export from the source package so skill metadata and provenance have one owner');
+  const skillEntrypoint = fileBytes(source, `${skillDirectory}/SKILL.md`);
+  if (!skillEntrypoint?.toString('utf8').trim()) throw new Refused(`required skill entrypoint is missing or empty: ${skillDirectory}/SKILL.md`);
   const files = new Map<string, Buffer>();
   const catalog: AssetCatalog = structuredClone(distribution.catalog);
   const mapping: Record<string, string> = {};

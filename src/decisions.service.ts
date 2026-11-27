@@ -4,6 +4,8 @@ import { execFileSync } from 'node:child_process';
 import type { AnswerRecord, AnswersDocument, Inspection, Question, QuestionsResult, Track } from './framework.types.js';
 import { contained, digest, fileBytes, readJson, Refused, targetRoot, walkFiles } from './filesystem.service.js';
 import { locateDistribution } from './distribution.service.js';
+import { inspectTestLayout } from './testing.service.js';
+import { mergeConfigurationOverrides, ownConfigurationValue, packagedConfigurationDefinitions, resolveRepositoryConfiguration, type ConfigurationAmendment, type ResolvedRepositoryConfiguration } from './configuration.service.js';
 
 export function loadManifest(root: string): Record<string, unknown> | null {
   const previousNames = ['.constitutional-dev.json', 'constitutional-dev.config.json', '.constitutional-dev', 'constitutional-dev-agents.policy.md', 'AGENTS.constitutional-dev.md'];
@@ -22,9 +24,11 @@ export function loadManifest(root: string): Record<string, unknown> | null {
   return value;
 }
 
-export function inspectRepository(options: { root: string; track?: Track }): Inspection {
+export function inspectRepository(options: { root: string; track?: Track; sourceRoot?: string; scope?: string }): Inspection & { configuration: ResolvedRepositoryConfiguration } {
   const root = targetRoot(options.root);
   const manifest = loadManifest(root);
+  const distribution = locateDistribution(options.sourceRoot);
+  const configuration = resolveRepositoryConfiguration({ root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution), scope: options.scope });
   const names = walkFiles(root);
   const files = names.map(name => { const bytes = fileBytes(root, name)!; return { path: name, hash: digest(bytes), size: bytes.length }; });
   const languages = new Set<string>();
@@ -32,9 +36,13 @@ export function inspectRepository(options: { root: string; track?: Track }): Ins
   for (const name of names) { const language = languageExtensions[path.extname(name)]; if (language) languages.add(language); }
   const packageFile = fileBytes(root, 'package.json');
   let packageScripts: Record<string, string> = {};
-  if (packageFile) { try { packageScripts = (JSON.parse(packageFile.toString('utf8')) as { scripts?: Record<string, string> }).scripts ?? {}; } catch { /* The inspection reports package parse trouble without executing code. */ } }
+  const packageNotes: string[] = [];
+  if (packageFile) {
+    try { packageScripts = (JSON.parse(packageFile.toString('utf8')) as { scripts?: Record<string, string> }).scripts ?? {}; }
+    catch (error) { packageNotes.push(`package.json: could not inspect package metadata: ${error instanceof Error ? error.message : String(error)}`); }
+  }
   const instructionFiles = names.filter(name => /(?:^|\/)(?:AGENTS|CLAUDE|GEMINI)\.md$/.test(name));
-  const documentRoots = ['docs/internal', 'docs/public', 'docs/development', 'framework', 'docs'].filter(name => fs.existsSync(contained(root, name)));
+  const documentRoots = [...new Set([...(configuration.config.documentation?.roots ?? []), 'docs/internal', 'docs/public', 'docs/development', 'framework', 'docs'])].filter(name => fs.existsSync(contained(root, name)));
   const historySources = names.filter(name => /(?:decisions|_archive|archive|recon|history|changelog|CHANGELOG)/.test(name) && /\.(?:md|json)$/.test(name));
   const gitHistory: NonNullable<Inspection['gitHistory']> = { entries: [], limit: 20, note: 'Git history unavailable or this target is not a repository. No Git mutations are performed.' };
   if (fs.existsSync(root)) {
@@ -48,7 +56,8 @@ export function inspectRepository(options: { root: string; track?: Track }): Ins
       }
     } catch { /* Missing Git, an unborn branch, or inaccessible history is reported as unavailable evidence. */ }
   }
-  return { schemaVersion: 1, root, exists: fs.existsSync(root), files, instructionFiles, documentRoots, languages: [...languages].sort(), packageScripts, manifest, historySources, gitHistory, notes: ['Observed code and history are evidence, not acceptance. No target code, Git mutations, or network operations were executed.'] };
+  const testLayout = inspectTestLayout(names);
+  return { schemaVersion: 1, root, exists: fs.existsSync(root), files, instructionFiles, documentRoots, languages: [...languages].sort(), packageScripts, manifest, historySources, gitHistory, testLayout, configuration, notes: ['Observed code and history are evidence, not acceptance. No target code, Git mutations, or network operations were executed.', `Test placement evidence: ${testLayout.layout}; ${testLayout.colocated.length} colocated, ${testLayout.separate.length} separate, ${testLayout.unclassified.length} unclassified. Reuse accepted policy; observations do not accept a layout or move tests.`, ...packageNotes] };
 }
 
 function answerValue(answer: unknown): unknown {
@@ -72,7 +81,8 @@ function applicability(question: Question, inspection: Inspection, answers: Reco
     if (typeof rule.capability === 'string') {
       const patterns: Record<string, RegExp> = { api: /(?:^|\/)(?:apis?|routes?|controllers?|openapi)(?:\/|\.)/i, persistence: /(?:migration|schema\.prisma|database|postgres|sqlite)/i, 'human-interface': /\.(?:tsx|jsx|vue|svelte|html)$|(?:^|\/)ui\//i, runtime: /\.(?:ts|js|py|java|go|rs|cs)$/i, deployment: /(?:dockerfile|terraform|deploy|\.github\/workflows)/i, 'external-integrations': /(?:integrations?|providers?|adapters?)\//i };
       const pattern = patterns[rule.capability];
-      return pattern ? inspection.files.some(file => pattern.test(file.path)) || Object.entries(answers).some(([key, value]) => key.includes('capabilities') && JSON.stringify(answerValue(value)).includes(String(rule.capability))) : true;
+      const managed = inspection.manifest?.files as Record<string, unknown> | undefined;
+      return pattern ? inspection.files.some(file => !Object.hasOwn(managed ?? {}, file.path) && pattern.test(file.path)) || Object.entries(answers).some(([key, value]) => key.includes('capabilities') && JSON.stringify(answerValue(value)).includes(String(rule.capability))) : true;
     }
     return true;
   }
@@ -123,14 +133,26 @@ export function expandAnswers(document: Partial<AnswersDocument>): Partial<Answe
   return expanded;
 }
 
-export function getQuestions(options: { root: string; track?: Track; answers?: Partial<AnswersDocument>; sourceRoot?: string }): QuestionsResult {
+export function getQuestions(options: { root: string; track?: Track; answers?: Partial<AnswersDocument>; sourceRoot?: string; scope?: string; taskAmendments?: ConfigurationAmendment[]; upgradeBaseline?: boolean }): QuestionsResult {
   const inspection = inspectRepository(options);
   const distribution = locateDistribution(options.sourceRoot);
+  const configuration = resolveRepositoryConfiguration({ root: inspection.root, packagedBaseline: distribution.config, packagedDefinitions: packagedConfigurationDefinitions(distribution), scope: options.scope, taskAmendments: options.taskAmendments, upgradeBaseline: options.upgradeBaseline });
   const expanded = expandAnswers(options.answers ?? {});
-  const supplied = expanded.answers ?? {};
+  const suppliedConfiguration = expanded.configuration;
+  const selectedConfiguration = mergeConfigurationOverrides(configuration.config, suppliedConfiguration);
+  if (configuration.kind !== 'absent') {
+    expanded.configuration = selectedConfiguration;
+  }
+  const saved: Record<string, unknown> = {};
+  const alignment = inspection.manifest?.alignment as { confirmed?: boolean; instruction?: string } | undefined;
+  if (alignment?.confirmed === true && alignment.instruction?.trim()) Object.assign(saved, inspection.manifest?.decisions ?? {});
+  for (const decision of configuration.decisions) if (decision.status === 'accepted' && (decision.scope === 'repository' || decision.scope === options.scope)) saved[decision.id] = decision.value;
+  const supplied = { ...saved, ...expanded.answers };
   const resolved: Record<string, unknown> = {};
   const unanswered: Question[] = [];
-  for (const question of distribution.questions) {
+  for (const definition of Object.values(configuration.definitions.questions ?? {})) {
+    if (definition.questionStage === 'artifact' || definition.questionStage === undefined && typeof definition.fact === 'string' && Array.isArray(definition.requiredFor)) continue;
+    const question = definition as unknown as Question;
     if (!applicability(question, inspection, { ...supplied, ...resolved }, options.track)) continue;
     const answer = supplied[question.id];
     if (notApplicable(answer)) {
@@ -142,9 +164,12 @@ export function getQuestions(options: { root: string; track?: Track; answers?: P
     }
     const record = answer && typeof answer === 'object' ? answer as AnswerRecord : undefined;
     if (record && ['proposed-from-observation', 'unanswered', 'conflict'].includes(String(record.status))) { unanswered.push(question); continue; }
-    const candidate = answerValue(answer) ?? (expanded.useDefaults ? question.default : undefined);
+    const field = question.id.startsWith('configuration.') ? question.id.slice('configuration.'.length) : undefined;
+    const explicitField = field ? ownConfigurationValue(suppliedConfiguration, field) : { present: false };
+    const configuredField = field && (configuration.kind !== 'absent' || explicitField.present) ? ownConfigurationValue(selectedConfiguration, field) : { present: false };
+    const candidate = configuredField.present ? configuredField.value : answerValue(answer) ?? (expanded.useDefaults ? question.default : undefined);
     if (validAnswer(question, candidate)) resolved[question.id] = candidate;
-    else unanswered.push(question);
+    else unanswered.push(answer === undefined ? question : { ...question, required: true });
   }
   const requireConfiguration = (id: string, prompt: string, value: unknown, valid: boolean): void => {
     if (valid) resolved[id] = value;
@@ -172,7 +197,7 @@ export function getQuestions(options: { root: string; track?: Track; answers?: P
   return { schemaVersion: 1, questions: unanswered, unresolved: unanswered.filter(question => question.required !== false).map(question => question.id), resolved, observations: inspection.notes };
 }
 
-export function alignedDecisions(options: { root: string; track?: Track; answers: AnswersDocument; sourceRoot?: string }): Record<string, unknown> {
+export function alignedDecisions(options: { root: string; track?: Track; answers: AnswersDocument; sourceRoot?: string; upgradeBaseline?: boolean }): Record<string, unknown> {
   if (!options.answers || options.answers.alignment?.confirmed !== true || typeof options.answers.alignment.instruction !== 'string' || !options.answers.alignment.instruction.trim()) throw new Refused('generation requires an alignment record with confirmed=true and the actual user instruction reference; inspect/questions remain read-only');
   const questions = getQuestions(options);
   if (questions.unresolved.length) throw new Refused(`applicable required decisions remain unresolved: ${questions.unresolved.join(', ')}; gather all answers and alignment before generating files`);

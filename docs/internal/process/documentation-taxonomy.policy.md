@@ -6,15 +6,15 @@ kind: "policy"
 state: "accepted"
 audience: "public"
 owner: "repository-maintainer"
-updated: "2026-11-25"
+updated: "2026-11-26"
 acceptance: "user:2026-11-25:framework-v02-implementation"
 -->
 
 ## Default document homes
 
-The default profile uses docs/internal for engineering documents and docs/public for curated user documentation. Architecture contains the overview and roadmap; philosophies contain engineering policy; process contains constitution, lifecycle and prompts; dev contains contributor guides and runbooks; decisions contains local decisions. Templates are split into design and execution. Platform, modules and edge hold applicable capability owners. Create those domain homes only when they are needed.
+The default profile uses docs/internal for engineering documents and docs/public for curated user documentation. Architecture contains the overview and roadmap; philosophies contain engineering policy; process contains constitution, lifecycle and prompts; dev contains contributor guides and runbooks; decisions contains local decisions. Templates are split into design and execution. The default product home is docs/internal/product, with capabilities and contracts branches containing meaningful owners/features and shared contract topics. A product-root overview explains purpose, audience, scope and outcomes; index.md owns navigation. Platform/modules/edge and deeper groupings are optional mapped repository vocabulary, not mandatory scaffold. Create only actual owners.
 
-Each concept has one canonical product, requirements, design and contract owner. Execution plans, slices and recon live beside their owner while active. Completed delivery evidence moves under docs/internal/_archive/delivery, recon or cutover. Current docs route to current authority; history links appear under an explicit Historical context (archived) heading.
+Each concept has one canonical product, requirements, design and contract owner. Execution plans, slices and recon live beside their owner while active. A closed execution packet moves as a unit into the configured archive mirror, normally docs/internal/_archive/<owner-relative path>/execution/<packet-id>. Preserve existing historical buckets and mapped archive conventions when adopted. Current docs route to current authority; history links appear under an explicit Historical context (archived) heading.
 
 ## Naming and roles
 

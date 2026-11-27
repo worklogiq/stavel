@@ -31,4 +31,4 @@ Root instructions route to the actual index at {{INDEX_PATH}}, constitution at {
 
 ## Commands and boundaries
 
-Record real supported lint/test/build commands, source and generated artifact boundaries, external side effects, review/publication authority, required mechanisms, scoped naming and accepted exceptions. Use the framework default only where selected; preserve mapped local owners and current user authorization.
+Record real supported lint/test/build commands, source and generated artifact boundaries, external side effects, review/publication authority, required mechanisms, scoped naming, test placement/patterns/scopes and accepted exceptions. Use the framework default only where selected; preserve mapped local owners and current user authorization.

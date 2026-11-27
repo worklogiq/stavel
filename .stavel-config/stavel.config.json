@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "id": "default",
+    "path": "baseline.profile.json",
+    "sha256": "172c71ed3b25ab789d743c9e039dc2394e96a91b536f308fb034f2835298940d",
+    "version": 1
+  },
+  "schemaVersion": 1,
+  "topics": {
+    "decisions": "decisions.config.json",
+    "taxonomy": "taxonomy.config.json",
+    "tooling": "tooling.config.json",
+    "workflow": "workflow.config.json"
+  }
+}

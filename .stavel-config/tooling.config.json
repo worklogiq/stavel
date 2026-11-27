@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "testing": {
+    "fallback": "ask",
+    "patterns": [
+      "**/*.test.ts"
+    ],
+    "placement": "colocated"
+  }
+}

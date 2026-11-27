@@ -15,6 +15,8 @@
     "kinds": [
       "accessibility-plan",
       "architecture-diagram",
+      "authorization-matrix",
+      "backend-design",
       "contract",
       "decision",
       "design",
@@ -29,6 +31,7 @@
       "help-documentation",
       "interface-design",
       "macro-execution",
+      "observability-plan",
       "overview",
       "philosophy",
       "policy",
@@ -40,6 +43,7 @@
       "requirements",
       "roadmap",
       "runbook",
+      "story",
       "template",
       "test-plan",
       "ui-design",
@@ -97,11 +101,20 @@
       "process": "docs/internal/process",
       "developerGuides": "docs/internal/dev",
       "decisions": "docs/internal/decisions",
-      "platform": "docs/internal/platform",
       "modules": "docs/internal/modules",
       "edge": "docs/internal/edge",
-      "public": "docs/public"
-    }
+      "public": "docs/public",
+      "product": "docs/internal/product",
+      "capabilities": "docs/internal/product/capabilities",
+      "contracts": "docs/internal/product/contracts"
+    },
+    "owners": [
+      {
+        "id": "product",
+        "role": "product",
+        "path": "docs/internal/product"
+      }
+    ]
   },
   "source": {
     "naming": {
@@ -196,5 +209,36 @@
     ],
     "generatedRoot": ".generated",
     "defaultTrack": "greenfield"
+  },
+  "testing": {
+    "placement": "follow-repository",
+    "fallback": "language-convention"
+  },
+  "workflow": {
+    "stories": {
+      "generation": "ask",
+      "template": "docs/internal/templates/design/story.template.md"
+    },
+    "commits": {
+      "convention": "conventional",
+      "types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert"
+      ],
+      "requireScope": false
+    },
+    "review": {
+      "design": "recommended-for-substantial",
+      "allowTaskException": true
+    }
   }
 }

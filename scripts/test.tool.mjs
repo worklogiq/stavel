@@ -9,9 +9,13 @@ const markdownDependency = { name: 'markdown-commonjs', setup(builder) {
   builder.onResolve({ filter: /^@worklogiq\/mdcomposer$/ }, () => ({ path: require.resolve('@worklogiq/mdcomposer') }));
 } };
 
-const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap(entry =>
-  entry.isDirectory() ? walk(join(directory, entry.name)) : [join(directory, entry.name)]);
-const sources = walk('tests').filter(file => file.endsWith('.test.ts'));
+const ignored = new Set(['.git', 'node_modules', 'dist', '.generated', '.cache', '.venv', 'coverage']);
+const walk = (directory) => readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name, 'en')).flatMap(entry => {
+  if (entry.isSymbolicLink() || ignored.has(entry.name)) return [];
+  const name = join(directory, entry.name);
+  return entry.isDirectory() ? walk(name) : entry.isFile() && name.endsWith('.test.ts') ? [name] : [];
+});
+const sources = walk('.');
 if (sources.length === 0) throw new Error('No Node tests were found.');
 mkdirSync('.generated/tests', { recursive: true });
 const outputs = [];

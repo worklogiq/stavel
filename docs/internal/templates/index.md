@@ -16,6 +16,7 @@ Copy the sections that clarify the task, then remove unused guidance. Do not cre
 | --- | --- |
 | [AGENTS entrypoint](agents.template.md) | Route a coding assistant into the local hierarchy |
 | [Product](design/product.template.md) | User problem, outcome, scope, non-goals |
+| [Story](design/story.template.md) | Optional PLAN output or discovery/design input; repository-owned and editable after init |
 | [Requirements](design/requirements.template.md) | Behavior, required mechanisms, acceptance |
 | [Design](design/design.template.md) | Data flow, boundaries, alternatives, compatibility |
 | [Decision](design/decision.template.md) | Accept or supersede a meaningful choice |
@@ -29,3 +30,9 @@ Copy the sections that clarify the task, then remove unused guidance. Do not cre
 | [Interface design](design/interface.template.md) | Human-facing states, accessibility, and recovery |
 
 Metadata: document state is draft/accepted/active/complete/deprecated; implementation state is separate. Record the accepting decision or instruction instead of having an assistant invent approval.
+
+## Portable artifact families
+
+The versioned artifact catalog supplies stable artifact, section and question identities for product overview, product/requirements/design/backend/interface/UI, architecture, decisions, test plans, accessibility, access control, observability, documentation/help/public documentation, stories, recon, experiments and execution. Select applicable families and record omissions; do not generate every document for every task. Repository-owned story/custom templates retain their edits.
+
+New generic templates include [product overview](design/product-overview.template.md), [backend](design/backend-design.template.md), [architecture](design/architecture-diagram.template.md), [access control](design/authorization-matrix.template.md), [observability](design/observability-plan.template.md) and [macro tracker](execution/macro-execution.template.md). The explicit asset catalog owns portable membership; filled source product records are excluded.

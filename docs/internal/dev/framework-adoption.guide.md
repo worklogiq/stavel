@@ -14,7 +14,7 @@ Adoption applies the methodology while retaining accepted local conventions and 
 
 ## Inspect and align
 
-Use read-only inspection, [historical context](repository-history.guide.md) and the [question workflow](agent-questions.guide.md). Establish source/generated/distribution/live-state boundaries and actual commands. Map existing owner docs, instructions, naming, lifecycle, audiences and exceptions. Record discrepancies without blessing accidental implementation behavior.
+Use read-only inspection, [historical context](repository-history.guide.md) and the [question workflow](agent-questions.guide.md). Establish source/generated/distribution/live-state boundaries and actual commands. Map existing owner docs, instructions, naming, lifecycle, audiences and exceptions. Inspect actual product surfaces and their feature/service responsibilities using the [ownership philosophy](../philosophies/capability-ownership.philosophy.md); do not assume one currently documented capability describes the whole repository. Record discrepancies without blessing accidental implementation behavior.
 
 Gather all applicable answers and align the complete selected configuration before creating target files. Accepted local policies provide evidence-backed selections; observed patterns remain proposals. Direct prior user choices count as answers. Keep material unknowns explicit.
 

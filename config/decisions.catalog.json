@@ -100,6 +100,27 @@
       "default": "bootstrap"
     },
     {
+      "id": "workflow.stories.generation",
+      "group": "workflow",
+      "prompt": "Should PLAN ask whether to generate stories (default), always generate them, or never generate them? This controls output stories, not stories supplied as input. Use profile-default to preserve accepted profile/repo settings.",
+      "type": "choice",
+      "required": false,
+      "options": [
+        "profile-default",
+        "ask",
+        "always",
+        "never"
+      ],
+      "default": "profile-default"
+    },
+    {
+      "id": "workflow.stories.template",
+      "group": "workflow",
+      "prompt": "Optional: name an existing repository-relative Markdown story template to override the default template seeded by init.",
+      "type": "text",
+      "required": false
+    },
+    {
       "id": "workflow.instructions",
       "group": "workflow",
       "prompt": "Which existing instruction and owner documents remain authoritative?",
@@ -294,6 +315,33 @@
       "required": false
     },
     {
+      "id": "verification.testPlacement",
+      "group": "verification",
+      "prompt": "Where should tests live? Preserve accepted repository conventions, use the selected profile default, propose a language/toolchain convention, colocate beside source, use a separate tests/ directory, or provide a custom/scoped layout. Observed patterns and defaults need real alignment; selecting a policy does not move tests.",
+      "type": "choice",
+      "required": false,
+      "options": [
+        "follow-repository",
+        "profile-default",
+        "language-convention",
+        "colocated",
+        "separate",
+        "custom"
+      ],
+      "default": "profile-default"
+    },
+    {
+      "id": "verification.testLayout",
+      "group": "verification",
+      "prompt": "Provide custom roots and filename patterns, with optional per-source-root scopes. For non-custom choices, optional details can be supplied explicitly in configuration.testing.",
+      "type": "object",
+      "required": true,
+      "applicability": {
+        "answer": "verification.testPlacement",
+        "equals": "custom"
+      }
+    },
+    {
       "id": "observability.expectations",
       "group": "observability",
       "prompt": "What diagnostics, correlation, privacy, telemetry and retention are required?",
@@ -353,6 +401,41 @@
         "tracks": [
           "existing"
         ]
+      }
+    },
+    {
+      "id": "configuration.workflow.commits",
+      "group": "workflow",
+      "prompt": "Select the commit convention. Default: conventional commits; preserve accepted repository conventions or supply a custom format.",
+      "type": "object",
+      "required": false,
+      "default": {
+        "convention": "conventional",
+        "types": [
+          "feat",
+          "fix",
+          "docs",
+          "style",
+          "refactor",
+          "perf",
+          "test",
+          "build",
+          "ci",
+          "chore",
+          "revert"
+        ],
+        "requireScope": false
+      }
+    },
+    {
+      "id": "configuration.workflow.review",
+      "group": "workflow",
+      "prompt": "Recommend a design PR for substantial work, require it for the team, or leave review sequence to each task? Direct DESIGN to PLAN is supported.",
+      "type": "object",
+      "required": false,
+      "default": {
+        "design": "recommended-for-substantial",
+        "allowTaskException": true
       }
     }
   ]

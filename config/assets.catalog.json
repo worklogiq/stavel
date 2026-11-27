@@ -15,6 +15,36 @@
   },
   "assets": [
     {
+      "source": "config/decisions.catalog.json",
+      "target": "config/decisions.catalog.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/default.profile.json",
+      "target": "config/default.profile.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/backend.example.json",
+      "target": "config/profiles/backend.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/frontend.example.json",
+      "target": "config/profiles/frontend.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/java.example.json",
+      "target": "config/profiles/java.example.json",
+      "role": "configuration"
+    },
+    {
+      "source": "config/profiles/python.example.json",
+      "target": "config/profiles/python.example.json",
+      "role": "configuration"
+    },
+    {
       "source": "docs/internal/dev/agent-questions.guide.md",
       "target": "docs/internal/dev/agent-questions.guide.md",
       "role": "documentation"
@@ -95,6 +125,16 @@
       "role": "documentation"
     },
     {
+      "source": "docs/internal/dev/story-workflow.guide.md",
+      "target": "docs/internal/dev/story-workflow.guide.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/dev/test-placement.guide.md",
+      "target": "docs/internal/dev/test-placement.guide.md",
+      "role": "documentation"
+    },
+    {
       "source": "docs/internal/index.md",
       "target": "docs/internal/index.md",
       "role": "documentation"
@@ -107,6 +147,16 @@
     {
       "source": "docs/internal/philosophies/architecture.philosophy.md",
       "target": "docs/internal/philosophies/architecture.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/capability-ownership.philosophy.md",
+      "target": "docs/internal/philosophies/capability-ownership.philosophy.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/philosophies/cli-tools.philosophy.md",
+      "target": "docs/internal/philosophies/cli-tools.philosophy.md",
       "role": "documentation"
     },
     {
@@ -205,6 +255,11 @@
       "role": "documentation"
     },
     {
+      "source": "docs/internal/process/prompts/execute.prompt.md",
+      "target": "docs/internal/process/prompts/execute.prompt.md",
+      "role": "documentation"
+    },
+    {
       "source": "docs/internal/process/prompts/experiment.prompt.md",
       "target": "docs/internal/process/prompts/experiment.prompt.md",
       "role": "documentation"
@@ -220,6 +275,11 @@
       "role": "documentation"
     },
     {
+      "source": "docs/internal/process/prompts/plan.prompt.md",
+      "target": "docs/internal/process/prompts/plan.prompt.md",
+      "role": "documentation"
+    },
+    {
       "source": "docs/internal/process/prompts/review.prompt.md",
       "target": "docs/internal/process/prompts/review.prompt.md",
       "role": "documentation"
@@ -227,6 +287,11 @@
     {
       "source": "docs/internal/process/prompts/strict.prompt.md",
       "target": "docs/internal/process/prompts/strict.prompt.md",
+      "role": "documentation"
+    },
+    {
+      "source": "docs/internal/process/prompts/vibe.prompt.md",
+      "target": "docs/internal/process/prompts/vibe.prompt.md",
       "role": "documentation"
     },
     {
@@ -273,6 +338,11 @@
       "source": "docs/internal/templates/design/requirements.template.md",
       "target": "docs/internal/templates/design/requirements.template.md",
       "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/story.template.md",
+      "target": "docs/internal/templates/design/story.template.md",
+      "role": "repository-template"
     },
     {
       "source": "docs/internal/templates/design/test-plan.template.md",
@@ -365,34 +435,69 @@
       "role": "documentation"
     },
     {
-      "source": "config/default.profile.json",
-      "target": "config/default.profile.json",
+      "source": "docs/internal/dev/change-provenance.guide.md",
+      "target": "docs/internal/dev/change-provenance.guide.md",
+      "role": "guide"
+    },
+    {
+      "source": "docs/internal/dev/commit-conventions.guide.md",
+      "target": "docs/internal/dev/commit-conventions.guide.md",
+      "role": "guide"
+    },
+    {
+      "source": "config/artifacts.catalog.json",
+      "target": "config/artifacts.catalog.json",
       "role": "configuration"
     },
     {
-      "source": "config/decisions.catalog.json",
-      "target": "config/decisions.catalog.json",
-      "role": "configuration"
+      "source": "docs/internal/templates/design/product-overview.template.md",
+      "target": "docs/internal/templates/design/product-overview.template.md",
+      "role": "template"
     },
     {
-      "source": "config/profiles/backend.example.json",
-      "target": "config/profiles/backend.example.json",
-      "role": "configuration"
+      "source": "docs/internal/templates/design/backend-design.template.md",
+      "target": "docs/internal/templates/design/backend-design.template.md",
+      "role": "template"
     },
     {
-      "source": "config/profiles/frontend.example.json",
-      "target": "config/profiles/frontend.example.json",
-      "role": "configuration"
+      "source": "docs/internal/templates/design/architecture-diagram.template.md",
+      "target": "docs/internal/templates/design/architecture-diagram.template.md",
+      "role": "template"
     },
     {
-      "source": "config/profiles/java.example.json",
-      "target": "config/profiles/java.example.json",
-      "role": "configuration"
+      "source": "docs/internal/templates/design/accessibility-plan.template.md",
+      "target": "docs/internal/templates/design/accessibility-plan.template.md",
+      "role": "template"
     },
     {
-      "source": "config/profiles/python.example.json",
-      "target": "config/profiles/python.example.json",
-      "role": "configuration"
+      "source": "docs/internal/templates/design/authorization-matrix.template.md",
+      "target": "docs/internal/templates/design/authorization-matrix.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/observability-plan.template.md",
+      "target": "docs/internal/templates/design/observability-plan.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/documentation-plan.template.md",
+      "target": "docs/internal/templates/design/documentation-plan.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/help-documentation.template.md",
+      "target": "docs/internal/templates/design/help-documentation.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/design/public-documentation.template.md",
+      "target": "docs/internal/templates/design/public-documentation.template.md",
+      "role": "template"
+    },
+    {
+      "source": "docs/internal/templates/execution/macro-execution.template.md",
+      "target": "docs/internal/templates/execution/macro-execution.template.md",
+      "role": "template"
     }
   ]
 }

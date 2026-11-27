@@ -7,6 +7,7 @@ import { collectFiles, diagnostic, inside, matchesAny, posix, stringList } from 
 import { analyzeDocumentationImpact, parseChangesetAttestation, type ImpactMapping } from './documentation-impact.rule.js';
 import { findMojibakeInText } from './encoding.rule.js';
 import { compareImageReviewManifests, validateBaselineManifest, type ImageManifest } from './image-manifest.rule.js';
+import defaultProfile from '../../config/default.profile.json' with { type: 'json' };
 
 export * from './policy.types.js';
 export * from './documentation-impact.rule.js';
@@ -14,7 +15,7 @@ export * from './encoding.rule.js';
 export * from './image-manifest.rule.js';
 export { globToRegExp, matchesAny } from './shared.service.js';
 
-const defaultKinds = ['product', 'requirements', 'design', 'contract', 'philosophy', 'policy', 'guide', 'runbook', 'overview', 'roadmap', 'decision', 'prompt', 'template', 'test-plan', 'verification', 'experiment', 'recon', 'execution-plan', 'execution-slices', 'execution-prompt', 'macro-execution', 'project-phase-status', 'documentation-plan', 'architecture-diagram', 'profile'];
+const defaultKinds = defaultProfile.documentation.kinds;
 const defaultStates = ['draft', 'accepted', 'active', 'complete', 'deprecated'];
 const fixedDocNames = new Set(['README.md', 'index.md']);
 

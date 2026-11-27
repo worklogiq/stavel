@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# Preserve exact bytes for pinned configuration and hash-bound execution evidence.
+/.stavel-config/baseline.profile.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/docs/internal/_archive/product/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md -text whitespace=trailing-space,space-before-tab,cr-at-eol

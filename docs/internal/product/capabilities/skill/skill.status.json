@@ -1,0 +1,68 @@
+{
+  "capabilityId": "skill",
+  "items": [
+    {
+      "blockers": [],
+      "history": [
+        {
+          "at": "2026-11-27T04:35:17.054Z",
+          "description": "Schema-only conversion; existing decisions, state and history preserved.",
+          "from": 1,
+          "mechanism": "deterministic",
+          "operation": "schema-migration",
+          "to": 2
+        },
+        {
+          "at": "2026-11-27T05:41:01.214Z",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "references": [
+            {
+              "field": "record",
+              "from": "guided-workflows/execution/guided-workflows/guided-workflows.execution-plan.md",
+              "sourceSha256": "b09e2497a1c87a8c687a459b25e69321288363dc934583112dcf2023c9a8b5a5",
+              "to": "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.execution-plan.md"
+            },
+            {
+              "field": "tracker",
+              "from": "guided-workflows/execution/guided-workflows/guided-workflows.macro-execution.md",
+              "sourceSha256": "ecc9a9e67ebac7b2a27f58dbb0f34bce118c322b6cc21f3e49e3fa284372ffe7",
+              "to": "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.macro-execution.md"
+            }
+          ]
+        },
+        {
+          "at": "2026-11-27T05:43:43.188Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "complete",
+            "mode": "REVIEW",
+            "nextAction": "Owner review of the local diff; commit, PR, publication and global skill replacement require their own instruction.",
+            "phase": "closed",
+            "status": "completed"
+          },
+          "closureEvidence": [
+            "guided-workflows/guided-workflows-delivery.verification.md",
+            "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.verification.md",
+            "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/philosophy-review.verification.md"
+          ],
+          "operation": "update",
+          "semanticAcceptance": "caller-reviewed"
+        }
+      ],
+      "id": "guided-workflows",
+      "implementationStatus": "complete",
+      "mode": "REVIEW",
+      "nextAction": "Owner review of the local diff; commit, PR, publication and global skill replacement require their own instruction.",
+      "phase": "closed",
+      "record": "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.execution-plan.md",
+      "status": "completed",
+      "title": "Guided setup, delivery and repository customization",
+      "tracker": "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.macro-execution.md"
+    }
+  ],
+  "owner": "repository-maintainer",
+  "schemaVersion": 2,
+  "title": "Skill",
+  "updated": "2026-11-27T05:43:43.188Z"
+}

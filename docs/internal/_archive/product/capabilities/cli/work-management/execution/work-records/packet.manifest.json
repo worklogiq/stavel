@@ -1,0 +1,495 @@
+{
+  "archive": {
+    "sourceHashes": {
+      ".stavel-config/baseline.profile.json": "172c71ed3b25ab789d743c9e039dc2394e96a91b536f308fb034f2835298940d",
+      ".stavel-config/decisions.config.json": "d1d07967ff629d926d66127dc8cfddc8cca7f39bb20299a9273d4c0a450bcf23",
+      ".stavel-config/stavel.config.json": "cc52a3085bf13f4268fc301aed5e3fd24087963853b7f92bf194b597bdbbda27",
+      ".stavel-config/taxonomy.config.json": "24f86cbaffa55e8319d6b8298bbb2ba23b4db608c37c4459a15e4f10ddc9b568",
+      ".stavel-config/tooling.config.json": "8c2534d70377a94d7d01493545216eb0c97c5246b177970ab4370b2162406b83",
+      ".stavel-config/workflow.config.json": "5f3c6072db8a4355fd8a81f3e7589a2c4df686ea7c432e03c4b8c7865fab0950",
+      "AGENTS.md": "62a3dc6d9c5dac381015033395f54a35e3d17830a57ffe73169d1a3602589c9c",
+      "docs/internal/_archive/delivery/initial-verification.overview.md": "2f1f85adc17a041c6ac1f8f2f3a73a686d5c750fa12c3fbcb48d3a996388d1fd",
+      "docs/internal/_archive/delivery/pre-stavel/framework-v02.decision.md": "b7daab69bbfe39d6746ebccf9152f04d5bb6aca40cd0f256c783b687defd90eb",
+      "docs/internal/_archive/delivery/pre-stavel/framework-v02.execution-plan.md": "795e102e0389e6787c9e9e900a1690defb970e1c4ae9f4006ce66ebc8356339a",
+      "docs/internal/_archive/delivery/stavel-restart.execution-plan.md": "94a3f70e086c87c220d51e0aecaaa86d9acaba34fea7f41173beb0ee38bea617",
+      "docs/internal/_archive/index.md": "8d5f22945e7c325d0905713de8ed75154d5c2840b7c72bd904869860ca99421b",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/guided-init.execution-plan.md": "c4b64cbc2cdafe8e7aea29e20d95c9392d0b984e5e513a00fa93cc7bbefd8a71",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/guided-init.macro-execution.md": "ed19ee2b1d20926bf44f2bb648a7482b5cbb5ced01aee22bbec0571241c751c3",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/guided-init.verification.md": "e8fd98475d71fa47873d7a0a9180cb8ace0255e098d9419d5c147315e7718c16",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/index.md": "43d101195f83e00c84eeadd984b559ce9cf1dfc356c1c897a707cd0732be5864",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/packet.manifest.json": "f728ea93b34d2c41d8268d04c247a6fc304f6cf76be4e967f0c34ee6312e9e27",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md": "a7f3983d7c2a2df224c5a03b83ac9cb36e06fa88af05310e841f30afd4673a4f",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md": "a27348399d57b629a2efbf9ec1953b4d9bf45426c1184296cbc1d97e90eab192",
+      "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-03-bare-init.execution-slice.md": "f9b18ccde0b3817344c9dc0e5b7d0158148925b960a7b7422f9e379668858555",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/fnd-01-package-inspection.execution-slice.md": "0bd8342d0e5c6f1ac12aea316e426daf08ef39d012de0c2c409d2094112d9e46",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/fnd-02-pure-service-contracts.execution-slice.md": "8a7de0f7442ba0a1d904fdfb74dcf881ae2c92c99ec55222dfdea2e03a3f0941",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/fnd-03-effect-service-contracts.execution-slice.md": "69783ba3d082e5f0633a205bebc4aff02aa0f691cdd1e1fa2587ec403d0bf1a9",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/foundations.execution-plan.md": "5071dae6c700c0268809f709e41a9c4cc94d7fb9bae97b203ab5c423af624a00",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/foundations.macro-execution.md": "4a929ce70eab7bb83a35e295fca0bf4d0be5788dd844d0121da02795e12c8a9d",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/foundations.verification.md": "26d352e5e3759a91ae194fdbd514475a76b8963074cfa0154640bcddc7dbdcd4",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/index.md": "b9dfab144c0bfb7c4ed345bfcc4d5fd23f9fe873f2d99e20b43c7effb148b0cb",
+      "docs/internal/_archive/product/capabilities/cli/services/execution/foundations/packet.manifest.json": "e8660d113c6eb76e362e15087be3fe2317d59d6d9bf7c51e29b069669a38394b",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/art-01-portable-artifact-catalog.execution-slice.md": "a286b2c056001b12f667835f4f95dbd831265846b2eecd81d3c9f099d4e71ea8",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/art-02-owner-aware-rendering.execution-slice.md": "b7505bcacd3d3582dd9c469d51f34253730eb32c09808ee33fb9514241833fcf",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/artifact-generation.execution-plan.md": "f42945229bcada5745a3578efdeba248970e84a9faa8dd6ca55397548d384562",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/artifact-generation.macro-execution.md": "cc45c30e7de6b3bd8e63d9022412c80b8917afd3d3fb55d3c7e460ab8f4a3b54",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/artifact-generation.verification.md": "847fe8bed2ba45a5af9069265dc96831d8c155bf1d72d1dfbc150ca55df81166",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/artifact-inventory.recon.md": "0eb1629e1930bf53caed20a72587f08d69b5dbce97afcba03029e7b5fe0ac40a",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/index.md": "b86988cf0aa76db84f2956fecb9110a592e5a9a0acad864216cfcfdaae58f813",
+      "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/artifact-generation/packet.manifest.json": "0d4e29cd58b3c45c2083a77c05ac5b5c66a5d280619576f5e2f62ab3eca5d167",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-01-effective-config-reader.execution-slice.md": "2a214a60f0d0d1ddf10c19672d233b6f152a24a06dc3aaf216bee261f0a204e3",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md": "03b3c5037858351a4593af25605db3d4f60f19c93111a90b016fabcd292035d7",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-03-structured-amendments.execution-slice.md": "6368ba37e1ed44169c3c5c93edf5fca43d5cf9d57d09a405819d8eb22871ee27",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/config-integration.recon.md": "4bb76dc4d72c2042257a9acdcc528dbe225a1407fb6b1a1a370e6d17e81bd333",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/configuration.verification.md": "9eeb5304c24c59d228cc59220dc67a102d7e488de27b36a79ed1e5ae760cb3a5",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/index.md": "3b84e5a2cfa28e592efdbf60787649939535c4f2350c4d045fbcb220c2d51d10",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/packet.manifest.json": "8ed368d1cebf38e3070f542e2bfacb38f221644b8a6c5098a2df30c9b50a4b64",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/repository-configuration.execution-plan.md": "ee3053851976ce7f4040fe024bead1be085167ec3fc9498ed0a6af32483299e8",
+      "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/repository-configuration.macro-execution.md": "646085cedb7e806024d4863c8083da48736c724945b21ad7891f1e6b1b38c748",
+      "docs/internal/decisions/capability-ownership.decision.md": "2c01c2c8a7e40281e82974f369395beb01c2db74d3edd5adf60a589885747dfe",
+      "docs/internal/decisions/index.md": "c4d989ffc343299e6954051c5f5955fbd2db29394ed1045fb9b5f1359cdc9311",
+      "docs/internal/decisions/product-documentation-home.decision.md": "0b2ebffd880a0a0a3eb548cddaef28389bdc74c8089f25b0df1ae4e0318e542d",
+      "docs/internal/decisions/stavel-restart.decision.md": "45146fcb44b4e3be0d2ef7e42efb783445b2d038edadcb76afc4495cd90e5501",
+      "docs/internal/dev/agent-questions.guide.md": "041b62725de2774b1aec6848348eaa401263fd3b616529c02cc3803a5f09501d",
+      "docs/internal/dev/bootstrap.guide.md": "cbad270847ba674f5da2d65c82f12596729d5e03074caa35459784ded2555cbc",
+      "docs/internal/dev/change-provenance.guide.md": "09d275f18bc9df6a934d666375d389e519d5760e4dc7c8c282b189f387d0dad4",
+      "docs/internal/dev/commit-conventions.guide.md": "f753728a1c86e01e414d5a5f2c910c3ce066c23bf1b22d0f9cfcbdea5131d94a",
+      "docs/internal/dev/configuration.contract.md": "ac423de1148a921a66a58654c1cae620ab2e433fba631cbb1f69e91706cbcf4f",
+      "docs/internal/dev/contribution-profiles.guide.md": "f9eb7e985b269a01eeb4fa6675db309250dcbab4aec66c2887d21bee94948e6b",
+      "docs/internal/dev/existing-system.guide.md": "5fd41ba61fecd50b89f6de3b598bbc1af02480498f43398ee5b1344300064b7f",
+      "docs/internal/dev/framework-adoption.guide.md": "d99e8cd72d925f90de7eb41f3160e14e0cbcbbf24aa893e3add95b0c451e70b0",
+      "docs/internal/dev/framework-origins.overview.md": "61b95c8aa1b26b9c95ab7475d7d2a98453ed9949a7bc4fecdb986e732089ed9f",
+      "docs/internal/dev/greenfield.guide.md": "68a46f58f982caa577dba54eb39484b44f41d6a7589eb12af568804d8ee81d49",
+      "docs/internal/dev/index.md": "dbfe01b6ee575017dc0cbe3f0a4ca63f22e5eccb3ab0a9974bc6812a63e1e117",
+      "docs/internal/dev/philosophy-extraction.overview.md": "71f79bbe234418d75c55cb2ea94156993409711c487d4fb3ec63c6a9c57758b3",
+      "docs/internal/dev/profiles/backend.profiles.md": "6b67417ee34c1ad93bdaee50a16d3218b895f027d4d572a8bdef31111ebfd2b8",
+      "docs/internal/dev/profiles/frontend.profiles.md": "c74ac0676f2af90903ab2cc12296dd396f93dcaa71ba3b48191f4bfd251d5679",
+      "docs/internal/dev/profiles/index.md": "bd6a81fc86d6967c3d0f8f5e01a7a69dc7d44eedf0d43f325390c0d0e62aead6",
+      "docs/internal/dev/profiles/java.profiles.md": "6750dbf88e88d9c28072a53e263fa51ec2ffb63206a8c4fc3673d6415fdfcd18",
+      "docs/internal/dev/profiles/python.profiles.md": "c8bc2aa93df131f673fbf8eee59b1b5aa551ac12bd8f0fc47c234a3371e1f2aa",
+      "docs/internal/dev/project-profile.overview.md": "e96ef7b35aa1ef2f6a96536d4d3a5123bd480471f9d07af6c2beabb27318639b",
+      "docs/internal/dev/repository-history.guide.md": "69056489b13309e933b2ca299b96b057e0c94ee80e5911cb43726f42879571af",
+      "docs/internal/dev/repository-migration.guide.md": "0e331ee328bed5ed2be541f40db1468b50df6800bee482856075e8cff2a36a7b",
+      "docs/internal/dev/research.guide.md": "211a3451401dc17927db19323afbc7c8a716b63299cf92c21c65c001728bbdd0",
+      "docs/internal/dev/story-workflow.guide.md": "e6d7066e387c02bc695aa06b6b61ece4d8e784d53de2a605fe55d04ed36cb420",
+      "docs/internal/dev/test-placement.guide.md": "139bc9189297184d17f5bbb7c8980352ddc75bef3a5bc4aab4fec654fa4d3f47",
+      "docs/internal/index.md": "39a5d88b2c539c766ac82f5d1d80ff1d85df7082c1aa929d6d8386c0aca8c496",
+      "docs/internal/philosophies/ai-collaboration.philosophy.md": "d7d610f78e6315fe5fc9dec0dc73b36bf1c83cdff2cd4b716acf8a6bbf5bbdc9",
+      "docs/internal/philosophies/architecture.philosophy.md": "6bb56c8e0484c8ce64ed035d86d36bee22ddf08d875b1060d5c9e0cf20570c4f",
+      "docs/internal/philosophies/capability-ownership.philosophy.md": "6b10c5a780808371acae824829c5bdc833f7f65002f7e816cf83cd22df978f5e",
+      "docs/internal/philosophies/cli-tools.philosophy.md": "41bcbc8c33bba5839ffbd909f7cd9005def1e358f9ccb61dc55b9f7ab8fe17b0",
+      "docs/internal/philosophies/code-quality.philosophy.md": "dec01f3f8d7a8128d59ed240299ee8f4d292d6d5066ae8a96e179eadb38c1bef",
+      "docs/internal/philosophies/data-and-persistence.philosophy.md": "4bf233f229e68aaf7a41db8c70e38254b3336ea92d450d9724f745463512a27b",
+      "docs/internal/philosophies/delivery-and-infrastructure.philosophy.md": "1a8616b6a9f9b1bbe8297cf35b2af844fa77ff4b3e15fa961b7dd6f5eb2b5cfe",
+      "docs/internal/philosophies/documentation.philosophy.md": "564ca88fe54923c00a2c5b2a1e72f622b77054afcd0da57570e87813efb82d4f",
+      "docs/internal/philosophies/index.md": "256d37d0f151c88f17b2d069da58d45f5bcd8368ef5008e67b1e489e61bcea6c",
+      "docs/internal/philosophies/interfaces-and-accessibility.philosophy.md": "c07bdf7607fbde63d622a40eb2cfc6930d600bfc0efa3402788254c2197ffc1c",
+      "docs/internal/philosophies/observability.philosophy.md": "abc2b0fdd36c3819e6d40f2fbd3fbc4d2cc00ca942b3bdd10e6b8712750137ef",
+      "docs/internal/philosophies/product-intent.philosophy.md": "ac14313a80d63e84a4350119077a96eaafc4b347ac711c9f17c81ee35e115918",
+      "docs/internal/philosophies/security-and-privacy.philosophy.md": "e802a6e7c12308969bf5575ee5b870d0b23ff89f3e639f6802de2ec69962c757",
+      "docs/internal/philosophies/stavel-testing.philosophy.md": "12e77cba5800944acd4773ed07b84472ae58d09222c0ba367fcc3d92474f971f",
+      "docs/internal/philosophies/tooling.philosophy.md": "c2535f277f58f36df18268a5778b36ff3c61d169d2eeb0d845f5fe5e292602db",
+      "docs/internal/philosophies/verification.philosophy.md": "dbea4c30f466d160f28a787efaa3cf0a2e1871cdef477a95cbafbb2dffda1c30",
+      "docs/internal/process/default-conventions.decision.md": "6826a0de885db2999a09462459f84170ac78df1db0068273d7995f12dbbc9eef",
+      "docs/internal/process/development-constitution.policy.md": "3604b27377ee3e50cba9700851d36ac9185e9f199a1f691b2f0b053fb51a571e",
+      "docs/internal/process/development-lifecycle.policy.md": "9cbc95f30a3ce5e7f806c6548f830effca9fdfe469af31f66bcd1823780ebd02",
+      "docs/internal/process/documentation-hierarchy.design.md": "22c24e842a74565716e330cfae85eea31fbd48d8d67f92f106b16a2ee0041b65",
+      "docs/internal/process/documentation-taxonomy.policy.md": "b6a259470ebc72150204d29086f8b424bfad2af3958f0044dd6aade6f81673c0",
+      "docs/internal/process/framework-extension.policy.md": "b105b597b42861cc600b7156a58b3c6ef5eab7ab9cab236d582bbc82ae1387a8",
+      "docs/internal/process/index.md": "0bdb3fdbd11bd3dd5bca40bd728a87723f1302ee2d71c729d5c453e829c5dc3f",
+      "docs/internal/process/naming-conventions.policy.md": "61f7c3befc0f742794dc654ef6235837f8f1169274982f004b21a6cdf4d553f5",
+      "docs/internal/process/prompts/design.prompt.md": "641f58a505862976a80de386f29fc20984992902e40987bb2bf52511e661efea",
+      "docs/internal/process/prompts/execute.prompt.md": "d62e96c90e87494e915f9ef1da986200eda596b224440f085703dce708dfd3fc",
+      "docs/internal/process/prompts/experiment.prompt.md": "d8926bb85f61e41a6d50ebf73534a8e1894f2be74497cab11bae075c75781be4",
+      "docs/internal/process/prompts/explore.prompt.md": "bfd968fd799409b17b700de4c7e3501856c73b673d2525489f8ab0e6e038da5c",
+      "docs/internal/process/prompts/index.md": "2371e9845efd0883df6f003da9c7393dc9f87c703383bfb101b1592a6b876d65",
+      "docs/internal/process/prompts/plan.prompt.md": "51f5ffe7d9177721af3275e59a13c13d2a453e74a843abcf9f1e43ffbc73703b",
+      "docs/internal/process/prompts/review.prompt.md": "8f9e21fa6d9d695e9ee5be78ab71defc4bb21e5407c02163f96b5c996e1503ed",
+      "docs/internal/process/prompts/strict.prompt.md": "f1699f0c5848ada96bea0b66fc0b3967b2d662600bf9448ef9421aaff06acf77",
+      "docs/internal/process/prompts/vibe.prompt.md": "ee2064f054fd60e028ef890899beb69beba486fbc5e4a7c561ccfadbdda4344c",
+      "docs/internal/process/session-handoff.guide.md": "2260bff2c8c09f891f9952233480692172f7322ad4f7be3143a4180626621ce0",
+      "docs/internal/product/capabilities/cli/checking/checking.design.md": "14ec67db9dcfb9809305b621a8822e4d5b248f0f2f6fb5c08020eb3ecdb2b377",
+      "docs/internal/product/capabilities/cli/cli.design.md": "2c39afeedb26822e4a46dabb729e4f521c4b8de14d5c4fd78274377710fdd097",
+      "docs/internal/product/capabilities/cli/cli.overview.md": "217be6195eebc0c442573c77af5fdb2b8313c084f32e5ae00783d7a5505159bc",
+      "docs/internal/product/capabilities/cli/cli.status.json": "fd583b5f264e19aa1574420c901bfcaaa87228a6b25fa409c1637f7497a72ecd",
+      "docs/internal/product/capabilities/cli/doctor/doctor.design.md": "0c15a29b34f72a0ecc0a83f1e3fa4411c3c652c444ffefb40a74e5a0e27dca48",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/doc-01-diagnosis.execution-slice.md": "4da0eb41f004f15bf2151740a1cdf025ca2791d3351daec41cc93ebf0248cbdf",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/doc-02-repair-flow.execution-slice.md": "45400d5de30083eb331bdfd49368f91dd6e88d321dade61b5a3426f51410d082",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/guided-doctor.execution-plan.md": "37a72f3f34c815d8d76574dfafe5726ae55caf0441280681eb3ad83c788b0557",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/guided-doctor.macro-execution.md": "fb7cb359feebb901bda0b15989f2ab252ae05bea5e6680decef5dee869bbaa0c",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/guided-doctor.verification.md": "50e1faaa8ff49b38b127a8ec96c51726a5d3ebe4b41e8bf705078d46f3c0ebd7",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/index.md": "a3b1425606dae2473696c92cfe5efcd9afc848ce2603e4533fbd61802d05c96d",
+      "docs/internal/product/capabilities/cli/doctor/execution/guided-doctor/packet.manifest.json": "284647ba69f85eb4fb4d10490a75bb02e1a859c305cf83a78477f3e846a5e4f3",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/effective-help.execution-plan.md": "dc2a8e6208171ca4c30b38bc96fd7d08a73ea9990c78c6e141c9d657c872265d",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/effective-help.macro-execution.md": "e46ef27228f376b52af1874f449c4eb64099777d7ded3654ef956fa2e56ba353",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/effective-help.verification.md": "12417471d10d606a252b6fb2e9759139959a538d65448e6bc04de8ad5a1556b2",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/hlp-01-effective-help.execution-slice.md": "c2cae2ec66737771283332c9e4eb3ecdce79960ac68954f2b440ec7326eba81c",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/index.md": "ba67e5729ea6cca003fcf2385759a1c20f2c8eefabec923e96bcf3323ed191d4",
+      "docs/internal/product/capabilities/cli/help/execution/effective-help/packet.manifest.json": "ba1137bd4b007f83e1ccf132583c7dc0bb173bc2441953e43bb19caefc98461f",
+      "docs/internal/product/capabilities/cli/help/help.design.md": "435096186abc0a84cc2eeeff761bb601c6fade866abb7bbaed6676567b236833",
+      "docs/internal/product/capabilities/cli/index.md": "b65ffc1abc45b8b8366cb2f121c10f842757f36d8d90c48aa1cd720d9e1f866a",
+      "docs/internal/product/capabilities/cli/initialization/initialization.design.md": "1ffcca6138112b245e2a7bb3bf5d0cbf688fc2eeda4c906e804b89082c3105a8",
+      "docs/internal/product/capabilities/cli/inspection/inspection.design.md": "9a5a1c76db8f2461731ae320eae5018f3c549bafea0fa93a6d1a4c297b966ef8",
+      "docs/internal/product/capabilities/cli/markdown/markdown.design.md": "aa4010d12eacc910b5c6a052d67a32f3f1fa7985e630a74db6392af3af5a43aa",
+      "docs/internal/product/capabilities/cli/migration/migration.design.md": "1b392d88cd32eeb62c7b521bd2e88e2e59058e88a24fc8520008c305d3ee5dda",
+      "docs/internal/product/capabilities/cli/planning/planning.design.md": "fddeb517442b9c75cc2be46777823657b2db4524e58e2d618c6dc664de837cb1",
+      "docs/internal/product/capabilities/cli/service-verification.test-plan.md": "8170b3ef3cbb317a6a48610b8b099e38ab41429d2996f28609889e0a376b0ead",
+      "docs/internal/product/capabilities/cli/services/distribution/distribution.design.md": "4a831e05c08b97f617e3059b2de1acff926ccc86634cec17202dd8204ed5ef28",
+      "docs/internal/product/capabilities/cli/services/filesystem/filesystem.design.md": "d1cdc1a268c1f4e84ed9e84d14d9e9e9a97633166822a6c8ac60f5214de056bf",
+      "docs/internal/product/capabilities/cli/services/naming/naming.design.md": "9eaa43d1bab2834bdfe557b8f70b50d4c5793db6646382c190b9679501e84553",
+      "docs/internal/product/capabilities/cli/services/policy-support/policy-support.design.md": "8e9d2759f71bf78699c4296b8dfc1b708ff0976a9c7096cdff46c0bc12061595",
+      "docs/internal/product/capabilities/cli/services/testing/testing.design.md": "15963eb947c1d85957b189685fbd5684d3c137ebe5df0298fc3b29525e9cdd00",
+      "docs/internal/product/capabilities/cli/skill-export/skill-export.design.md": "ec4228d980cd5b92093cc639d6be9963b2d6f986e500531f2c52611098e89d20",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/index.md": "a63471fae0e36c690d6cc2592b5272c925dba98fe500010a0b91894685952f99",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/packet.manifest.json": "2cdbf5ea6509f56f1917e0e16cabd9a60469c7769176a0322a330633efb58638",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/work-records.execution-plan.md": "ec212c6334d3cb4b9def3e025d634a9243d080786bc94840eecb5c7a6b445ff6",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/work-records.macro-execution.md": "482dc97c77424d1cd5941d1a92ab3ae8ae4a9a6fece70907392395230ccea83a",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/work-records.verification.md": "1bbe354872798422f37a43e8fd89ab7c0ca2ac642401f63fa40f3959ddf823ba",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-01-work-reader.execution-slice.md": "751b55bdb0c0331f3c3999585ccd679d75ea216cf40bf08e97cef678110b9c28",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-02-work-writers.execution-slice.md": "89c4b5d13273ff5b4ea4af647395ac9847e29fddb2f93b3a4e7b9406519c1f18",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-03-work-schema-migrations.execution-slice.md": "405a35236965f695e703c88886dab4918cd096b7459f568d07ddae0c8b89ac84",
+      "docs/internal/product/capabilities/cli/work-management/work-management.design.md": "4102b53b89711b552770abe825b46dad04de0e01f5b1d912e0bb69a8c3baca7b",
+      "docs/internal/product/capabilities/index.md": "ac0ebf6031abb1010b88aafbd5e8979626ca02d83a4f02b8bf964e63c57255a5",
+      "docs/internal/product/capabilities/skill/guided-workflows/delivery-workflows.design.md": "82f7e6a1804fad3ddcbfed00f5cfc62908341eb5a699ba59986ce7e64bb8b86b",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/design-readiness.guide.md": "4fc6d26932c8a73135ac1874afc2a71b329882a5a3ad2da77ff97527a8137d87",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/documentation-home.verification.md": "173bd3134887fa99603abf90c9e0a0e7c20d7c6be23d28f918d0b5b37faca617",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-checkpoint.verification.md": "de08b7760c7a32c79e317955225b8bd8c908a7a4b1f1bb5dc3dafcac18d7a961",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-contract.guide.md": "301aee3be9c9a65dae65eeeb8d12486f90d4f89a74d977c3e83f4e40c5ad7879",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-contracts.design.md": "e5a08d4ca909624d948775e5c4f18578c797dc00fb39c622b9d0b1f176032784",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.execution-plan.md": "575ebae3b1ecc457a7062d7f101db27e62667d1e6e1c319072694c0c36759ffa",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.macro-execution.md": "c4704870c290cf1e90a79a62b68c8ba3577c4dd811e9d35652854db1d3ae4d5a",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.verification.md": "df122b5e16cd26b22363186636b8a84000d705bf0bb1dfcce2ba6fad4af2795a",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/independent-agent.verification.md": "c68ecc0e2fc740100e62e9316805fa7e283acad684d6b31a5ae56788a6751622",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/index.md": "26e46601dfbdf639ddcc283d1e95ac105b2676e6efe8db7162ee90177cabc918",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/int-01-integrated-proof.execution-slice.md": "0cf57774e0c67bbe6b68eda297cfd3873ce40cff45c430923156cc7b1862ad38",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/int-02-local-adoption-and-closure.execution-slice.md": "22066dbc994f394fbeba47e1229b77dbc87ae92456b56a9027f85eba5f7fc641",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/packet.manifest.json": "0e0a35e90c712bd656b43f8d8c9311739c676dd716fa101951ee089adb64ba8c",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/philosophy-review.verification.md": "e3c66b4bcc6e6fe0e8e8d45059115056b6fc624185ea9e7f88606a250c65949c",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/planning-packet.verification.md": "58b7bd6f12aef4e6b760719f472d44066df46b38c8447fcba45ec8a300bd5316",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-00-contract-resolution.execution-slice.md": "0d12c0313dda16f3fe5dd951265c590c1a2c2734773d63e398e86cc4ef2508c0",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-01-diagnostic-foundations.execution-slice.md": "dc26b64d1e8f86e0e1ed60f41174b0df9b48993b87b39d13c8237ed2f13ffa93",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-02-effective-profile.execution-slice.md": "77d73f50e621e5f150ef5f763f0921c778c5dd1f2c34922a476f271bd39e9525",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-03-packet-catalog.execution-slice.md": "314acc17f221b099269ef8a04a211dad340466601c00789c6b211d31a7c1100a",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-04-scope-and-questions.execution-slice.md": "c47522e6a3336e54259fbca3d2dc821b3fc227fab8664bc1f6439b1382c0edf5",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-05-guided-init.execution-slice.md": "71aeeed38586a0b042674b2b9ee306aec0f535b6849b6aa807d883fe12712d5b",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-06-doctor-and-repair.execution-slice.md": "4afaf51caaf0363f12839083a48c643d5b28dfe69209b41720a114612b7278cf",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-07-execution-and-closure.execution-slice.md": "962a12f8f5b0545c52cfaafb96f81121e4665e2b5493704d5f82669534b66cc0",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-08-guided-help.execution-slice.md": "638ebf8aa2e7db2d26757d7bfc376a35715f001ea550c9955d8fb58cc0174efc",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-09-integration-and-proof.execution-slice.md": "af8924d138b1668682aed5fcfa5cf40c8467ff893dea629d48cb4110cec9d304",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-10-work-status-cli.execution-slice.md": "7f57c63ae3d6c107b26352d38c86aba96352c68e077c9f26c398820d5dbc2238",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/slice-11-cli-service-contracts.execution-slice.md": "87370ae85874e0256f9731585a9a8ab718f1792497d8bfc3f07fe6449b8a5170",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/test-placement.verification.md": "c890a0f85cadaab958385e32bef85ea0d8f1a11ba6e190ca5809dbe4be34ad33",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/workflow-story.verification.md": "b9e4afed4845fcf1adb0c670b65e463b366511fdb6a26595bfd7aaf8a06f55ad",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/index.md": "03e767ef8eea8ec0be4b08a8544a4bd508d4fa6cdc7fc4b34fbbdb6446d1e9a2",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lfc-01-plan-packets.execution-slice.md": "c395a20df54410581ee0bcad1a2b387e497a8b1ce3339ef87b4b3fb2f6cc859e",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lfc-02-execute-and-close.execution-slice.md": "03d7ab975ba022d5d341927ba1b8a551ec67a2ec9fa4f4ebbba55ef0ffb885fd",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lfc-03-vibe-checkpoints.execution-slice.md": "12e23442f4ad6b9a1749d27b6fa99d6017ee5d6ea3ac2660770aa64248a86bfb",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lifecycle-delivery.execution-plan.md": "ae4aa136566123eb1c90a80c6665658202ba7b8238337e23b5d45d4e35a76845",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lifecycle-delivery.macro-execution.md": "8f148b2536fe7a026ffd065a2605849dcda894ec0ca1cf661657ca7a2c94d1ce",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/lifecycle-delivery.verification.md": "11720bd8ea8829d0fd70448763269680e190786f8543d9092dcbbb5c67d72822",
+      "docs/internal/product/capabilities/skill/guided-workflows/execution/lifecycle-delivery/packet.manifest.json": "7301571de4afc0b4026b0d3231adeee805c4c45bd9838d145a4f2df50705115e",
+      "docs/internal/product/capabilities/skill/guided-workflows/guided-setup-and-repair.recon.md": "3ae2b7da79c9dac7d525b3530a808867d3e78ebb8a62a885e05c1831bc8a06fc",
+      "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.decision.md": "1541a3a83577e09b1b9c1a072aedd6b1ad3b4f7035f61f6fb6e6b8cf8db933f4",
+      "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md": "ea461863566028e7900e4ff40ac7d241fbed86f59c47c32a286e584f26cb6799",
+      "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.requirements.md": "7034830fc5f2a377277e65d4b76e823b2bfb81d245f830497f22c59003d38613",
+      "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.test-plan.md": "9f2b572f6601f0777965cf780ec14f7667307453df527e5b38385a98837af3d6",
+      "docs/internal/product/capabilities/skill/guided-workflows/index.md": "b37b333f7066a48d58cb3174cd599a13f71ad65a33fa5f985dd75366dfd11c10",
+      "docs/internal/product/capabilities/skill/index.md": "0429984fa9eb6c05dc53c501ccdec59bdd02fca64c1c7a378dc0a2e02e2c124b",
+      "docs/internal/product/capabilities/skill/skill.status.json": "e5e12ea79de3c4102790c1d4db9a096a5ecb1f1023c4c1d08bcbdae02628f0e7",
+      "docs/internal/product/contracts/configuration/index.md": "c1fbd7e1755d391800712115d1b3243f8f3e71ef13241d88210d12b4f8d5dcc1",
+      "docs/internal/product/contracts/configuration/repository-configuration.design.md": "ace9e940f5870392157419ef5ae899028639c2ccef478853933f9c0361605c6a",
+      "docs/internal/product/contracts/configuration/work-status.design.md": "ccc1a561175919a211600fecbbf23e6b5777888331a5fb43329bacab32b86426",
+      "docs/internal/product/contracts/distribution/dependency-snapshots.contract.md": "83db349d489f9c6d102a6fd7aaa46a0c870fc7c71573d65dea6dc703904cec84",
+      "docs/internal/product/contracts/distribution/index.md": "9fc0e9ab0b3821933a1a598e440bc64be08bcafb3c5584e128a023a1e24f1e24",
+      "docs/internal/product/contracts/framework/framework.design.md": "5a5e63279f228bd06e8a76429cdbc730cebcd6c94287ebe7e2f81122d3f51a68",
+      "docs/internal/product/contracts/framework/framework.requirements.md": "d269d3f5152240b8f1007ec974de7c57527fa6cbadf4b9094c10bd645d514857",
+      "docs/internal/product/contracts/framework/index.md": "bba621c5774790cc06709e0288dec5ead633cc86d049a6991881d2efbf21a0ba",
+      "docs/internal/product/contracts/index.md": "366952fcb3ada0b5ce85ab9fc5ac696a59bf908974609b2e3f3ee00984953681",
+      "docs/internal/product/index.md": "6535dbe3d3438199e712a6f216c2f7ec581b23fbcea6b69501d8d70f12c3f7cc",
+      "docs/internal/product/product.overview.md": "3907b1a8ecd46a5ad234b9f80e8f0311abe6267a0172eed4be7dced2fa1884a2",
+      "docs/internal/proposals/index.md": "03743ba41d1f3aea868104e21eefe75f64c4aaf0b1cff0f5e5b97bd174393a7a",
+      "docs/internal/templates/agents.template.md": "8b9799c0e1978b5f8c52220e05031e7af5abe8c49bac50fc75475b41088f050d",
+      "docs/internal/templates/design/accessibility-plan.template.md": "7f2592e050db4ae7a48cf5fd4cbc33634d5bbd5dfdcfdc4e94998d7ef6252327",
+      "docs/internal/templates/design/architecture-diagram.template.md": "571dea38e9efc082a1f43a8d4c92b5c06c2b30d9c1bfa8dece67caff9fc1cc2e",
+      "docs/internal/templates/design/authorization-matrix.template.md": "4803c55833064b8bb15e44d37f96105c99e6145e9f334ebcc21aeb5519f8a6fd",
+      "docs/internal/templates/design/backend-design.template.md": "52cc356f96d35b0975755a19205895ddae9c021b6a8c39e1db4bd6054f45273d",
+      "docs/internal/templates/design/decision.template.md": "109776d087343ddc5ab9c643cfa664ea303feedba5b1e9f593e39b4d962ecb86",
+      "docs/internal/templates/design/design.template.md": "8ecd0d8c5092747a0fc87d8cf833bbed5ba19ba9990edde8d2efbbddecc7656b",
+      "docs/internal/templates/design/documentation-plan.template.md": "c19b1b2a7de28e50172d02ed8d3cc5780e30c24b80a3536d500ba97c1b5eb552",
+      "docs/internal/templates/design/help-documentation.template.md": "9cdaa3f71e235803dbd7925bc020ab297b07df04081a6368cd864bb2a3a92d34",
+      "docs/internal/templates/design/index.md": "d35be6a27bb02859f08b1c0d74cb4316cd188224c0ffaf2a0eb6490a3d6b5426",
+      "docs/internal/templates/design/interface.template.md": "6b0fa620c5d926711f45b6d1e854ab7ec3f1034dec8ae4f83fd4176ea1ef02df",
+      "docs/internal/templates/design/observability-plan.template.md": "a52534be76d550b49fee5a7e7bada674d6f452cf98ca6840a3d0e3a55381d677",
+      "docs/internal/templates/design/philosophy.template.md": "0c8c956d5c81d5dd4663562b394e99a7006868dbaec00164884e3cdefa8897df",
+      "docs/internal/templates/design/product-overview.template.md": "599115e604b4b8d8f1c56deca293fd3129b8359e0e70a45bc5ce4b6950c7e5a3",
+      "docs/internal/templates/design/product.template.md": "f298bf4ad087c30fb7c6ed65c6337eeed202e2358815ff2ef582a2358b6d39d1",
+      "docs/internal/templates/design/public-documentation.template.md": "7e84f9d78be252c50cecb1dbc36ac42953ecf80a9c6aaa52f692aa45da520aab",
+      "docs/internal/templates/design/requirements.template.md": "008aab7c47df360856ec6246ec055daf041be4f1e94caf8c6cfe6a2afaaae2ee",
+      "docs/internal/templates/design/story.template.md": "c423fc0bc1508d81f2f24c5835f1c6efff5a9bf724982f6a5a923340f97badaf",
+      "docs/internal/templates/design/test-plan.template.md": "179a7c33c37e9e530e11930d1167e4cf6eb33568455468b2c4d7790cf8e173f0",
+      "docs/internal/templates/execution/execution-plan.template.md": "d9ff1cc2e3d557ee4f6d8b6a140de5e3341ca242cfa27185b78ac2bc03ffef6a",
+      "docs/internal/templates/execution/execution-slice.template.md": "a63b0a67624ce7b888ba114c58d662d8f325dd32f24626183338b887ded20d4c",
+      "docs/internal/templates/execution/experiment.template.md": "5448723668dc9a2109b36339c01d6086acc5f01de72b5da948922d5dbf59a588",
+      "docs/internal/templates/execution/index.md": "8b7244ee555f9aec7f88e5adbc9ce1f108c0375d00f6a454fa475e4c67f4c07c",
+      "docs/internal/templates/execution/macro-execution.template.md": "853b4d7716561a151dd1a3ba0ea99032542f10664555fc4dfa5b6618fa796036",
+      "docs/internal/templates/execution/recon.template.md": "18dc26cf514413473e0e3bf0878fc4faceda36ac33a824fda212c27e97e45586",
+      "docs/internal/templates/execution/verification.template.md": "5334039c7d85c6a30d645533342621aeb88183182b2c3ed5954bf33d00e8b261",
+      "docs/internal/templates/index.md": "06e3ebf41c064d01c15ae11aa09aab552d5075bddccff8e70b6cfdbb0323f583",
+      "docs/internal/templates/profiles/index.md": "3cd78ede53a188131dcdb3ab162b9c6ef6ed1fbb0b0038afa20f0420aa73f957",
+      "docs/internal/templates/profiles/language-profile.template.md": "55060400070137d36113dd0a3d0ed4ede6c9e3eed31b8637d239c3aee4e96f65",
+      "docs/internal/templates/project-profile.template.md": "3f8f2772096e7f5f267ce46e2ee7fb30a8b079ec16e4599e21bae925c65bd589",
+      "docs/internal/work-index.json": "f209532edab7c0b52901a2f7183ca4d5bc18142b9c552a586e83fe12d0999dcb",
+      "docs/public/framework-cli.contract.md": "b456fd574efb78f191d2311a11286204c70227792083e058255a715469e079d5",
+      "docs/public/index.md": "b548cf4d7ffef665c31f14bcc90dc51f64a825b80b8306af127aff0908bc75d0",
+      "docs/public/skill-installation.guide.md": "b654870e3a72c2d0d925ba1a07ab3d38cf1595367bbac72122572c9706a4da96",
+      "examples/existing-system.example.md": "665f3183b350ed0fb9a6ec8e9f159059a9d4a4817ee8d316779c491c53d9cf15",
+      "examples/greenfield.example.md": "305fe522821562f60a6ae77e9e055b93e236a88f8e653cfd57526c9014584301",
+      "examples/README.md": "8aafc76bc47f3a658ee788419af459383d1f76010378fa506a1398c5bc9132e8",
+      "examples/research.example.md": "037e7f42dcdac1ba18786a48dcb3a8e5dba27f26e8b1d837f3aaf42e266b47e6",
+      "README.md": "75aa79de942683d1b0074b806f4eed36b7bed7b8b9c42a4e5b49103880f1bffe",
+      "skills/stavel/SKILL.md": "b8f65d7600322f54f20b6e79436d125ede73a6228296ed841135f319dc68f959",
+      "stavel.config.json": null,
+      "tools/vendor/README.md": "606514120cc3c0df91fc13d16c295f5a6aeba8a8485f86f61b8eee2c74969e58"
+    },
+    "sourceHome": "docs/internal/product/capabilities/cli/work-management/execution/work-records"
+  },
+  "designs": [
+    {
+      "path": "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md",
+      "sha256": "fe3e679539548aae9715b164df9317d2aaa89ec437336b3bb5c0f41d6522a820"
+    },
+    {
+      "path": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-contracts.design.md",
+      "sha256": "b1e30415b56db16776d413a21e00daca2ba0e7471fd26b51cbf4ab64b63d304a"
+    }
+  ],
+  "id": "work-records",
+  "macro": "docs/internal/_archive/product/capabilities/cli/work-management/execution/work-records/work-records.macro-execution.md",
+  "migration": {
+    "from": "provisional-execution-fields",
+    "schemaVersion": 1,
+    "source": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+    "sources": {
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/work-records.execution-plan.md": "279a7c07c78e4af3626c80100c68810d9aca10592658fdc611ca4a2f268f80e3",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/work-records.macro-execution.md": "0d4bce11825b27b142b896c38a37dc528c9878dfe8e81178e286f0f4c1a5950f",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-01-work-reader.execution-slice.md": "613c403d463405273b6f0c930ade1ccb25d72d1b310ebaf7813490a4f3003b28",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-02-work-writers.execution-slice.md": "97082bd095a513df0cc754195101eed51bdaf7e004e5cbe3dce4ac0b4afb8b27",
+      "docs/internal/product/capabilities/cli/work-management/execution/work-records/wrk-03-work-schema-migrations.execution-slice.md": "01d75018bdee93b9715ec062875bb82e80eddd2325372a9785296e5138c4feaf"
+    }
+  },
+  "ownerPath": "docs/internal/product/capabilities/cli/work-management",
+  "plan": "docs/internal/_archive/product/capabilities/cli/work-management/execution/work-records/work-records.execution-plan.md",
+  "prerequisiteEvidence": {
+    "guided-init/SET-01": {
+      "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+      "sha256": "99e75b6d43bd3b85337384ed86417b3285cd1d9713610ce6825ffe2976227d66"
+    },
+    "guided-init/SET-02": {
+      "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+      "sha256": "22bec1a89de6a5d87586e7ef81beaf0b8874a038078989fd3b9d9d3a780aa291"
+    },
+    "repository-configuration/CFG-02": {
+      "path": "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+      "sha256": "bc4092ea739edee81033e44f9b961bb4c793fbaccbf81a6df491b9612d9ab587"
+    }
+  },
+  "referenceHistory": [
+    {
+      "changes": [
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "8cdffdffd06561587ab036601c784019853e1b6f3a2aed1c55026ba3348d1858"
+          },
+          "to": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "65951b5f91a70e602d15c146069e1b1e778315b583a03b048569424ebcea7663"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "7b1f5c13097026c396f0642a53b7785279ad873c3efb136f444ff80338e0540f"
+          },
+          "to": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "3d53c7729f4ca2ef6c1ba241a0a0c818b334479192dd20684991e8e850ee1e27"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "1f534b8297570e2040110db0bb01f2825b934fee1af27fbb6c64e56310afd794"
+          },
+          "to": {
+            "path": "docs/internal/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "3dec2e22925a1b8e4324803f8449a4a9c8788493d96814e3cd82658127bf4afc"
+          }
+        }
+      ],
+      "kind": "archive-reference-rebase",
+      "packetId": "foundations"
+    },
+    {
+      "changes": [
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "65951b5f91a70e602d15c146069e1b1e778315b583a03b048569424ebcea7663"
+          },
+          "to": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "f7648348ec4089c8e337827e7ebefaf7ddcbfade00f639d1844172ff4193a010"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "3d53c7729f4ca2ef6c1ba241a0a0c818b334479192dd20684991e8e850ee1e27"
+          },
+          "to": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "614418fbf304320f599bc488502d3478ce94997be75c3f37b071e00d87ff29f2"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "3dec2e22925a1b8e4324803f8449a4a9c8788493d96814e3cd82658127bf4afc"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "03b3c5037858351a4593af25605db3d4f60f19c93111a90b016fabcd292035d7"
+          }
+        }
+      ],
+      "kind": "archive-reference-rebase",
+      "packetId": "repository-configuration"
+    },
+    {
+      "changes": [
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "f7648348ec4089c8e337827e7ebefaf7ddcbfade00f639d1844172ff4193a010"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "a7f3983d7c2a2df224c5a03b83ac9cb36e06fa88af05310e841f30afd4673a4f"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "614418fbf304320f599bc488502d3478ce94997be75c3f37b071e00d87ff29f2"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "a27348399d57b629a2efbf9ec1953b4d9bf45426c1184296cbc1d97e90eab192"
+          }
+        }
+      ],
+      "kind": "archive-reference-rebase",
+      "packetId": "guided-init"
+    },
+    {
+      "changes": [
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md",
+            "sha256": "ea461863566028e7900e4ff40ac7d241fbed86f59c47c32a286e584f26cb6799"
+          },
+          "to": {
+            "path": "docs/internal/product/capabilities/skill/guided-workflows/guided-workflows.design.md",
+            "sha256": "fe3e679539548aae9715b164df9317d2aaa89ec437336b3bb5c0f41d6522a820"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-contracts.design.md",
+            "sha256": "e5a08d4ca909624d948775e5c4f18578c797dc00fb39c622b9d0b1f176032784"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-contracts.design.md",
+            "sha256": "b1e30415b56db16776d413a21e00daca2ba0e7471fd26b51cbf4ab64b63d304a"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+            "sha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+            "sha256": "0598fe8bfe6f745b19de74df2686fc1a550afd61aa4814411f1c0be40aa6e113"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "a7f3983d7c2a2df224c5a03b83ac9cb36e06fa88af05310e841f30afd4673a4f"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-01-scope-discovery.execution-slice.md",
+            "sha256": "99e75b6d43bd3b85337384ed86417b3285cd1d9713610ce6825ffe2976227d66"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "a27348399d57b629a2efbf9ec1953b4d9bf45426c1184296cbc1d97e90eab192"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/capabilities/cli/initialization/execution/guided-init/set-02-shared-question-sessions.execution-slice.md",
+            "sha256": "22bec1a89de6a5d87586e7ef81beaf0b8874a038078989fd3b9d9d3a780aa291"
+          }
+        },
+        {
+          "from": {
+            "path": "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "03b3c5037858351a4593af25605db3d4f60f19c93111a90b016fabcd292035d7"
+          },
+          "to": {
+            "path": "docs/internal/_archive/product/contracts/configuration/execution/repository-configuration/cfg-02-config-migration-and-adoption.execution-slice.md",
+            "sha256": "bc4092ea739edee81033e44f9b961bb4c793fbaccbf81a6df491b9612d9ab587"
+          }
+        }
+      ],
+      "kind": "archive-reference-rebase",
+      "packetId": "guided-workflows"
+    }
+  ],
+  "review": {
+    "kind": "accepted-design",
+    "sha256": "0598fe8bfe6f745b19de74df2686fc1a550afd61aa4814411f1c0be40aa6e113",
+    "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+  },
+  "schemaVersion": 1,
+  "slices": [
+    {
+      "dependencies": [
+        "repository-configuration/CFG-02",
+        "guided-init/SET-01"
+      ],
+      "id": "WRK-01",
+      "path": "docs/internal/_archive/product/capabilities/cli/work-management/execution/work-records/wrk-01-work-reader.execution-slice.md"
+    },
+    {
+      "dependencies": [
+        "WRK-01",
+        "guided-init/SET-02"
+      ],
+      "id": "WRK-02",
+      "path": "docs/internal/_archive/product/capabilities/cli/work-management/execution/work-records/wrk-02-work-writers.execution-slice.md"
+    },
+    {
+      "dependencies": [
+        "WRK-02"
+      ],
+      "id": "WRK-03",
+      "path": "docs/internal/_archive/product/capabilities/cli/work-management/execution/work-records/wrk-03-work-schema-migrations.execution-slice.md"
+    }
+  ],
+  "stories": []
+}

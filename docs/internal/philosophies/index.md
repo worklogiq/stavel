@@ -16,6 +16,8 @@ Read only the applicable subjects. Each policy states the behavior it protects a
 | --- | --- |
 | [AI collaboration](ai-collaboration.philosophy.md) | Coding sessions, prompts, model handoffs |
 | [Product intent](product-intent.philosophy.md) | Scope, outcomes, non-goals, priorities |
+| [Capability ownership](capability-ownership.philosophy.md) | Product surfaces, feature homes, shared services and proactive discovery |
+| [CLI tools](cli-tools.philosophy.md) | Command/service boundaries, effects, naming rationale and per-service tests |
 | [Architecture](architecture.philosophy.md) | Boundaries, domain logic, adapters, APIs |
 | [Code quality](code-quality.philosophy.md) | Naming, types, dependencies, maintainability |
 | [Data and persistence](data-and-persistence.philosophy.md) | Schemas, state, history, caches, migrations |

@@ -17,10 +17,12 @@ Use this single phase vocabulary in plans, prompts, and handoffs. Modes describe
 | 0 Recon | Relevant docs, behavior, gaps, and side effects mapped | EXPLORE or REVIEW |
 | 1 Requirements | Accepted behavior, non-goals, and required mechanisms | EXPLORE |
 | 2 Design | Boundaries, alternatives, contracts, risks, and decisions | DESIGN or EXPERIMENT |
-| 3 Slice planning | Reviewable change, acceptance, and checks | DESIGN |
-| 4 Implementation | Code or documents implement the authorized slice | STRICT MODE |
+| 3 Slice planning | Execution packet, coherent slices, dependencies, checks and optional output stories | PLAN |
+| 4 Implementation | Code or documents implement the authorized slice | EXECUTE using STRICT MODE |
 | 5 Verification | Requirement-level evidence and residual limitations | REVIEW |
 | 6 Close and handoff | Current docs, status, open work, historical record | REVIEW |
+
+EXPERIMENT can be standalone learning/POC work or support another phase. EXPLORE can begin with a story or an open problem. DESIGN turns that evidence into design docs; PLAN sets up execution from the selected design, including optional story outputs. EXECUTE performs the work. VIBE combines the applicable activities in short loops while preserving philosophies and durable records. A single authorized task can cover explicit transitions without collapsing these responsibilities or requiring a separate user invocation for every phase.
 
 ## Match the packet to the work
 

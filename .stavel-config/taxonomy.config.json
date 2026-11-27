@@ -1,0 +1,39 @@
+{
+  "documentation": {
+    "owners": [
+      {
+        "canonical": {
+          "artifact.product-overview": "docs/internal/product/product.overview.md"
+        },
+        "id": "product",
+        "path": "docs/internal/product",
+        "role": "product"
+      },
+      {
+        "id": "skill",
+        "parent": "product",
+        "path": "docs/internal/product/capabilities/skill",
+        "role": "capability"
+      },
+      {
+        "id": "cli",
+        "parent": "product",
+        "path": "docs/internal/product/capabilities/cli",
+        "role": "capability"
+      },
+      {
+        "id": "guided-workflows",
+        "parent": "skill",
+        "path": "docs/internal/product/capabilities/skill/guided-workflows",
+        "role": "feature"
+      },
+      {
+        "id": "configuration",
+        "parent": "product",
+        "path": "docs/internal/product/contracts/configuration",
+        "role": "contract-topic"
+      }
+    ]
+  },
+  "schemaVersion": 1
+}

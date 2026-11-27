@@ -6,7 +6,7 @@ kind: "contract"
 state: "accepted"
 audience: "public"
 owner: "repository-maintainer"
-updated: "2026-11-25"
+updated: "2026-11-26"
 acceptance: "user:2026-11-25:framework-v02-implementation"
 -->
 
@@ -55,6 +55,16 @@ Generated local context and newly synthesized document metadata use the resolved
 
 `source.languages` is a list of language identifiers; `source.naming.identifierCase` affects source policy independently of documentation naming. Existing-language decisions do not rename application source files or install a language toolchain. The questions command identifies additional applicable required answers; the example shows the record shape rather than an exhaustive answer list for every repository.
 
+## Test placement
+
+The default profile's testing section records placement=follow-repository and fallback=language-convention. The optional verification.testPlacement question offers repository-following, profile-default, language-convention, colocated, separate or custom policies; profile-default retains configured settings. Custom placement requires verification.testLayout roots/patterns. Explicit configuration.testing can also carry scoped layouts. The [placement guide](test-placement.guide.md) owns validation, examples, evidence/alignment and migration boundaries.
+
+Current inspection reports heuristic layout evidence; current aligned planning/init validates and persists the policy without generating or moving test code. Language/toolchain recommendations need applicable primary evidence and real alignment; absent consensus is a question, not a fabricated default. Bare interactive init and automated placement enforcement remain separate future work. Existing answer records remain valid without the optional question.
+
+## Story generation policy and template
+
+The default workflow.stories records generation=ask and the seeded story-template path. Optional workflow.stories.generation selects profile-default, ask, always or never; explicit always/never suppress the PLAN question. The optional workflow.stories.template answer or configuration.workflow.stories.template selects an existing repo-relative Markdown template. The [story guide](story-workflow.guide.md) owns current validation, editable bootstrap ownership and scope behavior. Init configures/seeds the template; it does not generate feature stories or external issues.
+
 ## Scoped source conventions
 
 Optional `source.scopes` answers record different conventions for repository-relative source roots. The resolved profile stores the same map at `configuration.source.scopes`; the longest matching root overrides the general source defaults. Each scope may declare `language`, `naming` (`shape`, `identifierCase`, `allowedNames`), `roles` and `rules`. Language-required filenames remain explicit exceptions. These decisions configure policy; they do not rename existing source or add an unimplemented language checker.
@@ -83,3 +93,17 @@ The portable asset catalog requires product: stavel and explicitly lists source,
 Generated installation manifests and plans require product: stavel. Journals validate their embedded Stavel plan. Existing schema numbers are independent from package version 0.1.0. Generic migration uses explicit reviewed mappings and preserves hashes, operations and actual state; there is no built-in predecessor import map or compatibility alias. Acceptance remains tied to the real user instruction or accepted owner record.
 
 Optional Java, Python, frontend and backend examples describe decisions to make. They do not enable unimplemented language checks. The [contribution guide](contribution-profiles.guide.md) defines the extension contract. Generic Markdown mechanics remain separate from project policy, and executable dependencies used after export must be included in the self-contained runtime.
+
+Optional decisions may be omitted for backward compatibility; explicitly supplied invalid values remain unresolved and block generation rather than silently falling back. Repository-owned template catalog assets are mutable target sources, while inspected hashes still protect stale plans.
+
+## Committed configuration home
+
+Use .stavel-config/stavel.config.json (schemaVersion 1) with baseline {id,version,path,sha256} and topic-name/path references. Commit the selected baseline.profile.json snapshot. Optional schemaVersion-1 topics own documentation (taxonomy), source/rules/testing (tooling), workflow and accepted decision records. Only actual overrides need topic entries; referenced existing topics/paths are preserved. Repository owner nodes carry stable id, role, parent, path and optional canonical artifact paths. Templates remain editable files.
+
+The resolver composes the pinned baseline, repository choices, explicit source/capability scope and task amendments, reporting field provenance and all file/absence preconditions. Defined objects merge, arrays replace; stable artifact/section/question/check amendments use explicit add/omit/replace with IDs, source and reason. Conflicts or removed/required targets refuse. Current user instructions still control scope; ephemeral task amendments do not become standing policy without that instruction.
+
+Root stavel.config.json remains supported. Two active homes conflict. Select an aligned migrate plan with --configuration-home directory to convert root policy without losing custom settings/history. Unsupported fields require an explicit mapping. Baseline upgrades are explicit migrations, not an effect of installing a new package. Configuration, package, profile, session, work and packet schema versions have independent meanings.
+
+Use config explain for the effective profile/provenance. General help reads distribution defaults; contextual help reads selected repository policy. Export uses only the explicit portable catalog, never the publisher's filled policy or work records. CLI flags describing target/output are separate from persisted methodology decisions.
+
+For a pinned-directory baseline upgrade, select migrate plan with --upgrade-baseline and complete aligned answers. The planner verifies the old pin, previews old/new defaults, reapplies explicit topic choices and refuses stale inputs. Legacy root configuration first needs an explicit directory migration, because it has no separable prior baseline. Installing a new package alone leaves the pin unchanged.

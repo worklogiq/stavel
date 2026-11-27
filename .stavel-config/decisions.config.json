@@ -1,0 +1,190 @@
+{
+  "decisions": [
+    {
+      "id": "configuration.defaults",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "committed-pinned-baseline"
+    },
+    {
+      "id": "configuration.precedence",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": [
+        "baseline",
+        "repository",
+        "capability",
+        "task"
+      ]
+    },
+    {
+      "id": "sessions.retention",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "explicit-cleanup"
+    },
+    {
+      "id": "migrations.preserve",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": true
+    },
+    {
+      "id": "effects.aiWarning",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": true
+    },
+    {
+      "id": "writers.recovery",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "hash-checked-locked-journaled"
+    },
+    {
+      "id": "doctor.repairs",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "allowlisted-preview"
+    },
+    {
+      "id": "workflow.packetAuthority",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "slice-markdown"
+    },
+    {
+      "id": "workflow.commits",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "conventional"
+    },
+    {
+      "id": "testing.placement",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": "colocated"
+    },
+    {
+      "id": "configuration.workflow.review",
+      "origin": "explicit-answer",
+      "referenceHistory": [
+        {
+          "from": "docs/internal/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+          "operation": "archive-reference-rebase",
+          "packetId": "guided-workflows",
+          "sourceSha256": "746cdcd6e9c1f7d051c65ca2e6ec58bc5d8839d301219bc8ed08e86e0cb554da",
+          "to": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md"
+        }
+      ],
+      "scope": "repository",
+      "source": "docs/internal/_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/execution-acceptance.decision.md",
+      "status": "accepted",
+      "value": {
+        "allowTaskException": true,
+        "design": "recommended-for-substantial"
+      }
+    }
+  ],
+  "schemaVersion": 1
+}

@@ -1,0 +1,1061 @@
+{
+  "product": "stavel",
+  "schemaVersion": 1,
+  "version": 1,
+  "artifacts": [
+    {
+      "id": "artifact.product-overview",
+      "family": "product",
+      "title": "Product overview",
+      "kind": "overview",
+      "template": "docs/internal/templates/design/product-overview.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner",
+        "purpose",
+        "audience",
+        "scope",
+        "outcomes"
+      ],
+      "sections": [
+        "section.product-overview.purpose-and-outcomes",
+        "section.product-overview.audience",
+        "section.product-overview.scope",
+        "section.product-overview.capabilities-and-contracts",
+        "section.product-overview.ownership-and-decisions"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.product",
+      "family": "product",
+      "title": "Product",
+      "kind": "product",
+      "template": "docs/internal/templates/design/product.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.product.problem-and-outcome",
+        "section.product.scope-and-non-goals",
+        "section.product.existing-fit",
+        "section.product.success-and-uncertainty"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.requirements",
+      "family": "requirements",
+      "title": "Requirements",
+      "kind": "requirements",
+      "template": "docs/internal/templates/design/requirements.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.requirements.inputs-and-observable-behavior",
+        "section.requirements.required-mechanisms",
+        "section.requirements.constraints",
+        "section.requirements.non-goals-and-open-decisions"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.design",
+      "family": "design",
+      "title": "Design",
+      "kind": "design",
+      "template": "docs/internal/templates/design/design.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.design.contract-and-context",
+        "section.design.data-flow-and-responsibilities",
+        "section.design.required-mechanisms-and-alternatives",
+        "section.design.compatibility-and-operation",
+        "section.design.verification-and-slices"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.backend",
+      "family": "backend",
+      "title": "Backend",
+      "kind": "backend-design",
+      "template": "docs/internal/templates/design/backend-design.template.md",
+      "surfaces": [
+        "backend"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.backend.scope-and-ownership",
+        "section.backend.transport-and-domain-behavior",
+        "section.backend.persistence-and-adapters",
+        "section.backend.operation-and-verification",
+        "section.backend.risks-and-decisions"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.interface",
+      "family": "interface",
+      "title": "Interface",
+      "kind": "ui-design",
+      "template": "docs/internal/templates/design/interface.template.md",
+      "surfaces": [
+        "ui",
+        "cli",
+        "library"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.interface.audience-and-workflow",
+        "section.interface.states-and-recovery",
+        "section.interface.accessibility-and-interaction",
+        "section.interface.verification-and-help"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.architecture",
+      "family": "architecture",
+      "title": "Architecture",
+      "kind": "architecture-diagram",
+      "template": "docs/internal/templates/design/architecture-diagram.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.architecture.diagram-inventory",
+        "section.architecture.context-and-components",
+        "section.architecture.critical-path-and-data-model",
+        "section.architecture.invariants-and-verification"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.decision",
+      "family": "decisions",
+      "title": "Decision",
+      "kind": "decision",
+      "template": "docs/internal/templates/design/decision.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.decision.context-and-evidence",
+        "section.decision.alternatives-and-decision",
+        "section.decision.consequences-and-enforcement",
+        "section.decision.supersession"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.test-plan",
+      "family": "tests",
+      "title": "Test plan",
+      "kind": "test-plan",
+      "template": "docs/internal/templates/design/test-plan.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.test-plan.acceptance-coverage",
+        "section.test-plan.failure-and-recovery",
+        "section.test-plan.empirical-claims",
+        "section.test-plan.commands-and-limitations"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.accessibility",
+      "family": "accessibility",
+      "title": "Accessibility",
+      "kind": "accessibility-plan",
+      "template": "docs/internal/templates/design/accessibility-plan.template.md",
+      "surfaces": [
+        "ui",
+        "cli"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.accessibility.scope-and-applicable-target",
+        "section.accessibility.interaction-and-recovery",
+        "section.accessibility.user-and-technology-coverage",
+        "section.accessibility.evidence-and-gaps"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.authorization",
+      "family": "authorization",
+      "title": "Authorization",
+      "kind": "authorization-matrix",
+      "template": "docs/internal/templates/design/authorization-matrix.template.md",
+      "surfaces": [
+        "backend",
+        "ui"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.authorization.scope-and-model",
+        "section.authorization.access-matrix",
+        "section.authorization.visibility-and-audit",
+        "section.authorization.verification-and-decisions"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.observability",
+      "family": "observability",
+      "title": "Observability",
+      "kind": "observability-plan",
+      "template": "docs/internal/templates/design/observability-plan.template.md",
+      "surfaces": [
+        "backend",
+        "cli",
+        "library",
+        "ui"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.observability.questions-and-signals",
+        "section.observability.boundaries-and-privacy",
+        "section.observability.configuration-and-failure-behavior",
+        "section.observability.validation-and-operation"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.documentation",
+      "family": "documentation",
+      "title": "Documentation",
+      "kind": "documentation-plan",
+      "template": "docs/internal/templates/design/documentation-plan.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.documentation.audience-and-deliverables",
+        "section.documentation.discovery-and-help",
+        "section.documentation.assets-and-publication",
+        "section.documentation.link-boundaries-and-closure"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.help",
+      "family": "documentation",
+      "title": "Help",
+      "kind": "help-documentation",
+      "template": "docs/internal/templates/design/help-documentation.template.md",
+      "surfaces": [
+        "ui",
+        "cli"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.help.purpose-and-prerequisites",
+        "section.help.steps-and-configuration",
+        "section.help.expected-outcomes-and-recovery",
+        "section.help.limits-and-related-help"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.public-docs",
+      "family": "documentation",
+      "title": "Public docs",
+      "kind": "guide",
+      "template": "docs/internal/templates/design/public-documentation.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.public-docs.purpose-and-audience",
+        "section.public-docs.usage-and-examples",
+        "section.public-docs.limits-and-support",
+        "section.public-docs.related-public-documentation"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.recon",
+      "family": "execution",
+      "title": "Recon",
+      "kind": "recon",
+      "template": "docs/internal/templates/execution/recon.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner",
+        "revision"
+      ],
+      "sections": [
+        "section.recon.task-and-authority",
+        "section.recon.observed-system",
+        "section.recon.discrepancies",
+        "section.recon.next-slice"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.execution-plan",
+      "family": "execution",
+      "title": "Execution plan",
+      "kind": "execution-plan",
+      "template": "docs/internal/templates/execution/execution-plan.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.execution-plan.accepted-inputs-and-outcome",
+        "section.execution-plan.slices",
+        "section.execution-plan.cross-cutting-changes",
+        "section.execution-plan.closure-and-handoff"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.execution-slice",
+      "family": "execution",
+      "title": "Execution slice",
+      "kind": "execution-slice",
+      "template": "docs/internal/templates/execution/execution-slice.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner",
+        "branch"
+      ],
+      "sections": [
+        "section.execution-slice.scope-and-authority",
+        "section.execution-slice.contract-to-preserve",
+        "section.execution-slice.steps-and-verification",
+        "section.execution-slice.result"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.macro-execution",
+      "family": "execution",
+      "title": "Macro execution",
+      "kind": "macro-execution",
+      "template": "docs/internal/templates/execution/macro-execution.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.macro-execution.accepted-scope",
+        "section.macro-execution.slice-index-and-dependencies",
+        "section.macro-execution.closure-and-archive"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.verification",
+      "family": "execution",
+      "title": "Verification",
+      "kind": "verification",
+      "template": "docs/internal/templates/execution/verification.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner",
+        "revision"
+      ],
+      "sections": [
+        "section.verification.requirement-evidence",
+        "section.verification.defining-mechanisms",
+        "section.verification.checks-actually-performed",
+        "section.verification.review-and-next-actions"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.experiment",
+      "family": "execution",
+      "title": "Experiment",
+      "kind": "experiment",
+      "template": "docs/internal/templates/execution/experiment.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.experiment.question-and-required-mechanism",
+        "section.experiment.independent-reference-and-protocol",
+        "section.experiment.observations",
+        "section.experiment.interpretation-and-decision"
+      ],
+      "version": 1
+    },
+    {
+      "id": "artifact.story",
+      "family": "story",
+      "title": "Story",
+      "kind": "story",
+      "template": "docs/internal/templates/design/story.template.md",
+      "surfaces": [
+        "any"
+      ],
+      "requiredFacts": [
+        "title",
+        "owner"
+      ],
+      "sections": [
+        "section.story.outcome-and-scope",
+        "section.story.canonical-requirements-and-design",
+        "section.story.acceptance",
+        "section.story.delivery-slices-and-dependencies",
+        "section.story.non-goals-open-decisions-and-status"
+      ],
+      "version": 1
+    }
+  ],
+  "sections": [
+    {
+      "id": "section.product-overview.purpose-and-outcomes",
+      "title": "Purpose and outcomes",
+      "version": 1
+    },
+    {
+      "id": "section.product-overview.audience",
+      "title": "Audience",
+      "version": 1
+    },
+    {
+      "id": "section.product-overview.scope",
+      "title": "Scope",
+      "version": 1
+    },
+    {
+      "id": "section.product-overview.capabilities-and-contracts",
+      "title": "Capabilities and contracts",
+      "version": 1
+    },
+    {
+      "id": "section.product-overview.ownership-and-decisions",
+      "title": "Ownership and decisions",
+      "version": 1
+    },
+    {
+      "id": "section.product.problem-and-outcome",
+      "title": "Problem and outcome",
+      "version": 1
+    },
+    {
+      "id": "section.product.scope-and-non-goals",
+      "title": "Scope and non-goals",
+      "version": 1
+    },
+    {
+      "id": "section.product.existing-fit",
+      "title": "Existing fit",
+      "version": 1
+    },
+    {
+      "id": "section.product.success-and-uncertainty",
+      "title": "Success and uncertainty",
+      "version": 1
+    },
+    {
+      "id": "section.requirements.inputs-and-observable-behavior",
+      "title": "Inputs and observable behavior",
+      "version": 1
+    },
+    {
+      "id": "section.requirements.required-mechanisms",
+      "title": "Required mechanisms",
+      "version": 1
+    },
+    {
+      "id": "section.requirements.constraints",
+      "title": "Constraints",
+      "version": 1
+    },
+    {
+      "id": "section.requirements.non-goals-and-open-decisions",
+      "title": "Non-goals and open decisions",
+      "version": 1
+    },
+    {
+      "id": "section.design.contract-and-context",
+      "title": "Contract and context",
+      "version": 1
+    },
+    {
+      "id": "section.design.data-flow-and-responsibilities",
+      "title": "Data flow and responsibilities",
+      "version": 1
+    },
+    {
+      "id": "section.design.required-mechanisms-and-alternatives",
+      "title": "Required mechanisms and alternatives",
+      "version": 1
+    },
+    {
+      "id": "section.design.compatibility-and-operation",
+      "title": "Compatibility and operation",
+      "version": 1
+    },
+    {
+      "id": "section.design.verification-and-slices",
+      "title": "Verification and slices",
+      "version": 1
+    },
+    {
+      "id": "section.backend.scope-and-ownership",
+      "title": "Scope and ownership",
+      "version": 1
+    },
+    {
+      "id": "section.backend.transport-and-domain-behavior",
+      "title": "Transport and domain behavior",
+      "version": 1
+    },
+    {
+      "id": "section.backend.persistence-and-adapters",
+      "title": "Persistence and adapters",
+      "version": 1
+    },
+    {
+      "id": "section.backend.operation-and-verification",
+      "title": "Operation and verification",
+      "version": 1
+    },
+    {
+      "id": "section.backend.risks-and-decisions",
+      "title": "Risks and decisions",
+      "version": 1
+    },
+    {
+      "id": "section.interface.audience-and-workflow",
+      "title": "Audience and workflow",
+      "version": 1
+    },
+    {
+      "id": "section.interface.states-and-recovery",
+      "title": "States and recovery",
+      "version": 1
+    },
+    {
+      "id": "section.interface.accessibility-and-interaction",
+      "title": "Accessibility and interaction",
+      "version": 1
+    },
+    {
+      "id": "section.interface.verification-and-help",
+      "title": "Verification and help",
+      "version": 1
+    },
+    {
+      "id": "section.architecture.diagram-inventory",
+      "title": "Diagram inventory",
+      "version": 1
+    },
+    {
+      "id": "section.architecture.context-and-components",
+      "title": "Context and components",
+      "version": 1
+    },
+    {
+      "id": "section.architecture.critical-path-and-data-model",
+      "title": "Critical path and data model",
+      "version": 1
+    },
+    {
+      "id": "section.architecture.invariants-and-verification",
+      "title": "Invariants and verification",
+      "version": 1
+    },
+    {
+      "id": "section.decision.context-and-evidence",
+      "title": "Context and evidence",
+      "version": 1
+    },
+    {
+      "id": "section.decision.alternatives-and-decision",
+      "title": "Alternatives and decision",
+      "version": 1
+    },
+    {
+      "id": "section.decision.consequences-and-enforcement",
+      "title": "Consequences and enforcement",
+      "version": 1
+    },
+    {
+      "id": "section.decision.supersession",
+      "title": "Supersession",
+      "version": 1
+    },
+    {
+      "id": "section.test-plan.acceptance-coverage",
+      "title": "Acceptance coverage",
+      "version": 1
+    },
+    {
+      "id": "section.test-plan.failure-and-recovery",
+      "title": "Failure and recovery",
+      "version": 1
+    },
+    {
+      "id": "section.test-plan.empirical-claims",
+      "title": "Empirical claims",
+      "version": 1
+    },
+    {
+      "id": "section.test-plan.commands-and-limitations",
+      "title": "Commands and limitations",
+      "version": 1
+    },
+    {
+      "id": "section.accessibility.scope-and-applicable-target",
+      "title": "Scope and applicable target",
+      "version": 1
+    },
+    {
+      "id": "section.accessibility.interaction-and-recovery",
+      "title": "Interaction and recovery",
+      "version": 1
+    },
+    {
+      "id": "section.accessibility.user-and-technology-coverage",
+      "title": "User and technology coverage",
+      "version": 1
+    },
+    {
+      "id": "section.accessibility.evidence-and-gaps",
+      "title": "Evidence and gaps",
+      "version": 1
+    },
+    {
+      "id": "section.authorization.scope-and-model",
+      "title": "Scope and model",
+      "version": 1
+    },
+    {
+      "id": "section.authorization.access-matrix",
+      "title": "Access matrix",
+      "version": 1
+    },
+    {
+      "id": "section.authorization.visibility-and-audit",
+      "title": "Visibility and audit",
+      "version": 1
+    },
+    {
+      "id": "section.authorization.verification-and-decisions",
+      "title": "Verification and decisions",
+      "version": 1
+    },
+    {
+      "id": "section.observability.questions-and-signals",
+      "title": "Questions and signals",
+      "version": 1
+    },
+    {
+      "id": "section.observability.boundaries-and-privacy",
+      "title": "Boundaries and privacy",
+      "version": 1
+    },
+    {
+      "id": "section.observability.configuration-and-failure-behavior",
+      "title": "Configuration and failure behavior",
+      "version": 1
+    },
+    {
+      "id": "section.observability.validation-and-operation",
+      "title": "Validation and operation",
+      "version": 1
+    },
+    {
+      "id": "section.documentation.audience-and-deliverables",
+      "title": "Audience and deliverables",
+      "version": 1
+    },
+    {
+      "id": "section.documentation.discovery-and-help",
+      "title": "Discovery and help",
+      "version": 1
+    },
+    {
+      "id": "section.documentation.assets-and-publication",
+      "title": "Assets and publication",
+      "version": 1
+    },
+    {
+      "id": "section.documentation.link-boundaries-and-closure",
+      "title": "Link boundaries and closure",
+      "version": 1
+    },
+    {
+      "id": "section.help.purpose-and-prerequisites",
+      "title": "Purpose and prerequisites",
+      "version": 1
+    },
+    {
+      "id": "section.help.steps-and-configuration",
+      "title": "Steps and configuration",
+      "version": 1
+    },
+    {
+      "id": "section.help.expected-outcomes-and-recovery",
+      "title": "Expected outcomes and recovery",
+      "version": 1
+    },
+    {
+      "id": "section.help.limits-and-related-help",
+      "title": "Limits and related help",
+      "version": 1
+    },
+    {
+      "id": "section.public-docs.purpose-and-audience",
+      "title": "Purpose and audience",
+      "version": 1
+    },
+    {
+      "id": "section.public-docs.usage-and-examples",
+      "title": "Usage and examples",
+      "version": 1
+    },
+    {
+      "id": "section.public-docs.limits-and-support",
+      "title": "Limits and support",
+      "version": 1
+    },
+    {
+      "id": "section.public-docs.related-public-documentation",
+      "title": "Related public documentation",
+      "version": 1
+    },
+    {
+      "id": "section.recon.task-and-authority",
+      "title": "Task and authority",
+      "version": 1
+    },
+    {
+      "id": "section.recon.observed-system",
+      "title": "Observed system",
+      "version": 1
+    },
+    {
+      "id": "section.recon.discrepancies",
+      "title": "Discrepancies",
+      "version": 1
+    },
+    {
+      "id": "section.recon.next-slice",
+      "title": "Next slice",
+      "version": 1
+    },
+    {
+      "id": "section.execution-plan.accepted-inputs-and-outcome",
+      "title": "Accepted inputs and outcome",
+      "version": 1
+    },
+    {
+      "id": "section.execution-plan.slices",
+      "title": "Slices",
+      "version": 1
+    },
+    {
+      "id": "section.execution-plan.cross-cutting-changes",
+      "title": "Cross-cutting changes",
+      "version": 1
+    },
+    {
+      "id": "section.execution-plan.closure-and-handoff",
+      "title": "Closure and handoff",
+      "version": 1
+    },
+    {
+      "id": "section.execution-slice.scope-and-authority",
+      "title": "Scope and authority",
+      "version": 1
+    },
+    {
+      "id": "section.execution-slice.contract-to-preserve",
+      "title": "Contract to preserve",
+      "version": 1
+    },
+    {
+      "id": "section.execution-slice.steps-and-verification",
+      "title": "Steps and verification",
+      "version": 1
+    },
+    {
+      "id": "section.execution-slice.result",
+      "title": "Result",
+      "version": 1
+    },
+    {
+      "id": "section.macro-execution.accepted-scope",
+      "title": "Accepted scope",
+      "version": 1
+    },
+    {
+      "id": "section.macro-execution.slice-index-and-dependencies",
+      "title": "Slice index and dependencies",
+      "version": 1
+    },
+    {
+      "id": "section.macro-execution.closure-and-archive",
+      "title": "Closure and archive",
+      "version": 1
+    },
+    {
+      "id": "section.verification.requirement-evidence",
+      "title": "Requirement evidence",
+      "version": 1
+    },
+    {
+      "id": "section.verification.defining-mechanisms",
+      "title": "Defining mechanisms",
+      "version": 1
+    },
+    {
+      "id": "section.verification.checks-actually-performed",
+      "title": "Checks actually performed",
+      "version": 1
+    },
+    {
+      "id": "section.verification.review-and-next-actions",
+      "title": "Review and next actions",
+      "version": 1
+    },
+    {
+      "id": "section.experiment.question-and-required-mechanism",
+      "title": "Question and required mechanism",
+      "version": 1
+    },
+    {
+      "id": "section.experiment.independent-reference-and-protocol",
+      "title": "Independent reference and protocol",
+      "version": 1
+    },
+    {
+      "id": "section.experiment.observations",
+      "title": "Observations",
+      "version": 1
+    },
+    {
+      "id": "section.experiment.interpretation-and-decision",
+      "title": "Interpretation and decision",
+      "version": 1
+    },
+    {
+      "id": "section.story.outcome-and-scope",
+      "title": "Outcome and scope",
+      "version": 1
+    },
+    {
+      "id": "section.story.canonical-requirements-and-design",
+      "title": "Canonical requirements and design",
+      "version": 1
+    },
+    {
+      "id": "section.story.acceptance",
+      "title": "Acceptance",
+      "version": 1
+    },
+    {
+      "id": "section.story.delivery-slices-and-dependencies",
+      "title": "Delivery slices and dependencies",
+      "version": 1
+    },
+    {
+      "id": "section.story.non-goals-open-decisions-and-status",
+      "title": "Non-goals, open decisions and status",
+      "version": 1
+    }
+  ],
+  "questions": [
+    {
+      "id": "question.artifact.fact.title",
+      "fact": "title",
+      "prompt": "What is this product or initiative called?",
+      "requiredFor": [
+        "artifact.product-overview",
+        "artifact.product",
+        "artifact.requirements",
+        "artifact.design",
+        "artifact.backend",
+        "artifact.interface",
+        "artifact.architecture",
+        "artifact.decision",
+        "artifact.test-plan",
+        "artifact.accessibility",
+        "artifact.authorization",
+        "artifact.observability",
+        "artifact.documentation",
+        "artifact.help",
+        "artifact.public-docs",
+        "artifact.recon",
+        "artifact.execution-plan",
+        "artifact.execution-slice",
+        "artifact.macro-execution",
+        "artifact.verification",
+        "artifact.experiment",
+        "artifact.story"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.owner",
+      "fact": "owner",
+      "prompt": "Who owns these documents and decisions?",
+      "requiredFor": [
+        "artifact.product-overview",
+        "artifact.product",
+        "artifact.requirements",
+        "artifact.design",
+        "artifact.backend",
+        "artifact.interface",
+        "artifact.architecture",
+        "artifact.decision",
+        "artifact.test-plan",
+        "artifact.accessibility",
+        "artifact.authorization",
+        "artifact.observability",
+        "artifact.documentation",
+        "artifact.help",
+        "artifact.public-docs",
+        "artifact.recon",
+        "artifact.execution-plan",
+        "artifact.execution-slice",
+        "artifact.macro-execution",
+        "artifact.verification",
+        "artifact.experiment",
+        "artifact.story"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.purpose",
+      "fact": "purpose",
+      "prompt": "What problem does the product solve?",
+      "requiredFor": [
+        "artifact.product-overview"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.audience",
+      "fact": "audience",
+      "prompt": "Who is the product for?",
+      "requiredFor": [
+        "artifact.product-overview"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.scope",
+      "fact": "scope",
+      "prompt": "What is in scope and explicitly out of scope?",
+      "requiredFor": [
+        "artifact.product-overview"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.outcomes",
+      "fact": "outcomes",
+      "prompt": "What useful observable outcomes should the product enable?",
+      "requiredFor": [
+        "artifact.product-overview"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.revision",
+      "fact": "revision",
+      "prompt": "Which actual source revision or bounded snapshot was inspected?",
+      "requiredFor": [
+        "artifact.recon",
+        "artifact.verification"
+      ],
+      "version": 1
+    },
+    {
+      "id": "question.artifact.fact.branch",
+      "fact": "branch",
+      "prompt": "Which actual task branch or execution baseline applies?",
+      "requiredFor": [
+        "artifact.execution-slice"
+      ],
+      "version": 1
+    }
+  ]
+}

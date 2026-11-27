@@ -34,7 +34,7 @@ For a small reversible change, a short task note may contain recon, requirements
 
 ## 5. Separate discovery from execution
 
-EXPLORE and DESIGN produce options and decisions. EXPERIMENT tests hypotheses in isolated work. STRICT MODE implements the accepted task. REVIEW assesses evidence and discrepancies. A mode is a working posture, not an authorization to write or publish. Experiments do not silently rewrite the production contract.
+EXPLORE clarifies requirements and codebase understanding. EXPERIMENT supports standalone learning/POCs or hypothesis tests. DESIGN records the design; PLAN sets up execution slices and optional stories. EXECUTE implements accepted ready scope using STRICT MODE. VIBE combines the activities with the same philosophy and evidence obligations. REVIEW assesses evidence and discrepancies. A mode is a working posture, not an authorization to write or publish. Experiments do not silently rewrite the production contract.
 
 ## 6. Handle uncertainty at its actual boundary
 

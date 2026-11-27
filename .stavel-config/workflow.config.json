@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "workflow": {
+    "review": {
+      "allowTaskException": true,
+      "design": "recommended-for-substantial"
+    },
+    "work": {
+      "registryFile": "docs/internal/work-index.json"
+    }
+  }
+}

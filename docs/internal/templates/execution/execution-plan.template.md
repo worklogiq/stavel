@@ -19,9 +19,7 @@ Link requirements, design, decisions, applicable philosophies, and non-goals.
 
 ## Slices
 
-| Slice | Requirement IDs | Deliverable | Acceptance / checks | Dependencies | State |
-| --- | --- | --- | --- | --- | --- |
-| S-01 | R-01 | Reviewable outcome | Concrete evidence | None | Planned |
+{{SLICE_INDEX}}
 
 ## Cross-cutting changes
 

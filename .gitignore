@@ -7,3 +7,6 @@ node_modules/
 .cache/
 *.tgz
 !tools/vendor/*.tgz
+
+# Transient Stavel writer locks and recovery journals
+.stavel/

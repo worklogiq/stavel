@@ -6,11 +6,11 @@ kind: "prompt"
 state: "accepted"
 audience: "public"
 owner: "repository-maintainer"
-updated: "2026-11-25"
-acceptance: "user:2026-11-25:framework-v02-implementation"
+updated: "2026-11-26"
+acceptance: "user:2026-11-26:distinct-design-plan-execute-workflows"
 -->
 
-Read the task, project profile, applicable philosophies, and existing owners. Identify the user problem, desired outcome, non-goals, current behavior, and unknowns. In an existing system, gather evidence before proposing replacement.
+Read the task, project profile, applicable philosophies, existing owners and any input story. Discuss requirements or investigate the codebase: identify the user problem, desired outcome, non-goals, current behavior and unknowns. In an existing system, gather evidence before proposing replacement.
 
 Offer focused options and tradeoffs. Distinguish user requirements from your suggestions. Ask only questions that materially affect the task; continue useful independent work. Keep analysis read-only unless writing a proposal or experiment is authorized.
 
