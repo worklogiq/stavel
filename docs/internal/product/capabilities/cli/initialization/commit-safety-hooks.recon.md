@@ -23,4 +23,4 @@ Ship executable commit safeguards with Stavel and install/integrate them during 
 - Git's pre-commit hook can reject a commit. Preventing a prohibited push also needs an appropriate push-side guard; local hooks are bypassable and do not replace server-side protections.
 - Reuse configured conventions and provide an actionable refusal. Do not silently install dependencies or replace an existing hook manager.
 
-This records the first idea for the [IDEA mode proposal](../../skill/guided-workflows/idea-capture.design.md). No hook was implemented or installed by this capture.
+This records the first idea for the [IDEA workflow](../../skill/guided-workflows/idea-capture.design.md). The subsequent [draft hook design](commit-safety-hooks.design.md) develops the mechanism and verification contract while preserving this original capture. No hook was implemented or installed by this capture or design.

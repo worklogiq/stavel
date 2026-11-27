@@ -32,7 +32,7 @@ The [repeat-initialization recon](repeat-initialization.recon.md) records the ow
 
 ## Captured ideas
 
-- [Idea 001: packaged commit-safety hooks installed by init](commit-safety-hooks.recon.md). Proposal only; current initialization does not install Git hooks.
+- [Idea 001](commit-safety-hooks.recon.md) now has a [draft commit-safety hook design](commit-safety-hooks.design.md). Current initialization does not install Git hooks.
 
 ## Historical context (archived)
 

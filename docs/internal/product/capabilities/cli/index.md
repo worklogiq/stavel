@@ -27,12 +27,13 @@ The CLI is an implemented Stavel capability alongside the [skill](../skill/index
 | [CLI help and capability discovery](help/help.design.md) | help; --help; -h |
 | [Diagnosis and reviewed repair](doctor/doctor.design.md) | doctor; bounded preview/repair |
 | [Work records, queries and schema upgrades](work-management/work-management.design.md) | work list/create/update/migrate/apply/recover |
+| [IDEA capture](idea-capture/idea-capture.design.md) | Proposed idea command; draft design, not shipped |
 
 ## Shared services and delivery
 
 The services directory documents filesystem, naming, distribution, test placement and shared policy helpers once; the architecture maps every current service to those or its owning feature. Shared framework/configuration/distribution contracts remain in their accepted homes.
 
-The [guided-workflow initiative](../skill/guided-workflows/index.md) coordinates planned CLI and skill changes with one execution packet and accountable status owner. Do not copy that packet into each feature. [CLI status](cli.status.json) has no separately active delivery item; it does not duplicate the initiative state held by the skill capability.
+The [guided-workflow owner](../skill/guided-workflows/index.md) coordinates shared skill/CLI workflow scope. Each initiative has one accountable status owner; do not copy its state or execution packet into every participating feature. [CLI status](cli.status.json) owns CLI work, while skill-owned initiatives remain in the skill capability's status file.
 
 Current CLI owner-local execution plans are indexed by the initiative coordination packet (archived; see historical context). CLI participates in that one accountable initiative; this index does not copy its phase/status.
 

@@ -55,15 +55,27 @@
             "workType": "idea"
           },
           "operation": "create"
+        },
+        {
+          "at": "2026-11-27T19:22:28.013Z",
+          "changes": {
+            "blockers": [],
+            "mode": "DESIGN",
+            "nextAction": "Review/select the draft guard and preserving init-integration design, then use PLAN for execution slices.",
+            "phase": "design",
+            "record": "initialization/commit-safety-hooks.design.md",
+            "status": "active"
+          },
+          "operation": "update"
         }
       ],
       "id": "commit-safety-hooks",
       "implementationStatus": "not-started",
-      "mode": "EXPLORE",
-      "nextAction": "Explore policy enforcement and preserving hook integration before design or implementation.",
-      "phase": "exploration",
-      "record": "initialization/commit-safety-hooks.recon.md",
-      "status": "planned",
+      "mode": "DESIGN",
+      "nextAction": "Review/select the draft guard and preserving init-integration design, then use PLAN for execution slices.",
+      "phase": "design",
+      "record": "initialization/commit-safety-hooks.design.md",
+      "status": "active",
       "title": "Idea 001: packaged commit-safety hooks installed by init",
       "workType": "idea"
     }
@@ -71,5 +83,5 @@
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "CLI",
-  "updated": "2026-11-27T11:06:28.825Z"
+  "updated": "2026-11-27T19:22:28.013Z"
 }

@@ -78,15 +78,26 @@
             "workType": "proposal"
           },
           "operation": "create"
+        },
+        {
+          "at": "2026-11-27T19:22:27.435Z",
+          "changes": {
+            "blockers": [],
+            "mode": "DESIGN",
+            "nextAction": "Review/select the draft IDEA workflow and CLI design, then use PLAN for execution slices.",
+            "phase": "design",
+            "status": "active"
+          },
+          "operation": "update"
         }
       ],
       "id": "idea-capture",
       "implementationStatus": "not-started",
-      "mode": "EXPLORE",
-      "nextAction": "Explore the lightweight capture interface and record format before design or implementation.",
-      "phase": "exploration",
+      "mode": "DESIGN",
+      "nextAction": "Review/select the draft IDEA workflow and CLI design, then use PLAN for execution slices.",
+      "phase": "design",
       "record": "guided-workflows/idea-capture.design.md",
-      "status": "planned",
+      "status": "active",
       "title": "IDEA mode for quick capture and registration",
       "workType": "proposal"
     }
@@ -94,5 +105,5 @@
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "Skill",
-  "updated": "2026-11-27T11:06:28.264Z"
+  "updated": "2026-11-27T19:22:27.435Z"
 }
