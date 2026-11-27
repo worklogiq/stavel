@@ -59,10 +59,40 @@
       "status": "completed",
       "title": "Guided setup, delivery and repository customization",
       "tracker": "../../../_archive/product/capabilities/skill/guided-workflows/execution/guided-workflows/guided-workflows.macro-execution.md"
+    },
+    {
+      "blockers": [],
+      "history": [
+        {
+          "at": "2026-11-27T11:06:28.264Z",
+          "changes": {
+            "blockers": [],
+            "id": "idea-capture",
+            "implementationStatus": "not-started",
+            "mode": "EXPLORE",
+            "nextAction": "Explore the lightweight capture interface and record format before design or implementation.",
+            "phase": "exploration",
+            "record": "guided-workflows/idea-capture.design.md",
+            "status": "planned",
+            "title": "IDEA mode for quick capture and registration",
+            "workType": "proposal"
+          },
+          "operation": "create"
+        }
+      ],
+      "id": "idea-capture",
+      "implementationStatus": "not-started",
+      "mode": "EXPLORE",
+      "nextAction": "Explore the lightweight capture interface and record format before design or implementation.",
+      "phase": "exploration",
+      "record": "guided-workflows/idea-capture.design.md",
+      "status": "planned",
+      "title": "IDEA mode for quick capture and registration",
+      "workType": "proposal"
     }
   ],
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "Skill",
-  "updated": "2026-11-27T05:43:43.188Z"
+  "updated": "2026-11-27T11:06:28.264Z"
 }

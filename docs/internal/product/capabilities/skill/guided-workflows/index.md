@@ -22,6 +22,10 @@ Guided workflows owns conversational setup/customization and agent lifecycle beh
 
 Execution packets live under each working owner while active. Closed packets move as a unit into the configured archive mirror; canonical feature requirements/design remain here. Work state is read from its owning records, not inferred from document acceptance or a generated tracker.
 
+## Proposals
+
+- [IDEA mode: quick capture and registration](idea-capture.design.md)
+
 ## Historical context (archived)
 
 ### Guided workflows draft packet

@@ -36,10 +36,40 @@
       "record": "initialization/repeat-initialization.recon.md",
       "status": "active",
       "title": "Repeat initialization and setup recognition"
+    },
+    {
+      "blockers": [],
+      "history": [
+        {
+          "at": "2026-11-27T11:06:28.825Z",
+          "changes": {
+            "blockers": [],
+            "id": "commit-safety-hooks",
+            "implementationStatus": "not-started",
+            "mode": "EXPLORE",
+            "nextAction": "Explore policy enforcement and preserving hook integration before design or implementation.",
+            "phase": "exploration",
+            "record": "initialization/commit-safety-hooks.recon.md",
+            "status": "planned",
+            "title": "Idea 001: packaged commit-safety hooks installed by init",
+            "workType": "idea"
+          },
+          "operation": "create"
+        }
+      ],
+      "id": "commit-safety-hooks",
+      "implementationStatus": "not-started",
+      "mode": "EXPLORE",
+      "nextAction": "Explore policy enforcement and preserving hook integration before design or implementation.",
+      "phase": "exploration",
+      "record": "initialization/commit-safety-hooks.recon.md",
+      "status": "planned",
+      "title": "Idea 001: packaged commit-safety hooks installed by init",
+      "workType": "idea"
     }
   ],
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "CLI",
-  "updated": "2026-11-27T10:51:49.548Z"
+  "updated": "2026-11-27T11:06:28.825Z"
 }

@@ -30,6 +30,10 @@ The guided and initialization services have colocated behavioral suites. The own
 
 The [repeat-initialization recon](repeat-initialization.recon.md) records the owner's 2026-11-27 discovery request and observed repeat-run/session failures. The owner accepted [recognition without registration and preserving gap previews](repeat-initialization.decision.md). Technical classification/session changes still need a design; this paragraph does not claim current runtime behavior changed. Current lifecycle state remains in the capability status file.
 
+## Captured ideas
+
+- [Idea 001: packaged commit-safety hooks installed by init](commit-safety-hooks.recon.md). Proposal only; current initialization does not install Git hooks.
+
 ## Historical context (archived)
 
 - [owner packet](../../../../_archive/product/capabilities/cli/initialization/execution/guided-init/guided-init.execution-plan.md)
