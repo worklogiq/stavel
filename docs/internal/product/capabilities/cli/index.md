@@ -20,6 +20,7 @@ The CLI is an implemented Stavel capability alongside the [skill](../skill/index
 | [Repository inspection and aligned decisions](inspection/inspection.design.md) | inspect; questions |
 | [Adoption and migration planning](planning/planning.design.md) | plan; migrate plan |
 | [Aligned initialization](initialization/initialization.design.md) | init; supported bootstrap/adopt planning routes |
+| [Explicit guard controls](initialization/git-guard-controls.decision.md) | hooks enable/disable --local/--repo; git -c stavel.allow with true or false for an invocation |
 | [Plan application, verification and recovery](migration/migration.design.md) | apply; verify; migrate apply/resume/rollback |
 | [Repository checks and policy rules](checking/checking.design.md) | check; rules list |
 | [Markdown tools and link integration](markdown/markdown.design.md) | docs <mdcomposer args> |

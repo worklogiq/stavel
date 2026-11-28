@@ -17,6 +17,8 @@ These instructions govern development sessions, not workers inside the applicati
 
 Respect the selected protected-branch and review policy. General commit/push authorization is not an exception for a protected branch. Never bypass a Git-guard refusal with --no-verify, alternate hooks configuration or another Git invocation.
 
+Use Stavel's explicit local/repository guard settings or native git -c stavel.allow=true invocation exceptions only when the user specifically requests that exception and scope. General delivery permission and tool refusals do not authorize disabling protection. Report selected exceptions and preserve other hooks/policy.
+
 For bootstrap, adoption or migration, inspect first and use native Q&A when available or grouped numbered questions otherwise. Gather applicable answers and align the complete configuration before generating target files. Existing explicit instructions count as answers. Preserve existing instruction files and canonical owners; merge routing deliberately.
 
 Choose discovery, experiment, design, strict implementation or review for the actual task. Preserve accepted behavior and required mechanisms. Surface material ambiguity and discrepancies; make routine reversible implementation choices autonomously within the contract. Do not weaken requirements or tests to hide omissions.

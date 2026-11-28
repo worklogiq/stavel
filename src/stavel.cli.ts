@@ -22,7 +22,7 @@ import { readWork, workOptionsForConfiguration, bindWorkPlanInputs, planWorkCrea
 import type { WorkPlan, WorkCreateInput, WorkUpdateInput } from './work.service.js';
 import { planExecutionPacket, planPacketMigration, readExecutionPacket, planPacketArchive, planVibeCheckpoint, planSliceTransition } from './lifecycle.service.js';
 import { planIdeaCapture } from './idea.service.js';
-import { augmentGitGuardPlan, inspectGitGuards, recoverGitGuardInstallation } from './git-guard.service.js';
+import { setLocalGitGuards, planRepositoryGitGuards, augmentGitGuardPlan, inspectGitGuards, recoverGitGuardInstallation } from './git-guard.service.js';
 import { initializationReadiness } from './initialization.service.js';
 
 const help = `Usage: stavel <command> [options]
@@ -31,6 +31,8 @@ Guided commands (detect project root; explicit --target always wins):
   init                     Ask questions, align choices, preview and offer setup.
   idea "short thought"     Capture and register an idea; --capability resolves its owner.
   hooks inspect|resume|rollback  Inspect local guard setup or recover its activation.
+  hooks enable|disable --local|--repo  Select checkout-only or committed protection.
+  git -c stavel.allow=true commit|push ...  Explicit exception for that invocation.
   doctor                   Report findings, then offer a repair preview.
   help --json [--target PATH] Explain available CLI and agent capabilities.
   config explain           Explain effective configuration and provenance.
@@ -115,7 +117,7 @@ function parse(argv: string[]): Parsed {
   const options = new Set(['target', 'name', 'track', 'mode', 'answers', 'plan', 'journal', 'output', 'framework-path', 'source-root', 'input', 'instruction', 'performed-by', 'configuration-home', 'registry', 'scope', 'capability', 'status-file', 'title', 'owner', 'request-id']);
   while (tokens.length) {
     const token = tokens.shift()!;
-    if (['--help', '-h', '--dry-run', '--json', '--non-interactive', '--preview', '--apply', '--repair', '--reset-session', '--upgrade-baseline'].includes(token)) { flags.add(token.replace(/^--?/, '')); continue; }
+    if (['--help', '-h', '--dry-run', '--json', '--non-interactive', '--preview', '--apply', '--repair', '--reset-session', '--upgrade-baseline', '--local', '--repo'].includes(token)) { flags.add(token.replace(/^--?/, '')); continue; }
     if (!token.startsWith('--')) throw new Refused(`unexpected argument: ${token}`);
     const [name, ...equals] = token.slice(2).split('=');
     if (!options.has(name)) throw new Refused(`unknown option: --${name}`);
@@ -196,7 +198,18 @@ export async function runCli(argv: string[], io: { out?: (text: string) => void;
       if (values.scope) throw new Refused('Git guards apply to the repository; select a project --target rather than a capability --scope');
       const selected = await selectedScope(); if (!selected) return 2;
       if (!parsed.subcommand || parsed.subcommand === 'inspect') { out(jsonText(inspectGitGuards({ root: selected, sourceRoot }))); return 0; }
-      if (!['resume', 'rollback'].includes(parsed.subcommand)) throw new Refused('use hooks inspect, resume or rollback');
+      const dryRun = flags.has('dry-run') || flags.has('preview');
+      if (['enable', 'disable'].includes(parsed.subcommand)) {
+        if (flags.has('local') === flags.has('repo')) throw new Refused('choose exactly one scope: --local for this checkout or --repo for committed policy');
+        const enabled = parsed.subcommand === 'enable';
+        if (flags.has('local')) out(jsonText(setLocalGitGuards({ root: selected, enabled, dryRun })));
+        else {
+          const plan = reportProvenance(planRepositoryGitGuards({ root: selected, enabled, alignment: { confirmed: true, instruction: values.instruction ?? `cli:hooks ${parsed.subcommand} --repo` } }));
+          out(jsonText(dryRun ? { state: 'preview', scope: 'repository', plan, preflight: applyPlan(plan, { dryRun: true }) } : { scope: 'repository', result: applyPlan(plan), policy: inspectGitGuards({ root: selected, sourceRoot }) }));
+        }
+        return 0;
+      }
+      if (!['resume', 'rollback'].includes(parsed.subcommand)) throw new Refused('use hooks inspect, enable/disable --local/--repo, resume or rollback');
       const selectedPlan = values.plan ? readJson<MigrationPlan>(path.resolve(values.plan)) : undefined;
       if (selectedPlan) { validatePlan(selectedPlan); if (targetRoot(selectedPlan.root) !== selected || !selectedPlan.gitGuardActivation) throw new Refused('guard recovery plan must select this target and an activation descriptor'); }
       out(jsonText(recoverGitGuardInstallation({ root: selected, mode: parsed.subcommand as 'resume' | 'rollback', dryRun: flags.has('dry-run'), ...(selectedPlan?.gitGuardActivation ? { activation: selectedPlan.gitGuardActivation } : {}) }))); return 0;

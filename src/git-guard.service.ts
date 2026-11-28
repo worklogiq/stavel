@@ -3,7 +3,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import type { Alignment, FrameworkConfig, MigrationPlan } from './framework.types.js';
 import { assertNoLinks, contained, digest, fileBytes, fileHash, jsonText, Refused, relativeName, targetRoot } from './filesystem.service.js';
-import { resolveRepositoryConfiguration } from './configuration.service.js';
+import { directoryConfigurationFiles, resolveRepositoryConfiguration } from './configuration.service.js';
 import { mutationPlan } from './effects.service.js';
 import { planDigest } from './planning.service.js';
 import { locateDistribution } from './distribution.service.js';
@@ -18,6 +18,7 @@ export interface GitGuardInspection {
   ready: boolean; active: boolean; repairable: boolean; issues: GitGuardIssue[]; inputs: Record<string, string | null>;
   git: { state: 'ordinary' | 'non-git' | 'bare' | 'worktree' | 'unsupported'; configPath?: '.git/config'; configHash?: string; effectiveHooksPath?: string | null };
   assets: Array<{ path: string; expectedHash: string; currentHash: string | null; owned: boolean }>; bundlePath?: string;
+  controls?: { local: 'inherit' | 'enabled' | 'disabled'; effectiveEnabled: boolean; commandAllow?: boolean };
 }
 export interface GitGuardActivation {
   schemaVersion: 1; kind: 'stavel-git-guard-activation'; id: string; root: string; hooksPath: string; gitConfigPath: '.git/config'; beforeConfigHash: string;
@@ -25,7 +26,7 @@ export interface GitGuardActivation {
 }
 export interface GitGuardInstallPlan { assets: MigrationPlan; activation?: GitGuardActivation; inspection: GitGuardInspection }
 export interface GitGuardActivationResult { ok: true; state: 'active' | 'rolled-back' | 'not-activated'; changed: boolean; journal?: string; dryRun?: boolean }
-interface OwnedManifest { schemaVersion: 1; product: 'stavel-git-guard'; hooksPath: string; files: Record<string, string> }
+interface OwnedManifest { schemaVersion: 1; product: 'stavel-git-guard'; hooksPath: string; files: Record<string, string>; controlsVersion?: 1 }
 interface Receipt { schemaVersion: 1; kind: 'stavel-git-guard-receipt'; checksum: string; activation: GitGuardActivation; beforeConfig: string; afterConfig: string; modes: Array<{ path: string; before: number; after: number }> }
 const writerLock = '.stavel/runtime/writer.lock';
 const recoveryLock = '.stavel/runtime/git-guard-recovery.lock';
@@ -105,6 +106,8 @@ function executable(root: string, filename: string): boolean { if (process.platf
 export function inspectGitGuards(options: { root: string; config?: FrameworkConfig; sourceRoot?: string; bundlePath?: string }): GitGuardInspection {
   const root = targetRoot(options.root), selected = options.config ? undefined : currentConfiguration(root), policy = gitProtectionPolicy(options.config ?? (selected!.kind === 'absent' ? { schemaVersion: 1 } : selected!.config));
   const report: GitGuardInspection = { root, policy, state: policy.state === 'absent' ? 'not-selected' : policy.state === 'disabled' ? 'disabled' : 'incomplete', ready: false, active: false, repairable: false, issues: [], inputs: { ...selected?.inputs }, git: { state: 'non-git' }, assets: [] };
+  report.git = gitFacts(root);
+  if (report.git.state === 'ordinary') { const local = localGuardSetting(root), commandAllow = commandGuardAllowance(root); report.controls = { local, effectiveEnabled: policy.enabled && local !== 'disabled' && commandAllow !== true, ...(commandAllow !== undefined ? { commandAllow } : {}) }; }
   if (!policy.enabled) { report.git = gitFacts(root); return report; }
   const issue = (code: string, message: string, repairable = false) => report.issues.push({ code, message, repairable });
   const available = bundle(options); if (available.path) report.bundlePath = available.path;
@@ -181,13 +184,13 @@ export function planGitGuardInstallation(options: { root: string; config?: Frame
   const upgrade = Boolean(options.upgradeRuntime && ownership);
   if (upgrade) {
     const metadata = fileBytes(root, `${policy.hooksPath}/ownership.json`)!;
-    if (Object.keys(ownership!).sort().join('|') !== ['files', 'hooksPath', 'product', 'schemaVersion'].sort().join('|') || !metadata.equals(Buffer.from(jsonText(ownership))) || names.some(name => fileHash(root, `${policy.hooksPath}/${name}`) !== ownership!.files[name])) throw new Refused('explicit runtime upgrade requires intact owned assets/ownership; first restore exact pinned bytes without discarding edits');
+    if (Object.keys(ownership!).some(key => !['files', 'hooksPath', 'product', 'schemaVersion', 'controlsVersion'].includes(key)) || ownership!.controlsVersion !== undefined && ownership!.controlsVersion !== 1 || !metadata.equals(Buffer.from(jsonText(ownership))) || names.some(name => fileHash(root, `${policy.hooksPath}/${name}`) !== ownership!.files[name])) throw new Refused('explicit runtime upgrade requires intact owned assets/ownership; first restore exact pinned bytes without discarding edits');
     if (!available.bytes) throw new Refused('explicit runtime upgrade needs the selected package bundle; rebuild/reinstall it before previewing an upgrade');
   }
   const runtime = upgrade ? available.bytes : ownership ? installed && digest(installed) === ownership.files['stavel.git-hook.cjs'] ? installed : available.bytes && digest(available.bytes) === ownership.files['stavel.git-hook.cjs'] ? available.bytes : undefined : available.bytes;
   if (!runtime) throw new Refused('exact selected/pinned guard runtime is unavailable; rebuild/reinstall matching package bytes or explicitly plan an upgrade');
   const contents = new Map<string, Buffer>([['pre-commit', Buffer.from(launcher('pre-commit'))], ['pre-push', Buffer.from(launcher('pre-push'))], ['stavel.git-hook.cjs', runtime]]);
-  const manifest: OwnedManifest = { schemaVersion: 1, product: 'stavel-git-guard', hooksPath: policy.hooksPath, files: Object.fromEntries([...contents].map(([name, bytes]) => [name, digest(bytes)])) };
+  const manifest: OwnedManifest = { schemaVersion: 1, product: 'stavel-git-guard', hooksPath: policy.hooksPath, files: Object.fromEntries([...contents].map(([name, bytes]) => [name, digest(bytes)])), ...(!ownership || upgrade || ownership.controlsVersion === 1 ? { controlsVersion: 1 as const } : {}) };
   contents.set('ownership.json', Buffer.from(jsonText(manifest)));
   const assets = [...contents].map(([name, bytes]) => {
     const filename = `${policy.hooksPath}/${name}`, before = fileHash(root, filename), after = digest(bytes); inspection.inputs[filename] = before;
@@ -430,13 +433,66 @@ export function recoverGitGuardInstallation(options: { root: string; mode: 'resu
   finally { fs.unlinkSync(guard); }
 }
 
-export function runGitHook(options: { cwd: string; hook: 'pre-commit' | 'pre-push'; stdin?: string; runtimePath?: string }): { ok: true } {
+function localGuardSetting(root: string): 'inherit' | 'enabled' | 'disabled' {
+  const result = git(root, ['config', '--local', '--no-includes', '--get-all', 'stavel.guards.enabled'], true);
+  if (result.status === 1) return 'inherit';
+  if (result.status !== 0 || !['true', 'false'].includes(result.stdout.trim())) throw new Refused('invalid or duplicate local stavel.guards.enabled; use hooks enable/disable --local to select one boolean');
+  return result.stdout.trim() === 'true' ? 'enabled' : 'disabled';
+}
+function guardControlContext(root: string): GitProtectionPolicy {
+  if (gitFacts(root).state !== 'ordinary') throw new Refused('guard controls require a supported ordinary Git repository');
+  const policy = runtimePolicy(root), manifest = owned(root, policy.hooksPath);
+  if (!manifest || manifest.controlsVersion !== 1) throw new Refused('installed guard runtime predates explicit controls; select an owned runtime upgrade first');
+  for (const name of names) if (fileHash(root, `${policy.hooksPath}/${name}`) !== manifest.files[name]) throw new Refused('guard controls require intact owned assets; restore the installation first');
+  return policy;
+}
+function withControlLock<T>(root: string, action: () => T): T {
+  const lock = contained(root, writerLock); fs.mkdirSync(path.dirname(lock), { recursive: true });
+  try { fs.writeFileSync(lock, jsonText({ kind: 'git-guard-control', pid: process.pid }), { flag: 'wx' }); } catch { throw new Refused('another writer owns repository state; guard controls will not steal its lock'); }
+  try { if (fileHash(root, '.git/config.lock') !== null) throw new Refused('foreign Git config.lock exists; no guard control was changed'); return action(); }
+  finally { fs.unlinkSync(lock); }
+}
+/** A private checkout setting; never changes core.hooksPath or committed policy. */
+export function setLocalGitGuards(options: { root: string; enabled: boolean; dryRun?: boolean }) {
+  if (typeof options.enabled !== 'boolean') throw new Refused('enabled must be boolean');
+  const root = targetRoot(options.root); guardControlContext(root);
+  const before = localGuardSetting(root), after = options.enabled ? 'enabled' : 'disabled';
+  if (options.dryRun || before === after) return { ok: true, scope: 'local', before, after, changed: false, ...(options.dryRun ? { dryRun: true } : {}) };
+  return withControlLock(root, () => { git(root, ['config', '--local', '--replace-all', 'stavel.guards.enabled', String(options.enabled)]); return { ok: true, scope: 'local', before, after, changed: true }; });
+}
+/** Committed policy changes reuse the pinned configuration serializer and file journal. */
+export function planRepositoryGitGuards(options: { root: string; enabled: boolean; alignment: Alignment }): MigrationPlan {
+  const root = targetRoot(options.root), selected = currentConfiguration(root);
+  if (!['configured-directory', 'legacy-root'].includes(selected.kind)) throw new Refused('repository guard selection requires an adopted repository configuration');
+  const policy = gitProtectionPolicy(selected.config);
+  if (policy.state === 'absent') throw new Refused('select guard policy through init before toggling it');
+  const next = structuredClone(selected.config); next.workflow!.gitProtection = { enabled: options.enabled, protectedBranches: policy.protectedBranches, hooksPath: policy.hooksPath }; gitProtectionPolicy(next);
+  const files = selected.kind === 'legacy-root' ? { 'stavel.config.json': Buffer.from(jsonText(next)) } : directoryConfigurationFiles({ config: next, baseline: selected.baselineProfile, previous: selected });
+  return mutationPlan({ root, alignment: options.alignment, inputs: selected.inputs, changes: Object.entries(files).filter(([name, bytes]) => fileHash(root, name) !== digest(bytes)).map(([name, content]) => ({ path: name, content, reason: 'explicit repository-wide Git guard selection; preserve pinned baseline and other policy' })) });
+}
+/** Only invocation-scoped Git values may select this exception. Persisted keys are ignored. */
+function commandGuardAllowance(root: string): boolean | undefined {
+  const result = git(root, ['config', '--show-scope', '--null', '--get-all', 'stavel.allow'], true);
+  if (result.status === 1) return;
+  if (result.status !== 0) throw new Refused('cannot read command-scoped stavel.allow');
+  const fields = result.stdout.split('\0');
+  if (fields.pop() !== '' || fields.length % 2 !== 0) throw new Refused('invalid scoped Git configuration response');
+  let value: string | undefined;
+  for (let index = 0; index < fields.length; index += 2) if (fields[index] === 'command') value = fields[index + 1];
+  if (value === undefined) return;
+  if (!/^(?:true|false)$/i.test(value)) throw new Refused('command-scoped stavel.allow must be true or false');
+  return value.toLowerCase() === 'true';
+}
+
+export function runGitHook(options: { cwd: string; hook: 'pre-commit' | 'pre-push'; stdin?: string; runtimePath?: string }): { ok: true; exception?: string } {
   const root = targetRoot(options.cwd), facts = gitFacts(root);
   if (facts.state !== 'ordinary') throw new Refused(`Stavel guard requires a supported ordinary Git repository; found ${facts.state}`);
   const policy = runtimePolicy(root); if (!policy.enabled) return { ok: true };
   const manifest = owned(root, policy.hooksPath); if (!manifest) throw new Refused('guard ownership/configuration is missing; restore selected setup rather than bypassing the hook');
   for (const name of names) if (fileHash(root, `${policy.hooksPath}/${name}`) !== manifest.files[name]) throw new Refused(`guard asset missing/modified: ${name}; restore the owned installation`);
   if (options.runtimePath && path.resolve(options.runtimePath) !== contained(root, `${policy.hooksPath}/stavel.git-hook.cjs`)) throw new Refused('guard runtime is outside the selected owned installation');
+  if (commandGuardAllowance(root) === true) return { ok: true, exception: 'Explicit git -c stavel.allow=true exception for this Git invocation.' };
+  if (localGuardSetting(root) === 'disabled') return { ok: true, exception: 'Git guards are explicitly disabled in this checkout (hooks enable --local to restore).' };
   for (const name of policy.protectedBranches) if (git(root, ['check-ref-format', `refs/heads/${name}`], true).status !== 0) throw new Refused(`invalid exact protected branch identity: ${name}`);
   // Case-insensitive ordinary files repositories permit MAIN to alias main.
   // Deny that ambiguity for destinations too; an offline hook cannot know the

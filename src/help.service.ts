@@ -22,7 +22,7 @@ const commands: Array<[string, string, string[], string]> = [
   ['help', 'Explain CLI commands and agent workflows; general help needs no adopted repository.', [], 'stavel help --json'],
   ['init', 'Discover the project, ask applicable questions, align choices and preview setup.', [], 'stavel init'],
   ['idea', 'Capture original idea text and register it in capability-owned work without an execution plan.', [], 'stavel idea "Add an export view" --capability cli'],
-  ['hooks', 'Inspect selected local Git guards or recover their checked activation.', ['inspect', 'resume', 'rollback'], 'stavel hooks inspect'],
+  ['hooks', 'Inspect/recover guards, select local or repository protection, or use git -c stavel.allow=true for one invocation.', ['inspect', 'enable', 'disable', 'resume', 'rollback'], 'stavel hooks inspect'],
   ['doctor', 'Report mechanical findings and offer a bounded repair preview.', [], 'stavel doctor'],
   ['config', 'Explain effective repository configuration and provenance.', ['explain'], 'stavel config explain'],
   ['work', 'Read and manage pointer-indexed capability work records.', ['list', 'create', 'update', 'migrate', 'apply', 'recover'], 'stavel work list'],

@@ -1,8 +1,9 @@
 {
+  "controlsVersion": 1,
   "files": {
     "pre-commit": "f8b9133f7882fbf35e476a49a4fdee80b19a83536207801a4464b07ea37c9a8d",
     "pre-push": "a4809982b4fe1ed3b767c88c5ef325a8453c5c3e178cdadbd46aa515a71188a0",
-    "stavel.git-hook.cjs": "fc9465281be44d1dbaf582187ac5a9e5cc0e1af647924ee85d8fe277034a0241"
+    "stavel.git-hook.cjs": "c61cbbf2b461f4b5174584a1b89b53ffcb957a032ebb8bdef71395d6058705c4"
   },
   "hooksPath": ".stavel-hooks",
   "product": "stavel-git-guard",

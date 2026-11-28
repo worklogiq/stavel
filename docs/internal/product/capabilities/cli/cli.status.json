@@ -141,10 +141,54 @@
       "title": "Idea 001: packaged commit-safety hooks installed by init",
       "tracker": "../../../_archive/product/capabilities/cli/initialization/execution/commit-safety-hooks/commit-safety-hooks.macro-execution.md",
       "workType": "idea"
+    },
+    {
+      "blockers": [],
+      "history": [
+        {
+          "at": "2026-11-28T05:41:41.468Z",
+          "changes": {
+            "blockers": [],
+            "id": "git-guard-controls",
+            "implementationStatus": "partial",
+            "mode": "EXECUTE",
+            "nextAction": "Verify real CLI/Git scope, matching allowances, preservation and runtime compatibility; reconcile usage guidance.",
+            "phase": "implementation",
+            "record": "initialization/git-guard-controls.decision.md",
+            "status": "active",
+            "title": "Explicit personal, one-time and repository Git-guard controls"
+          },
+          "operation": "create"
+        },
+        {
+          "at": "2026-11-28T05:53:30.077Z",
+          "changes": {
+            "blockers": [],
+            "implementationStatus": "complete",
+            "mode": "REVIEW",
+            "nextAction": "Review scoped guard controls; choose local, one-time or repository settings explicitly when needed.",
+            "phase": "closed",
+            "status": "completed"
+          },
+          "closureEvidence": [
+            "initialization/git-guard-controls.verification.md"
+          ],
+          "operation": "update",
+          "semanticAcceptance": "caller-reviewed"
+        }
+      ],
+      "id": "git-guard-controls",
+      "implementationStatus": "complete",
+      "mode": "REVIEW",
+      "nextAction": "Review scoped guard controls; choose local, one-time or repository settings explicitly when needed.",
+      "phase": "closed",
+      "record": "initialization/git-guard-controls.decision.md",
+      "status": "completed",
+      "title": "Explicit personal, one-time and repository Git-guard controls"
     }
   ],
   "owner": "repository-maintainer",
   "schemaVersion": 2,
   "title": "CLI",
-  "updated": "2026-11-27T23:13:34.011Z"
+  "updated": "2026-11-28T05:53:30.077Z"
 }

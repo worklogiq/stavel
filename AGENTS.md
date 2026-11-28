@@ -19,3 +19,5 @@ Keep application-specific choices in profiles and owner docs. Follow the [extens
 Do not commit or push to main, merge, deploy or publish without authorization. Local instructions do not create permissions beyond the user's actual task.
 
 Use a task branch for subsequent changes. A general instruction to commit/push is not explicit authorization to write main. Respect selected Git guards; never bypass a refusal with --no-verify, alternate hooks configuration or another Git invocation.
+
+An explicit user instruction may select Stavel's scoped guard controls under the [guard-controls decision](docs/internal/product/capabilities/cli/initialization/git-guard-controls.decision.md). General commit/push authorization is insufficient. Use the requested scope, report the exception and restore temporary choices when requested; never disable guards merely to complete an agent task.

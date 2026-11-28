@@ -76,6 +76,30 @@ test('aligned CLI init activates real hooks that reject protected commits and de
   const refusedPush = git(['push', remote, 'HEAD:refs/heads/main']); assert.notEqual(refusedPush.status, 0); assert.match(refusedPush.stderr, /blocked push.*protected destination/);
   assert.notEqual(git(['--git-dir', remote, 'rev-parse', '--verify', 'refs/heads/main']).status, 0);
   const allowedPush = git(['push', remote, 'HEAD:refs/heads/feat/guard-fixture']); assert.equal(allowedPush.status, 0, allowedPush.stderr);
+  assert.equal(git(['switch', '-c', 'main']).status, 0);
+  const beforeLocal = fs.readFileSync(path.join(root, '.git/config'));
+  assert.equal(ideaCli(root, ['hooks', 'disable']).status, 1);
+  assert.equal(ideaCli(root, ['hooks', 'disable', '--local', '--repo']).status, 1);
+  assert.equal(ideaCli(root, ['hooks', 'disable', '--local', '--preview']).status, 0);
+  assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), beforeLocal);
+  assert.equal(ideaCli(root, ['hooks', 'disable', '--local']).status, 0);
+  assert.equal(git(['commit', '--allow-empty', '-m', 'test: personal selection']).status, 0);
+  assert.equal(ideaCli(root, ['hooks', 'enable', '--local']).status, 0);
+  assert.notEqual(git(['commit', '--allow-empty', '-m', 'test: protected again']).status, 0);
+  assert.equal(git(['-c', 'stavel.allow=false', 'commit', '--allow-empty', '-m', 'test: false remains protected']).status, 1);
+  assert.equal(git(['-c', 'stavel.allow=true', 'commit', '--allow-empty', '-m', 'test: explicit invocation']).status, 0);
+  assert.notEqual(git(['commit', '--allow-empty', '-m', 'test: next invocation protected']).status, 0);
+  assert.equal(git(['remote', 'add', 'origin', remote]).status, 0);
+  assert.equal(git(['-c', 'stavel.allow=true', 'push', 'origin', 'HEAD:refs/heads/main']).status, 0);
+  const entry = JSON.parse(fs.readFileSync(path.join(root, '.stavel-config/stavel.config.json'), 'utf8'));
+  const pin = fs.readFileSync(path.join(root, '.stavel-config', entry.baseline.path));
+  const previewPolicy = ideaCli(root, ['hooks', 'disable', '--repo', '--preview']); assert.equal(previewPolicy.status, 0, previewPolicy.stderr);
+  const disabledPolicy = ideaCli(root, ['hooks', 'disable', '--repo']); assert.equal(disabledPolicy.status, 0, disabledPolicy.stderr);
+  assert.equal(git(['commit', '--allow-empty', '-m', 'test: shared selection']).status, 0);
+  const enabledPolicy = ideaCli(root, ['hooks', 'enable', '--repo']); assert.equal(enabledPolicy.status, 0, enabledPolicy.stderr);
+  assert.notEqual(git(['commit', '--allow-empty', '-m', 'test: shared protection restored']).status, 0);
+  assert.deepEqual(fs.readFileSync(path.join(root, '.stavel-config', entry.baseline.path)), pin);
+  assert.equal(JSON.parse(ideaCli(root, ['hooks', 'inspect']).stdout).controls.effectiveEnabled, true);
 });
 
 test('CLI help explains distinct agent workflows outside a repo without advertising execution subcommands', () => {

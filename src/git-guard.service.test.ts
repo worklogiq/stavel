@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { applyPlan, rollbackMigration } from './migration.service.js';
-import { activateGitGuards, augmentGitGuardPlan, gitProtectionPolicy, inspectGitGuards, planGitGuardInstallation, recoverGitGuardInstallation, runGitHook, verifyGitGuardActivation } from './git-guard.service.js';
+import { setLocalGitGuards, planRepositoryGitGuards, activateGitGuards, augmentGitGuardPlan, gitProtectionPolicy, inspectGitGuards, planGitGuardInstallation, recoverGitGuardInstallation, runGitHook, verifyGitGuardActivation } from './git-guard.service.js';
 import { mutationPlan } from './effects.service.js';
 import type { FrameworkConfig } from './framework.types.js';
 
@@ -16,7 +16,7 @@ process.env.GIT_CONFIG_GLOBAL = path.join(isolation, 'empty-global'); process.en
 const alignment = { confirmed: true, instruction: 'user:fixture:explicit-guard-assets-and-local-activation' };
 const configuration = (hooksPath = '.stavel-hooks'): FrameworkConfig => ({ schemaVersion: 1, workflow: { gitProtection: { enabled: true, protectedBranches: ['main', 'release/stable'], hooksPath } } });
 function g(root: string, args: string[], options: { allowFailure?: boolean; env?: NodeJS.ProcessEnv } = {}) {
-  const result = spawnSync(executable, ['-C', root, ...args], { encoding: 'utf8', shell: false, windowsHide: true, env: options.env ?? process.env });
+  const result = spawnSync(executable, ['-C', root, ...args], { encoding: 'utf8', shell: false, windowsHide: true, timeout: 30000, env: options.env ?? process.env });
   if (!options.allowFailure) assert.equal(result.status, 0, `${args.join(' ')}\n${result.stderr}\n${result.error?.message ?? ''}`);
   return result;
 }
@@ -31,6 +31,73 @@ function install(root: string) { const plan = planGitGuardInstallation({ root, b
 function snapshot(root: string): Record<string, string> {
   const output: Record<string, string> = {}; const walk = (directory: string) => { for (const entry of fs.readdirSync(directory, { withFileTypes: true })) { const filename = path.join(directory, entry.name), name = path.relative(root, filename).replace(/\\/g, '/'); if (entry.isDirectory()) { output[`${name}/`] = ''; walk(filename); } else output[name] = fs.readFileSync(filename).toString('base64'); } }; walk(root); return output;
 }
+
+test('personal controls preview without writes and restore real commit/push protection without changing shared policy/hooks', t => {
+  const { root, directory } = fixture(t); install(root);
+  const policy = fs.readFileSync(path.join(root, 'stavel.config.json')), hooks = fs.readFileSync(path.join(root, '.stavel-hooks/ownership.json'));
+  const before = snapshot(root); setLocalGitGuards({ root, enabled: false, dryRun: true }); assert.deepEqual(snapshot(root), before);
+  g(root, ['config', '--local', 'other.fixture', 'keep']);
+  setLocalGitGuards({ root, enabled: false }); assert.equal(inspectGitGuards({ root }).controls?.effectiveEnabled, false);
+  const allowed = g(root, ['commit', '--allow-empty', '-m', 'explicit personal override']); assert.match(allowed.stderr, /explicitly disabled/);
+  const remote = path.join(directory, 'personal.git'); fs.mkdirSync(remote); g(remote, ['init', '--bare']); g(root, ['push', remote, 'HEAD:refs/heads/main']);
+  setLocalGitGuards({ root, enabled: true }); assert.notEqual(g(root, ['commit', '--allow-empty', '-m', 'blocked again'], { allowFailure: true }).status, 0);
+  g(root, ['switch', '-c', 'task/restored']); g(root, ['commit', '--allow-empty', '-m', 'new task update']);
+  assert.notEqual(g(root, ['push', remote, 'HEAD:refs/heads/main'], { allowFailure: true }).status, 0);
+  assert.equal(g(root, ['config', '--local', '--get', 'other.fixture']).stdout.trim(), 'keep');
+  assert.deepEqual(fs.readFileSync(path.join(root, 'stavel.config.json')), policy); assert.deepEqual(fs.readFileSync(path.join(root, '.stavel-hooks/ownership.json')), hooks);
+});
+
+test('native command boolean permits one real commit and respects false, duplicates and invalid values', t => {
+  const { root } = fixture(t); install(root);
+  for (const settings of [[], ['-c', 'stavel.allow=false'], ['-c', 'stavel.allow=true', '-c', 'stavel.allow=false'], ['-c', 'stavel.allow=some reason']]) {
+    const result = g(root, [...settings, 'commit', '--allow-empty', '-m', 'must remain protected'], { allowFailure: true });
+    assert.notEqual(result.status, 0); assert.match(result.stderr, /blocked commit|must be true or false/);
+  }
+  const config = fs.readFileSync(path.join(root, '.git/config')), receipts = fs.readdirSync(path.join(root, '.git/stavel-guards'));
+  const allowed = g(root, ['-c', 'stavel.allow=false', '-c', 'stavel.allow=true', 'commit', '--allow-empty', '-m', 'explicit invocation']);
+  assert.match(allowed.stderr, /Explicit git -c stavel.allow=true/);
+  assert.notEqual(g(root, ['commit', '--allow-empty', '-m', 'next invocation protected'], { allowFailure: true }).status, 0);
+  assert.deepEqual(fs.readFileSync(path.join(root, '.git/config')), config); assert.deepEqual(fs.readdirSync(path.join(root, '.git/stavel-guards')), receipts);
+});
+
+test('native command boolean permits the selected push and never persists into subsequent pushes', t => {
+  const { root, directory } = fixture(t), remote = path.join(directory, 'native.git'); fs.mkdirSync(remote); g(remote, ['init', '--bare']);
+  g(root, ['remote', 'add', 'origin', remote]); g(root, ['push', 'origin', 'main']); install(root); g(root, ['switch', '-c', 'task/native']); g(root, ['commit', '--allow-empty', '-m', 'task update']);
+  assert.notEqual(g(root, ['-c', 'stavel.allow=false', 'push', 'origin', 'HEAD:main'], { allowFailure: true }).status, 0);
+  const allowed = g(root, ['-c', 'stavel.allow=true', 'push', 'origin', 'HEAD:main']); assert.match(allowed.stderr, /Explicit git -c stavel.allow=true/);
+  g(root, ['commit', '--allow-empty', '-m', 'later task update']);
+  assert.notEqual(g(root, ['push', 'origin', 'HEAD:main'], { allowFailure: true }).status, 0);
+  assert.notEqual(g(root, ['-c', 'stavel.allow=false', 'push', 'origin', 'HEAD:main'], { allowFailure: true }).status, 0);
+});
+
+test('persisted local/global stavel.allow never grants an invocation exception and true still checks owned integrity', t => {
+  const { root, directory } = fixture(t); install(root); g(root, ['config', '--local', 'stavel.allow', 'true']);
+  const global = path.join(directory, 'global.gitconfig'); fs.writeFileSync(global, '[stavel]\n allow = true\n');
+  const env = { ...process.env, GIT_CONFIG_GLOBAL: global };
+  assert.notEqual(g(root, ['commit', '--allow-empty', '-m', 'persistent values ignored'], { allowFailure: true, env }).status, 0);
+  assert.notEqual(g(root, ['-c', 'stavel.allow=false', 'commit', '--allow-empty', '-m', 'explicit false'], { allowFailure: true, env }).status, 0);
+  assert.equal(inspectGitGuards({ root }).controls?.commandAllow, undefined);
+  fs.appendFileSync(path.join(root, '.stavel-hooks/stavel.git-hook.cjs'), '\n// modified\n');
+  const changed = g(root, ['-c', 'stavel.allow=true', 'commit', '--allow-empty', '-m', 'integrity still required'], { allowFailure: true });
+  assert.notEqual(changed.status, 0); assert.match(changed.stderr, /asset missing\/modified/);
+});
+
+test('repository toggles preserve pinned policy, preview/stale refusal and restore actual guard behavior', t => {
+  const { root } = fixture(t); install(root); const original = fs.readFileSync(path.join(root, 'stavel.config.json'));
+  const plan = planRepositoryGitGuards({ root, enabled: false, alignment }); applyPlan(plan, { dryRun: true }); assert.deepEqual(fs.readFileSync(path.join(root, 'stavel.config.json')), original);
+  applyPlan(plan); assert.equal(inspectGitGuards({ root }).state, 'disabled'); g(root, ['commit', '--allow-empty', '-m', 'repository selected off']);
+  const enable = planRepositoryGitGuards({ root, enabled: true, alignment }); applyPlan(enable); assert.notEqual(g(root, ['commit', '--allow-empty', '-m', 'restored policy'], { allowFailure: true }).status, 0);
+  const stale = planRepositoryGitGuards({ root, enabled: false, alignment }); fs.appendFileSync(path.join(root, 'stavel.config.json'), '\n'); const changed = fs.readFileSync(path.join(root, 'stavel.config.json'));
+  assert.throws(() => applyPlan(stale), /stale|changed/); assert.deepEqual(fs.readFileSync(path.join(root, 'stavel.config.json')), changed);
+});
+
+test('controls preserve foreign locks and refuse runtimes without control support', t => {
+  const { root } = fixture(t); install(root); write(root, '.git/config.lock', 'foreign'); const before = snapshot(root);
+  assert.throws(() => setLocalGitGuards({ root, enabled: false }), /foreign Git config.lock/); assert.deepEqual(snapshot(root), before);
+  fs.unlinkSync(path.join(root, '.git/config.lock'));
+  const old = JSON.parse(fs.readFileSync(path.join(root, '.stavel-hooks/ownership.json'), 'utf8')); delete old.controlsVersion; write(root, '.stavel-hooks/ownership.json', old);
+  assert.throws(() => setLocalGitGuards({ root, enabled: false }), /predates explicit controls/);
+});
 
 test('exact policy identities reject patterns, full refs and reserved case aliases; absent/disabled stays unselected', () => {
   assert.equal(gitProtectionPolicy({ schemaVersion: 1 }).state, 'absent'); assert.equal(gitProtectionPolicy({ schemaVersion: 1, workflow: { gitProtection: { enabled: false } } }).state, 'disabled');
